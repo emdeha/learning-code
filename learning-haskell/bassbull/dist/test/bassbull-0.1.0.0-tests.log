@@ -1,0 +1,9 @@
+Test suite tests: RUNNING...
+
+Verify that bassbull outputs the correct data
+  equals zero
+
+Finished in 0.3422 seconds
+1 example, 0 failures
+Test suite tests: PASS
+Test suite logged to: dist\test\bassbull-0.1.0.0-tests.log

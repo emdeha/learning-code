@@ -1,0 +1,16 @@
+POST /enlighten/calais.asmx HTTP/1.1
+Host: api.opencalais.com
+Transfer-Encoding: chunked
+Content-Type: text/xml; charset=utf-8
+SOAPAction: \"http://clearforest.com/Enlighten\"
+
+4
+Wiki
+5
+pedia
+c
+ in
+
+chunks.
+0
+

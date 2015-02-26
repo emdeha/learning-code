@@ -1,0 +1,42 @@
+name:                bassbull
+version:             0.1.0.0
+synopsis:            Processing some CSV data
+description:         Baseball data analysis
+license:             BSD3
+license-file:        LICENSE
+author:              Tsvetan Tsvetanov
+maintainer:          cpi-cecko@gmail.com
+copyright:           2014, Tsvetan Tsvetanov
+category:            Data
+build-type:          Simple
+cabal-version:       >=1.10
+
+executable bassbull
+  main-is:             Main.hs
+  ghc-options:         -rtsopts -O2
+  build-depends:       base,
+                       bassbull,
+                       bytestring,
+                       cassava
+  hs-source-dirs:      src
+  default-language:    Haskell2010
+
+test-suite tests
+  ghc-options:         -Wall
+  type:                exitcode-stdio-1.0
+  main-is:             Tests.hs
+  hs-source-dirs:      tests
+  build-depends:       base,
+                       bassbull,
+                       hspec >= 2.0 && < 2.1
+  default-language:    Haskell2010
+
+library
+  ghc-options:         -Wall
+  exposed-modules:     Bassbull
+  build-depends:       base >= 4.7 && <5,
+                       bytestring,
+                       vector,
+                       cassava
+  hs-source-dirs:      src
+  default-language:    Haskell2010

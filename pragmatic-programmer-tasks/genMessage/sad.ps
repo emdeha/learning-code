@@ -1,0 +1,8 @@
+
+{ Add a Product }
+{ to the 'on-order' list }
+AddProductMsg = packed record
+	id: LongInt;
+	name: array[0..29] of char;
+	order_code: LongInt;
+end;

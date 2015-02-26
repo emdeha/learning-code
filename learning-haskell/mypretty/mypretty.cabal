@@ -1,0 +1,17 @@
+Name: mypretty
+Version: 0.1
+
+Synopsis: My pretty printing lib with JSON support
+Description: 
+    A simple pretty printing lib that illustrates how to develop a Haskell lib.
+Author: Tsvetan
+Maintainer: noone@tsvetanov.com
+
+License-File: wtfpl.txt
+Cabal-Version: >= 1.2
+
+library
+    Exposed-Modules: Prettify
+                     PrettyJSON
+                     SimpleJSON
+    Build-Depends:   base >= 2.0

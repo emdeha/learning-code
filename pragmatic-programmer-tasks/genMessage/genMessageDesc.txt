@@ -1,0 +1,29 @@
+# Add a Product
+# to the 'on-order' list
+M AddProduct
+F id         int
+F name       char[30]
+F order_code int
+E
+
+======
+PASCAL
+======
+{ Add a Product }
+{ to the 'on-order' list }
+AddProductMsg = packed record
+    id:         LongInt;
+    name:       array[0..29] of char;
+    order_code: LongInt;
+end;
+
+===
+C++
+===
+/* Add a Product */
+/* to the 'on-order' list */
+struct AddProductMsg {
+    int id;
+    char name[30];
+    int order_code;
+};

@@ -1,0 +1,97 @@
+LEARN YOU A HASKELL FOR GREAT GOOD!!!
+Ninety Nine Haskell problems.
+
+Какво е ФП?
+Pros and Cons of FP.
+- Сигурност при многонишковост.
+- Гарантиран еднакъв резултат при извикване на функция два пъти с едни и същи параметри.
+- Не толкова ефективен при реализацията на процедурни алгоритми.
+Defining types and functions.
+- t :: Int
+- ch :: Char
+- str :: String, str :: [Char]
+- f :: Float
+- d :: Double
+- sum :: Int -> Int -> Int
+  sum a b = a + b
+- firstDigit :: Int -> Int
+  firstDigin num = num % 10
+Primitive Types.
+- Int, Integer, Float, Double, Char
+Guards.
+- grade :: Int -> Char
+  grade score
+    | score < 50 = 'F'
+    | score >= 50 && score < 69 = 'D'
+    | score >= 69 && score < 79 = 'C'
+    | score >= 79 && score < 89 = 'B'
+    | score >= 89 && score <= 100 = 'A'
+    | otherwise = '-' 
+Conditional expressions.
+- grade :: Int -> Char
+  grade score =
+    if score < 50 then 'F'
+      else if score >= 50 && score < 69 then 'D'
+        else if score >= 69 && score < 79 then 'C'
+          else if score >= 79 && score < 89 then 'B'
+            else if score >= 90 && score < 100 then 'A'
+              else '-'
+The case expression.
+- case `sth` of
+First steps in recursion.
+- fact :: Integer -> Integer
+  fact n = n * (fact n-1)
+- pow :: Int -> Int -> Int
+  pow a 0 = a
+  pow a n = a * (pow a (n-1))
+List manipulation examples.
+List recursion.
+Generic functions.
+Tuples, lists
+- [1,2,3,4] :: [Int]
+- "I'm a string" :: [Char]
+- repeat' :: Int -> [Int]
+  repeat' n = n:(repeat' n)
+- repeat'' :: a -> [a]
+  repeat'' n = n:(repeat'' n)
+- take' :: Int -> [a] -> [a]
+  take' _ [] = []
+  take' count xs
+    | count <= 0 = []
+    | otherwise = (head xs):take' (count-1) xs 
+- take with (x:xs)
+- reverse :: [Int] -> [Int]
+  reverse [] = []
+  reverse xs = (reverse tail xs) ++ [(head xs)]
+- reverse' :: [a] -> [a]
+  reverse' [] = []
+  reverse' xs = (reverse' tail xs) ++ [(head xs)]
+- reverse'' :: [a] -> [a]
+  reverse'' [] = []
+  reverse'' (x:xs) = (reverse'' xs) ++ [x]
+- maximum' :: Ord a => [a] -> a
+  maximum' [] = error "Trying to compute the maximum of an empty list"
+  maximum' [x] = x
+  maximum' (x:xs) = max x (maximum' xs)
+- logValue :: Int -> String -> (Int, String)
+  logValue a str = (a,str)
+Where, let clauses.
+- quicksort' :: (Ord a) => [a] -> [a]
+  quicksort' [] = []
+  quicksort' (x:xs) =
+    let smallerSorted = quicksort' [a | a <- xs, a <= x]
+        biggerSorted = quicksort' [a | a <- xs, a > x]
+    in  smallerSorted ++ [x] ++ biggerSorted
+- quicksort with filter
+- split' :: [a] -> Int -> ([a],[a])
+  split' xs 0 = ([],xs)
+  split' (x:xs) n = (x:(fst (split xs (n-1))), snd (split xs (n-1)))
+- split :: [a] -> Int -> ([a],[a])
+  split xs 0 = ([],xs)
+  split (x:xs) n = (x:(fst restSplit), snd restSplit)
+    where restSplit = split xs (n-1) 
+type keyword.
+- type Polar2D a = (a,a)
+- type Cartesian2D a = (a,a)
+- addCoords :: Cartesian2D -> Cartesian2D -> Cartesian2D
+  addCoords v1 v2 = ((fst v1) + (fst v2), (snd v1) + (snd v2))
