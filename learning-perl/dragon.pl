@@ -66,6 +66,64 @@ sub get_coords(@)
     return @coords;
 }
 
+sub turnsMode(@)
+{
+    my (@turns) = (@_);
+
+    say @turns;
+    exit(0);
+}
+
+sub turtleMode(@)
+{
+    my (@turns) = (@_);
+
+    say 'forward 10';
+    for my $turn (@turns) {
+        say $turn? 'right': 'left', ' 90';
+        say 'forward 10';
+    }
+    exit(0);
+}
+
+sub coordsMode(@)
+{
+    my (@coords) = (@_);
+
+    my @c;
+    while (@coords) {
+        my ($x, $y) = (shift @coords, shift @coords);
+        push @c, "($x, $y)"
+    }
+    say "@c";
+    exit (0);
+}
+
+sub pngMode(@)
+{
+    my (@coords) = (@_);
+
+    my $maxval = max map { abs($_) } @coords;
+    my $scale = 256 / $maxval;
+
+    my $img = GD::Simple->new(600, 600);
+    $img->bgcolor('white');
+    $img->fgcolor('black');
+
+    $img->moveTo(300, 300);
+
+    while (@coords) {
+        my ($x, $y) = (shift @coords, shift @coords);
+        my ($imgx, $imgy) = (300 + $scale * $x, 300 - $scale * $y);
+
+        $img->lineTo($imgx, $imgy);
+    }
+
+    binmode STDOUT;
+    print $img->png;
+    exit(0);
+}
+
 MAIN:
 {
     my %opts;
@@ -101,47 +159,17 @@ MAIN:
     }
 
     if ($mode eq 'turns') {
-        say @turns;
-        exit(0);
+        turnsMode(@turns);
     } elsif ($mode eq 'turtle') {
-        say 'forward 10';
-        for my $turn (@turns) {
-            say $turn? 'right': 'left', ' 90';
-            say 'forward 10';
-        }
-        exit(0);
+        turtleMode(@turns);
     }
 
     my @coords = get_coords @turns;
     if ($mode eq 'coords') {
-        my @c;
-        while (@coords) {
-            my ($x, $y) = (shift @coords, shift @coords);
-            push @c, "($x, $y)"
-        }
-        say "@c";
-        exit (0);
+        coordsMode(@coords);
     }
 
     if ($mode eq 'png') {
-        my $maxval = max map { abs($_) } @coords;
-        my $scale = 256 / $maxval;
-
-        my $img = GD::Simple->new(600, 600);
-        $img->bgcolor('white');
-        $img->fgcolor('black');
-
-        $img->moveTo(300, 300);
-
-        while (@coords) {
-            my ($x, $y) = (shift @coords, shift @coords);
-            my ($imgx, $imgy) = (300 + $scale * $x, 300 - $scale * $y);
-
-            $img->lineTo($imgx, $imgy);
-        }
-
-        binmode STDOUT;
-        print $img->png;
-        exit(0);
+        pngMode(@coords);
     }
 }
