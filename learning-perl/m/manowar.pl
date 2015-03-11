@@ -6,4 +6,9 @@ use warnings;
 
 MAIN:
 {
+    while (<>) {
+        chomp;
+        my @chars = split '', lc;
+        say "@chars";
+    }
 }
