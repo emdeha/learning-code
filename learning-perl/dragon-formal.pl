@@ -6,38 +6,72 @@ use warnings;
 
 use GD::Simple;
 use List::Util 'max';
-use constant halfpi => atan2(1, 0);
+use Math::Trig ':pi';
 
-my $init = "FX";
-my %rules = ( 
-    X => "X+YF+",
-    Y => "-FX-Y"
+# Dragon curve
+# my $init = "FX";
+# my %rules = ( 
+#     X => "X+YF+",
+#     Y => "-FX-Y"
+# );
+# 
+# sub getCoords($)
+# {
+#     my $grad = $_[0];
+#     my $expand = $init;
+#     while ($grad-- >= 1) {
+#         $expand =~ s/(X|Y)/$rules{$1}/g;
+#     }
+# 
+#     my @coords;
+#     my ($x, $y) = (0, 0);
+#     my $theta = 0;
+#     for (split //, $expand) {
+#         if (/F/) {
+#             $x += 2 * cos($theta);
+#             $y += 2 * sin($theta);
+#             push @coords, ($x, $y);
+#         } elsif (/\+/) {
+#             $theta += pi / 2;
+#         } elsif (/\-/) {
+#             $theta -= pi / 2;
+#         }
+#     }
+# 
+#     return @coords;
+# }
+
+# Sierpinski triangle
+my $init = "F-G-G";
+my %rules = (
+    F => "F-G+F+G-F",
+    G => "GG"
 );
 
 sub getCoords($)
 {
-    my $grad = $_[0];
-    my $expand = $init;
-    while ($grad-- >= 1) {
-        $expand =~ s/(X|Y)/$rules{$1}/g;
-    }
+     my $grad = $_[0];
+     my $expand = $init;
+     while ($grad-- >= 1) {
+         $expand =~ s/(G|F)/$rules{$1}/g;
+     }
 
-    my @coords;
-    my ($x, $y) = (0, 0);
-    my $theta = 0;
-    for (split //, $expand) {
-        if (/F/) {
-            $x += 2 * cos($theta);
-            $y += 2 * sin($theta);
-            push @coords, ($x, $y);
-        } elsif (/\+/) {
-            $theta += halfpi;
-        } elsif (/\-/) {
-            $theta -= halfpi;
-        }
-    }
-
-    return @coords;
+     my @coords;
+     my ($x, $y) = (0, 0);
+     my $theta = 0;
+     for (split //, $expand) {
+         if (/F|G/) {
+             $x += 2 * cos($theta);
+             $y += 2 * sin($theta);
+             push @coords, ($x, $y);
+         } elsif (/\+/) {
+             $theta -= 2 * pi / 3;
+         } elsif (/\-/) {
+             $theta += 2 * pi / 3;
+         }
+     }
+ 
+     return @coords;
 }
 
 MAIN:
