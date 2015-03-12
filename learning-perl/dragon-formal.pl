@@ -6,10 +6,9 @@ use warnings;
 
 use GD::Simple;
 use List::Util 'max';
+use constant halfpi => atan2(1, 0);
 
-my $angle = 90;
 my $init = "FX";
-my @consts = ('F', '+', '-');
 my %rules = ( 
     X => "X+YF+",
     Y => "-FX-Y"
@@ -23,18 +22,20 @@ sub getCoords($)
         $expand =~ s/(X|Y)/$rules{$1}/g;
     }
 
-    my @split = split '', $expand;
     my @coords;
-    my ($x, $y) = (1, 0);
-    for (@split) {
-        if ($_ cmp 'F') {
-            push @coords, (10 * $x, 10 * $y);
-        } elsif ($_ cmp '+') {
-        } elsif ($_ cmp '-') {
+    my ($x, $y) = (0, 0);
+    my $theta = 0;
+    for (split //, $expand) {
+        if (/F/) {
+            $x += 2 * cos($theta);
+            $y += 2 * sin($theta);
+            push @coords, ($x, $y);
+        } elsif (/\+/) {
+            $theta += halfpi;
+        } elsif (/\-/) {
+            $theta -= halfpi;
         }
     }
-    # $, = ' ';
-    # say @coords;
 
     return @coords;
 }
@@ -47,7 +48,7 @@ MAIN:
 
     $img->moveTo(300, 300);
 
-    my @coords = getCoords(8);
+    my @coords = getCoords(10);
     my $maxval = max map { abs($_) } @coords;
     my $scale = 256 / $maxval;
     while (@coords) {
@@ -55,7 +56,6 @@ MAIN:
         my ($imgx, $imgy) = (300 + $scale * $x, 300 - $scale * $y);
 
         $img->lineTo($imgx, $imgy);
-
     }
 
     binmode STDOUT;
