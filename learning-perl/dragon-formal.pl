@@ -77,9 +77,9 @@ sub getCoords($ $)
      return @coords;
 }
 
-sub draw(@)
+sub draw($ @)
 {
-    my @coords = @_;
+    my ($out, @coords) = @_;
 
     my $img = GD::Simple->new(600, 600);
     $img->bgcolor('white');
@@ -96,8 +96,14 @@ sub draw(@)
         $img->lineTo($imgx, $imgy);
     }
 
+    my $imgFile;
+    open $imgFile, '>', $out or die "cannot open file";
+
     binmode STDOUT;
-    print $img->png;
+    print { $imgFile } $img->png;
+
+    close $imgFile or die "cannot close file";
+
     exit(0);
 }
 
@@ -111,9 +117,10 @@ sub usage($_)
     my ($err) = @_;
 
     my $s = <<USAGE
-Usage: dragon-formal [-f figure] <generation>
+Usage: dragon-formal [-f figure] [-i image] <generation>
 
     -f     the figure which you want to draw; use -f list to show available figures
+    -i     the image you wish to draw to
 The generation must be positive integer
 USAGE
     ;
@@ -124,7 +131,7 @@ USAGE
 MAIN:
 {
     my %opts;
-    getopts('hf:v', \%opts) or usage(1);
+    getopts('hf:vi:', \%opts) or usage(1);
     version() if $opts{v};
     usage(0) if $opts{h};
     exit(0) if $opts{h} || $opts{v};
@@ -145,9 +152,11 @@ MAIN:
         $figure = $opts{f};
     }
 
+    my $out = exists $opts{i}? $opts{i}: "$figure.png";
+
     usage(1) unless @ARGV == 1 && $ARGV[0] =~ /^[1-9][0-9]*$/;
     my $generation = $ARGV[0];
 
     my @coords = getCoords($generation, $figure);
-    draw(@coords);
+    draw($out, @coords);
 }
