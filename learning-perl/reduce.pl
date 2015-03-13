@@ -4,7 +4,7 @@ use warnings;
 use strict;
 use utf8;
 
-use List::Util qw/reduce any all/;
+use List::Util qw/reduce any all pairgrep/;
 
 use v5.012;
 
@@ -17,3 +17,6 @@ say 'all are positive' if all { $_ > 0 } @ary;
 any { $_ & 1 } @ary and say 'some elements are odd';
 
 say reduce { $a + $b } @ary;
+
+
+say join ',', pairgrep { $a + $b < 10 } @ary;
