@@ -54,3 +54,6 @@ or screen -r <num>
 $ ./runServer.sh
 
 $ ./runClient.sh
+
+# Eclipse
+Run > Run Cofigurations
