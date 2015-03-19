@@ -1,0 +1,11 @@
+perlbrew
+carton
+
+perl -MCPAN -eshell
+
+cpanm -> simple output
+cpan CPAN
+App::CPANMINUS
+cpan i /App:<glob> -> if no idea about file
+
+metacpan.org
