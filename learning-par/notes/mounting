@@ -1,0 +1,3 @@
+mount /dev/sdc1 sdc1 -o rw,exec
+
+add to fstab

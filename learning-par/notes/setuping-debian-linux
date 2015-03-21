@@ -1,0 +1,59 @@
+http://pb7.1z0.org/~lisp/
+<res2> http://rmi.yaht.net/week-03/arithmetic*.pdf
+http://rmi.yaht.net/repo/arith.bin
+
+Oracle VM Virtualbox
+> ubuntu-zali
+> Terminal
+
+# apt-get update
+# apt-get -y install aptitude eclipse-jdt joe
+# java -version
+# dpkg -l | grep eclipse
+# apt-cache search <pack_name>
+# apt-cache show <pack_full_name>
+# aptitude remove <pack_name>
+# dpkg --purge --force-depends <pack_nam>
+
+debian - Debora Ian
+
+Homework: Simple RMI with Haskell
+
+RMI -> URL on which we could find the needed call (obj.methodCall())
+
+(1) RMI registry:
+    Contains data
+
+(2) Server:
+    (0) -> start server
+    (1) -> bind to address (Naming.rebind(...))
+
+(3) Client:
+    (0) -> start
+    (1) -> list available resources (Naming.list(...))
+    (2) -> instantiate remote object from available ones
+    (3) -> communicate via instantiated object
+            - we use "stub"s ("proxy-object"s) to transfer data
+
+# Testing on remote servers
+$ java -cp ./bin \                              # find class files in this folder
+       -D java.rm.server.codebase=... \         # extra RMI functionality
+       ArithClient \                            # start ArithClient
+       cmd1..cmdN
+
+# Running the examples
+$ cd <folder where unarchived <res2>>
+$ ./runRegistry.sh
+(..halts..)
+<Ctr-Shift-T>
+
+or ./runRegistry.sh & -> starts it and puts it somewhere
+or screen -r <num>
+    <Ctr-A> to switch terminals
+
+$ ./runServer.sh
+
+$ ./runClient.sh
+
+# Eclipse
+Run > Run Cofigurations

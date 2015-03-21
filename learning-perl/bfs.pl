@@ -44,7 +44,7 @@ sub bfs {
                 return;
             }
             for (@{$graph{$curr}}) {
-                if (!exists($walked{$curr})) {
+                if (grep { not exists($walked{$curr} })) {
                     print "not exists";
                     push @queue, $curr;
                     $walked{$curr} = 'yes';
