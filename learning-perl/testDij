@@ -6,6 +6,7 @@ e f 5
 f a 10
 g a 4
 g c 3
+a a 0
 g b 1
 ? a g
-? d f
+? g a
