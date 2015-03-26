@@ -24,20 +24,3 @@ main = do
                         return (as' ++ bs')
         
     print solutions
-
--- main :: IO ()
--- main = do
---     [f] <- getArgs
---     file <- readFile f
--- 
---     let fibnums = lines file
---         solutions = runEval (myparMap (fib . read) fibnums)
---         
---     print solutions
--- 
--- myparMap :: (a -> b) -> [a] -> Eval [b]
--- myparMap _ [] = return []
--- myparMap f (a:as) = do
---     b <- rpar (f a)
---     bs <- myparMap f as
---     return (b:bs)
