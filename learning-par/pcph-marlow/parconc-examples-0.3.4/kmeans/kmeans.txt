@@ -1,0 +1,2 @@
+[Cluster {clId = 0, clCent = Point (-5.843594657217393) (-5.465023143155275)},Cluster {clId = 1, clCent = Point 8.316354592277676 (-8.330430847304319)},Cluster {clId = 2, clCent = Point (-9.06455081846106) 7.561852464109089},Cluster {clId = 3, clCent = Point 9.243597731128498 6.138576051709918},Cluster {clId = 4, clCent = Point (-3.621709114340706) (-1.824581243202083)}]
+Total time: 0.55

@@ -107,8 +107,8 @@ kmeans_strat numChunks nclusters points clusters =
         printf "giving up."
         return clusters
       loop n clusters = do
-        printf "iteration %d\n" n
-        putStr (unlines (map show clusters))
+        -- printf "iteration %d\n" n
+        -- putStr (unlines (map show clusters))
         let clusters' = parSteps_strat nclusters clusters chunks -- <2>
         if clusters' == clusters
            then return clusters
