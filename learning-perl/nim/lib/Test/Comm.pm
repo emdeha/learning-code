@@ -29,15 +29,7 @@ func comm_init()
 
 func comm_encode_text(HashRef $comm, Str $text, Str $tag)
 {
-    $text =~ s/[\r\n]*$//;
-
-    my @lines = split /\n/, $text;
-    push @lines, '' unless @lines;
-
-    my $last = pop @lines;
-
-    my @res = map {"$tag-$_"} @lines;
-    return (@res, $last);
+    ...;
 }
 
 func comm_decode_line(HashRef $comm, Str $text, Maybe[Str] $tag?)
