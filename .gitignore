@@ -58,3 +58,8 @@ nytprof.out
 # produced vignettes
 vignettes/*.html
 vignettes/*.pdf
+
+
+### Others
+
+potion-game/
