@@ -16,6 +16,9 @@
 -- Usage (Par monad):
 --   $ ./kmeans par 600 +RTS -N4
 --
+-- Usage (Par monad/Vector slice):
+--   $ ./kmeans par-vec 600 +RTS -N4
+--
 -- Usage (divide-and-conquer / Par monad):
 --   $ ./kmeans divpar 7 +RTS -N4
 --
@@ -59,11 +62,12 @@ main = runInUnboundThread $ do
   performGC
   t0 <- getCurrentTime
   final_clusters <- case args of
-    ["seq"       ] -> kmeans_seq               nclusters points clusters
-    ["strat",   n] -> kmeans_strat    (read n) nclusters points clusters
-    ["par",     n] -> kmeans_par      (read n) nclusters points clusters
-    ["divpar",  n] -> kmeans_div_par  (read n) nclusters points clusters npoints
-    ["diveval", n] -> kmeans_div_eval (read n) nclusters points clusters npoints
+    ["seq"         ] -> kmeans_seq                 nclusters points clusters
+    ["strat",     n] -> kmeans_strat      (read n) nclusters points clusters
+    ["strat-vec", n] -> kmeans_strat_vec  (read n) nclusters (Vector.fromList points) clusters
+    ["par",       n] -> kmeans_par        (read n) nclusters points clusters
+    ["divpar",    n] -> kmeans_div_par    (read n) nclusters points clusters npoints
+    ["diveval",   n] -> kmeans_div_eval   (read n) nclusters points clusters npoints
     _other -> error "args"
   t1 <- getCurrentTime
   print final_clusters
@@ -125,6 +129,41 @@ chunk :: Int -> [a] -> [[a]]
 chunk n [] = []
 chunk n xs = as : chunk n bs
   where (as,bs) = splitAt n xs
+-- >>
+
+-- -----------------------------------------------------------------------------
+-- K-Means: repeatedly step until convergence (Strategies); use Vector split
+
+-- <<kmeans_strat_vec
+kmeans_strat_vec :: Int -> Int -> Vector Point -> [Cluster] -> IO [Cluster]
+kmeans_strat_vec numChunks nclusters points clusters =
+  let
+      chunks = splitV numChunks points
+
+      loop :: Int -> [Cluster] -> IO [Cluster]
+      loop n clusters | n > tooMany = do
+        printf "giving up."
+        return clusters
+      loop n clusters = do
+        -- printf "iteration %d\n" n
+        -- putStr (unlines (map show clusters))
+        let clusters' = parSteps_strat_vec nclusters clusters chunks
+        if clusters' == clusters
+           then return clusters
+           else loop (n+1) clusters'
+  in
+  loop 0 clusters
+-- >>
+
+-- <<splitV
+splitV :: Int -> Vector a -> Vector (Vector a)
+splitV numChunks xs = chunkV (Vector.length xs `quot` numChunks) xs
+
+chunkV :: Int -> Vector a -> Vector (Vector a)
+chunkV n xs
+    | Vector.null xs = Vector.empty
+    | otherwise      = as `Vector.cons` chunkV n bs
+                         where (as,bs) = Vector.splitAt n xs
 -- >>
 
 -- -----------------------------------------------------------------------------
@@ -252,6 +291,23 @@ assign nclusters clusters points = Vector.create $ do
                         [ (c, sqDistance (clCent c) p) | c <- clusters ]
 -- >>
 
+-- <<assign_vec
+assign_vec :: Int -> [Cluster] -> Vector Point -> Vector PointSum
+assign_vec nclusters clusters points = Vector.create $ do
+    vec <- MVector.replicate nclusters (PointSum 0 0 0)
+    let
+        addpoint p = do
+          let c = nearest p; cid = clId c
+          ps <- MVector.read vec cid
+          MVector.write vec cid $! addToPointSum ps p
+
+    Vector.mapM_ addpoint points
+    return vec
+ where
+  nearest p = fst $ minimumBy (compare `on` snd)
+                        [ (c, sqDistance (clCent c) p) | c <- clusters ]
+-- >>
+
 data PointSum = PointSum {-# UNPACK #-} !Int {-# UNPACK #-} !Double {-# UNPACK #-} !Double
 
 instance NFData PointSum
@@ -288,6 +344,15 @@ parSteps_strat nclusters clusters pointss
       foldr1 combine $
           (map (assign nclusters clusters) pointss
             `using` parList rseq)
+-- >>
+
+-- <<parSteps_strat_vec
+parSteps_strat_vec :: Int -> [Cluster] -> Vector (Vector Point) -> [Cluster]
+parSteps_strat_vec nclusters clusters pointss
+  = makeNewClusters $
+      Vector.foldr1 combine $
+          (Vector.map (assign_vec nclusters clusters) pointss
+            `using` parTraversable rseq)
 -- >>
 
 steps_par :: Int -> [Cluster] -> [[Point]] -> [Cluster]

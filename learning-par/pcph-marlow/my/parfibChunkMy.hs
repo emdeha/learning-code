@@ -13,7 +13,7 @@ main = do
     file <- readFile f
 
     let fibnums = lines file
-        chunks = chunk 4 (map (fib . read) fibnums)
+        chunks = chunk 20 (map (fib . read) fibnums)
         solutions = chunks `using` (parList (evalList rseq))
         
     print $ concat solutions

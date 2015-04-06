@@ -13,6 +13,6 @@ main = do
     file <- readFile f
 
     let fibnums = lines file
-        solutions =  map (fib . read) fibnums `using` parListChunk 10 rseq
+        solutions =  map (fib . read) fibnums `using` parListChunk 20 rseq
         
     print solutions
