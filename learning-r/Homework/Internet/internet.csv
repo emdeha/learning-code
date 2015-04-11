@@ -1,0 +1,31 @@
+Rank,Country,Internet_users,One_yr_growth,One_yr_population_change,Penetration
+1,China,641601070,0.04,positive,0.4603
+2,United States,279834232,0.07,positive,0.8675
+3,India,243198922,0.14,positive,0.1919
+4,Japan,109252912,0.08,negative,0.8603
+6,Russia,84437793,0.1,negative,0.5927
+7,Germany,71727551,0.02,negative,0.8678
+9,United Kingdom,57075826,0.03,positive,0.899
+11,Mexico,50923060,0.07,positive,0.4113
+12,South Korea,45314248,0.08,positive,0.9152
+18,Turkey,35358888,0.03,positive,0.4662
+20,Canada,33000381,0.07,positive,0.9289
+24,South Africa,24909854,0.14,positive,0.4688
+26,Australia,21176595,0.09,positive,0.8962
+32,Ukraine,16849008,0.09,negative,0.3749
+38,Uzbekistan,11914665,0.12,positive,0.4063
+41,Romania,11178477,0.02,negative,0.5166
+46,United Arab Emirates,8807226,0.1,positive,0.9324
+50,Hungary,7388776,0.02,negative,0.7438
+56,Greece,6438325,0.02,positive,0.5785
+68,Belarus,4856969,0.09,negative,0.5218
+70,Serbia,4705141,0.02,negative,0.4969
+76,Bulgaria,4083950,0.01,negative,0.5697
+83,Cuba,3090796,0.06,negative,0.2745
+86,Croatia,2780534,0.02,negative,0.6509
+88,Iraq,2707928,0.12,positive,0.0779
+90,Bosnia Herzegovina,2582502,0.02,negative,0.6752
+94,Georgia,2188311,0.1,negative,0.5062
+95,Lithuania,2113393,0.02,negative,0.7025
+96,Puerto Rico,2027549,0.06,negative,0.5504
+100,Afghanistan,1856781,0.1,positive,0.0594
