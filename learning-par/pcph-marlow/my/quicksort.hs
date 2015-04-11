@@ -14,5 +14,6 @@ main = do
     file <- readFile f
 
     let list = map read $ lines file :: [Int]
+        sorted = quicksort list
 
-    print $ quicksort list
+    print $ length sorted
