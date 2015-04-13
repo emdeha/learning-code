@@ -14,7 +14,7 @@ skips ls = go 0
                 let zipped = zip ls (cycle $ (replicate n False) ++ [True])
                 in  foldr (\(a,b) acc -> if b then a:acc else acc) [] zipped : go (n+1)
 
--- | Find the local maxima of a list
+-- | Finds the local maxima of a list
 localMaxima :: [Integer] -> [Integer]
 localMaxima []       = []
 localMaxima (_:[])   = []
@@ -34,8 +34,7 @@ histogram ls =
 getLines :: [[a]] -> [String]
 getLines fr
     | all null fr = []
-    | otherwise      = 
-            getLines fr' ++ [map frToStr fr]
+    | otherwise   = getLines fr' ++ [map frToStr fr]
           where fr' = map subtr fr
 
                 subtr []  = []
