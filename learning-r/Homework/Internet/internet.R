@@ -5,7 +5,9 @@ head(internetData)
 # <3> Get the names of the variables
 names(internetData)
 
-# <4>
+# <4> What type of data store Internet_users, One_yr_growth, One_yr_population_change
+#     and Penetration?
+# Comment:
 # (1)Internet_users is quantitative because it shows the quantity of internet
 #    users
 # (2)One_yr_growth is quantitative because it shows the percentage growth of 
