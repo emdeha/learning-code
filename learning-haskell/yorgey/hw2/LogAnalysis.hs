@@ -3,37 +3,36 @@ module LogAnalysis where
 
 import Log
 
+import Data.Char
+
 
 types :: [String]
 types = ["E", "I", "W"]
 
 -- | Parses an individual line from the log file
---  TODO: Refactor and fix the following bad parses:
---          E 10 <msg>
---          [EIW] <msg>
---          [EIW]<msg>
---          [IW] <sev><msg>
 parseMessage :: String -> LogMessage
 parseMessage [] = Unknown []
 parseMessage msg =
-    let (t, rest) = firstBy ' ' msg
-    in  if any (==t) types
-        then createMsg t rest
-        else Unknown msg
-  where createMsg :: String -> String -> LogMessage
-        createMsg "E" str = 
-            let (sev, str') = firstBy ' ' str
-                (ts, str'') = firstBy ' ' str'
-            in  LogMessage (Error (read sev)) (read ts) (tail str'')
-        createMsg t' str =
-            let (ts, str') = firstBy ' ' str
-            in  case t' of
-                    "I" -> LogMessage Info (read ts) (tail str')
-                    "W" -> LogMessage Warning (read ts) (tail str')
-                    _   -> Unknown msg
+    let (f, rest) = firstWord msg
+        (s, rest') = firstWord rest
+        (t, rest'') = firstWord rest'
+    in  case f of
+            "E" -> if all isDigSeq [s, t]
+                   then (LogMessage (Error (read s)) (read t) (tail rest''))
+                   else (Unknown msg)
+            "I" -> if isDigSeq s
+                   then (LogMessage Info (read s) (tail rest'))
+                   else (Unknown msg)
+            "W" -> if isDigSeq s
+                   then (LogMessage Warning (read s) (tail rest'))
+                   else (Unknown msg)
+            _   -> Unknown msg
+  where
+    firstWord :: String -> (String, String)
+    firstWord = span (/=' ') . dropWhile (==' ')
 
-        firstBy :: Char -> String -> (String, String)
-        firstBy dm = span (/=dm) . dropWhile (==dm)
+    isDigSeq :: String -> Bool
+    isDigSeq = all isDigit
 
 -- | Parses each line in @file@ into a log message
 parse :: String -> [LogMessage]
@@ -65,8 +64,6 @@ build = foldr insert Leaf
 inOrder :: MessageTree -> [LogMessage]
 inOrder Leaf = []
 inOrder (Node Leaf msg Leaf) = [msg]
-inOrder (Node left msg Leaf) = inOrder left ++ [msg]
-inOrder (Node Leaf msg right) = msg : inOrder right
 inOrder (Node left msg right) = inOrder left ++ [msg] ++ inOrder right
 
 
