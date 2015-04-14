@@ -21,4 +21,5 @@ fun2 n | even n    = n + fun2 (n `div` 2)
 
 -- | idiomatic fun2
 fun2' :: Integer -> Integer
-fun2' = sum . filter even . takeWhile (/=1) . iterate (\n -> if even n then n `div` 2 else 3 * n + 1)
+fun2' = sum . filter even . takeWhile (/=1) . iterate cont
+  where cont n = if even n then n `div` 2 else 3 * n + 1
