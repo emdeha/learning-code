@@ -106,4 +106,20 @@ instance Expr VarExprT where
 instance HasVars (M.Map String Integer -> Maybe Integer) where
     var = M.lookup
 
--- instance Expr (M.Map String Integer -> Maybe Integer) where
+instance Expr (M.Map String Integer -> Maybe Integer) where
+    lit a = (\_ -> Just a)
+    add a b = (\x -> maybeApply (+) (a x) (b x))
+    mul a b = (\x -> maybeApply (*) (a x) (b x))
+
+maybeApply :: (Integer -> Integer -> Integer) -> 
+              Maybe Integer -> Maybe Integer -> Maybe Integer
+maybeApply _ Nothing Nothing  = Nothing
+maybeApply _ _ Nothing = Nothing
+maybeApply _ Nothing _ = Nothing
+maybeApply f (Just a) (Just b) = Just $ a `f` b
+
+
+withVars :: [(String, Integer)]
+         -> (M.Map String Integer -> Maybe Integer)
+         -> (Maybe Integer)
+withVars vs expr = expr $ M.fromList vs
