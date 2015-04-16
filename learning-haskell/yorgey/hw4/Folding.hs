@@ -28,20 +28,25 @@ fun2' = sum . filter even . takeWhile (/=1) . iterate cont
   where cont n = if even n then n `div` 2 else 3 * n + 1
 
 
----- | Folding with trees
---data Tree a = Leaf
---            | Node Integer (Tree a) a (Tree a)
---  deriving (Show, Eq)
---
----- | Generates a balanced binary tree from a list of values
---foldTree :: [a] -> Tree a
---foldTree = foldr insert
---  where insert :: a -> Tree a -> Tree a
---        insert = go 0
---          where go _ a Leaf = Node 0 Leaf a Leaf
---                go n a (Node depth left elem right)
---                    | n - depth <= 1 = (Node (n+1) (go n a left) elem right)
---                    | otherwise      = (Node (n+1) left elem (go n a right))
+-- | Folding with trees
+data Tree a = Leaf
+            | Node Integer (Tree a) a (Tree a)
+  deriving (Show, Eq)
+
+-- | Generates a balanced binary tree from a list of values
+foldTree :: [a] -> Tree a
+foldTree = foldr insertB Leaf
+  where insertB el               Leaf = Node 0 Leaf el Leaf
+        insertB el (Node n l pE Leaf) = (Node (n+1) l pE (insertB el Leaf))
+        insertB el (Node n Leaf pE r) = (Node n (insertB el Leaf) pE r)
+        insertB el (Node n l@(Node ln _ _ _) pEl r@(Node rn _ _ _))
+                | ln < rn   = Node n (insertB el l) pEl r
+                | ln > rn   = Node n l pEl (insertB el r)
+                | otherwise = Node (h+1) l pEl rightInserted
+              where rightInserted = insertB el r
+                    h             = height rightInserted
+                    height Leaf           = 0
+                    height (Node n' _ _ _) = n'
 
 
 -- | More folds
