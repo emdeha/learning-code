@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wall -fno-warn-missing-methods #-}
+{-# LANGUAGE FlexibleInstances #-}
 module Fibonacci where
 
 
@@ -23,15 +25,15 @@ instance Show a => Show (Stream a) where
 
 -- | Converts a Stream into an infinite list
 streamToList :: Stream a -> [a]
-streamToList (Cons x xs) = x : streamToList xs
+streamToList (Cons a as) = a : streamToList as
 
 -- | Creates a stream where each element is the same
 streamRepeat :: a -> Stream a
-streamRepeat x = Cons x $ streamRepeat x
+streamRepeat a = Cons a $ streamRepeat a
 
 -- | Maps a function of the type (a->b) to a Stream of values
 streamMap :: (a -> b) -> Stream a -> Stream b
-streamMap f (Cons x xs) = Cons (f x) $ streamMap f xs
+streamMap f (Cons a as) = Cons (f a) $ streamMap f as
 
 -- | Generates a stream from @seed@ and unfolding rule @ur@
 streamFromSeed :: (a -> a) -> a -> Stream a
@@ -44,11 +46,30 @@ nats = streamFromSeed (+1) 0
 -- | Stream corresponding to the ruler function
 ruler :: Stream Integer
 ruler = streamInterleave (streamRepeat 0) powerStream
-  where powerStream = streamMap divX $ streamFromSeed (+1) 1
-        divX x
-            | x `mod` 2 == 0 = 1 + divX (x`quot`2)
+  where powerStream = streamMap divA $ streamFromSeed (+1) 1
+        divA :: Integer -> Integer
+        divA a
+            | a `mod` 2 == 0 = 1 + divA (a`quot`2)
             | otherwise      = 1
 
 -- | Interleaves two streams by alternating their values
 streamInterleave :: Stream a -> Stream a -> Stream a
-streamInterleave (Cons x xs) (Cons y ys) = Cons x (Cons y $ streamInterleave xs ys)
+streamInterleave (Cons a as) (Cons b bs) = Cons a (Cons b $ streamInterleave as bs)
+
+
+-- | Fibonacci numbers using generating functions
+x :: Stream Integer
+x = (Cons 0 (Cons 1 (streamRepeat 0)))
+
+instance Num (Stream Integer) where
+    fromInteger n = Cons n $ streamRepeat 0
+    negate = streamMap (*(-1))
+    (Cons a as) + (Cons b bs) = Cons (a+b) (as + bs)
+    (Cons a0 a') * b@(Cons b0 b') = Cons (a0*b0) ((streamMap (*a0) b') + a'*b)
+
+instance Fractional (Stream Integer) where
+    (Cons a0 a') / (Cons b0 b') = q
+        where q = Cons (a0`div`b0) (streamMap (*(1`div`b0)) (a' - q * b'))
+
+fibs3 :: Stream Integer
+fibs3 = x / (1 - x - x^2)
