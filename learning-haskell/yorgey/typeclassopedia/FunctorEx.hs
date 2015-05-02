@@ -2,6 +2,7 @@
 module FunctorEx where
 
 
+
 data MyEither e x = L e
                   | R x
                   deriving (Show)
@@ -26,8 +27,14 @@ instance Functor ITree where
     fmap g (Leaf f)      = Leaf $ g . f
     fmap g (Node forest) = Node $ map (fmap g) forest
 
-f :: Int -> Char
-f = undefined
 
-x :: a
-x = undefined
+class CoMonoidal f where
+    clean :: f () -> ()
+    clean = (\_ -> ())
+    split :: f (a, b) -> (f a, f b)
+
+instance CoMonoidal ((,) a) where
+    split (a, (a1,b)) = ((a,a1),(a,b))
+
+instance CoMonoidal ((->) a) where
+    split ff = ((\a -> fst (ff a)), (\a -> snd (ff a)))
