@@ -57,3 +57,9 @@ posInt = Parser f
 ------------------------------------------------------------
 -- Your code goes below here
 ------------------------------------------------------------
+
+instance Functor Parser where
+    fmap f pa = Parser $ \str -> fmap (first f) (runParser pa str)
+
+first :: (a -> b) -> (a, c) -> (b, c)
+first f (a, c) = (f a, c)
