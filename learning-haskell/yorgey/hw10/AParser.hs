@@ -63,3 +63,26 @@ instance Functor Parser where
 
 first :: (a -> b) -> (a, c) -> (b, c)
 first f (a, c) = (f a, c)
+
+instance Applicative Parser where
+    pure a = Parser $ \str -> Just (a, str)
+
+    p1 <*> p2 = Parser f
+      where f = \str -> case runParser p1 str of
+                            Nothing -> Nothing
+                            Just (g, str') -> fmap (first g) (runParser p2 str')
+
+-- | @abParser@ parses the first two chars of a string and returns them in a 
+--   tuple if they match 'a' and 'b'
+abParser :: Parser (Char, Char)
+abParser = (,) <$> char 'a' <*> char 'b'
+
+-- | @abParser_@ acts like @abParser@ but discards its parsed result.
+abParser_ :: Parser ()
+abParser_ =  void <$> char 'a' <*> char 'b'
+  where void = (\_ _ -> ())
+
+-- | @intPair@ parser two integer values separated by space.
+intPair :: Parser [Integer]
+intPair = pairList <$> posInt <* satisfy (==' ') <*> posInt
+  where pairList = (\a b -> a : [b])
