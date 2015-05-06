@@ -79,8 +79,7 @@ abParser = (,) <$> char 'a' <*> char 'b'
 
 -- | @abParser_@ acts like @abParser@ but discards its parsed result.
 abParser_ :: Parser ()
-abParser_ =  void <$> char 'a' <*> char 'b'
-  where void = (\_ _ -> ())
+abParser_ =  void2 <$> char 'a' <*> char 'b'
 
 -- | @intPair@ parser two integer values separated by space.
 intPair :: Parser [Integer]
@@ -90,3 +89,15 @@ intPair = pairList <$> posInt <* satisfy (==' ') <*> posInt
 instance Alternative Parser where
     empty = Parser (\_ -> Nothing)
     p1 <|> p2 = Parser (\str -> runParser p1 str <|> runParser p2 str)
+
+-- | @intOrUppercase@ parser an integer or an uppercase char
+intOrUppercase :: Parser ()
+intOrUppercase = void <$> posInt <|> void <$> (satisfy isUpper)
+
+-- | @void@ discards its argument and returns ()
+void :: a -> ()
+void _ = ()
+
+-- | @void2@ discards both arguments and returns ()
+void2 :: a -> b -> ()
+void2 _ _ = ()
