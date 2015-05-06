@@ -86,3 +86,7 @@ abParser_ =  void <$> char 'a' <*> char 'b'
 intPair :: Parser [Integer]
 intPair = pairList <$> posInt <* satisfy (==' ') <*> posInt
   where pairList = (\a b -> a : [b])
+
+instance Alternative Parser where
+    empty = Parser (\_ -> Nothing)
+    p1 <|> p2 = Parser (\str -> runParser p1 str <|> runParser p2 str)
