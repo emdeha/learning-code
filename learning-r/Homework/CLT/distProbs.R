@@ -1,9 +1,9 @@
 geomProb <- function() {
-    sum (dgeom(4:12, 0.123))
+    sum (dgeom(4:11, 0.123))
 }
 
 poisProb <- function() {
-    sum (dpois(7:17, 2))
+    sum (dpois(8:17, 2))
 }
 
 normQuant <- function() {

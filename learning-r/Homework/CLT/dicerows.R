@@ -1,3 +1,5 @@
+#!/usr/bin/R
+
 rowDie <- function(n) {
     eqCount = 0
 
