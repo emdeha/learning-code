@@ -64,3 +64,6 @@ vignettes/*.pdf
 ### Others
 
 potion-game/
+.docx
+.odt
+.png
