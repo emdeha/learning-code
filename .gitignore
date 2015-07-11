@@ -42,6 +42,7 @@ nytprof.out
 *.o
 *.bs
 /_eumm/
+learning-perl/files/
 
 
 ### R
