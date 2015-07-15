@@ -4,7 +4,6 @@
 #include <string>
 #include <iomanip>
 #include <sstream>
-#include <math.h>
 
 
 bool BiasedRandom(double p)
