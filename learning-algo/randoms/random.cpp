@@ -4,7 +4,12 @@
 #include <random>
 #include <iomanip>
 #include <map>
+#include <cmath>
+#include <cassert>
+#include <cstring>
 
+
+const char *BIG_SAMPLE_OPT = "-big";
 
 int RandomZeroOne()
 {
@@ -18,40 +23,56 @@ int RandomZeroOne()
 
 int RandomRange(int a, int b)
 {
-    int x = RandomZeroOne();
-    int y = RandomZeroOne();
+    assert(b > a);
+    size_t iterations = std::ceil(std::log2(b));
+    assert(iterations < sizeof(int) * 8);
 
-    if (x && !y)
+    int number = 0;
+    for (size_t i = 0; i < iterations; ++i)
     {
-        return a;
-    }
-    if (!x && y)
-    {
-        return b;
-    }
-    if (x && y)
-    {
-        return (a + b) / 4;
+        int bit = RandomZeroOne() << i;
+
+        number = number | bit;
     }
 
-    return (a + b) / 1.5;
+    if (a <= number && number <= b)
+        return number;
+    else
+        return RandomRange(a, b);
 }
 
 int main(int argc, char *argv[]) 
 {
     int a,b;
-    std::stringstream(argv[1]) >> a;
-    std::stringstream(argv[2]) >> b;
-
-    std::map<int, int> hist;
-    for (int i = 0; i < 10000; ++i) 
+    bool isBigSample = false;
+    if (strncmp(argv[1], BIG_SAMPLE_OPT, strlen(BIG_SAMPLE_OPT)) == 0)
     {
-        ++hist[RandomRange(a, b)];
+        isBigSample = true;
+        std::stringstream(argv[2]) >> a;
+        std::stringstream(argv[3]) >> b;
     }
-    for (auto p : hist)
+    else
     {
-        std::cout << std::setw(5) << p.first
-                  << ' ' << std::string(p.second/500, '*') << '\n';
+        std::stringstream(argv[1]) >> a;
+        std::stringstream(argv[2]) >> b;
+    }
+
+    if (isBigSample)
+    {
+        std::map<int, int> hist;
+        for (int i = 0; i < 100000; ++i) 
+        {
+            ++hist[RandomRange(a, b)];
+        }
+        for (auto p : hist)
+        {
+            std::cout << std::setw(5) << p.first
+                      << ' ' << std::string(p.second/500, '*') << '\n';
+        }
+    }
+    else
+    {
+        std::cout << RandomRange(a, b) << '\n';
     }
 
     return 0;
