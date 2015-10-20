@@ -1,6 +1,18 @@
+--
+-- Informed search
+-- Best-first search
+-- Heuristics properties 
+-- A -
+-- |  \
+-- |   C
+-- |  /
+-- B -
+-- dist(A,B) + dist(B,C) > dist(A,C)
+--
 import System.IO
+import System.Environment (getArgs)
 import Data.List
-import Data.Array
+import qualified Data.Sequence as S
 
 
 type Input = String
@@ -26,8 +38,8 @@ rows = 3
 cols :: Int
 cols = 3
 
-inputToStates :: Input -> Node
-inputToStates inp = 
+inputToNode :: Input -> Node
+inputToNode inp = 
     let xCol = indexX `mod` cols
         xRow = indexX `quot` rows
     in  Node Nil ((xCol, xRow), inp)
@@ -54,12 +66,12 @@ generateChildren p@(Node _ v) =
         at' x y =
             (getVal v) !! (y * rows + x)
 
-findNode :: Node -> Node -> [Node] -> [Node] -> [Node]
-findNode _     _   visited []     = reverse visited
-findNode start end visited (x:xs)
+findNode :: Node -> [Node] -> S.ViewL Node -> [Node]
+findNode _   visited S.EmptyL = []
+findNode end visited (x S.:< xs)
     | getNodeVal x == getNodeVal end = reverse $ constructPathFromEnd x
-    | elem x visited                 = findNode x end visited xs
-    | otherwise = findNode x end (x:visited) ((generateChildren start) ++ xs)
+    | elem x visited                 = findNode end visited (S.viewl xs)
+    | otherwise = findNode end (x:visited) (S.viewl $ xs S.>< (S.fromList $ generateChildren x))
   where constructPathFromEnd :: Node -> [Node]
         constructPathFromEnd initial =
             unfoldr (\nd@(Node p e) -> case p of
@@ -70,7 +82,19 @@ findNode start end visited (x:xs)
 
 main :: IO ()
 main = do
-    let start = inputToStates "123X45678"
-        end = inputToStates "123456X78"
+    args <- getArgs
+    case args of
+        [start, end] -> solvePuzzle (inputToNode start) (inputToNode end)
+        _            -> putStrLn "Invalid args"
+
+solvePuzzle :: Node -> Node -> IO ()
+solvePuzzle start end =
     putStrLn . 
-        concatMap (\nd -> getNodeVal nd ++ " ") $ start : findNode start end [] [start]
+        concatMap ((++"\n") . concatMap (++"\n") . chunk 3 . getNodeVal) $
+            -- start : (take 20 . generateChildren $ start)
+            start : findNode end [] (S.viewl . S.singleton $ start)
+
+chunk _ []  = []
+chunk n str =
+    case splitAt n str of
+        (ch, rest) -> ch : chunk n rest
