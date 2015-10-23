@@ -1,14 +1,3 @@
---
--- Informed search
--- Best-first search
--- Heuristics properties 
--- A -
--- |  \
--- |   C
--- |  /
--- B -
--- dist(A,B) + dist(B,C) > dist(A,C)
---
 import System.IO
 import System.Environment (getArgs)
 import Data.List
