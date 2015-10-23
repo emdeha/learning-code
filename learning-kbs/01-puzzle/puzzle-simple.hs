@@ -10,8 +10,13 @@ type Input = String
 type Puzzle = String
 type Element = ((Int, Int), Puzzle)
 
+getXCol :: Element -> Int
 getXCol ((x, _), _) = x
+
+getXRow :: Element -> Int
 getXRow ((_, y), _) = y
+
+getVal :: Element -> Puzzle
 getVal  ((_, _), v) = v
 
 
@@ -19,6 +24,7 @@ data Node = Node Node Element
           | Nil
          deriving (Show, Eq)
 
+getNodeVal :: Node -> Puzzle
 getNodeVal (Node _ v) = getVal v
 
 
@@ -43,6 +49,7 @@ inputToNode inp =
 -- (x-1, y), (x+1, y), (x, y-1), (x, y+1).
 --
 generateChildren :: Node -> [Node]
+generateChildren Nil = []
 generateChildren p@(Node _ v) = 
     let x = getXCol v
         y = getXRow v
@@ -57,14 +64,14 @@ generateChildren p@(Node _ v) =
             (getVal v) !! (y * rows + x)
 
 findNode :: Node -> HS.HashSet Element -> S.ViewL Node -> [Node]
-findNode _   visited S.EmptyL = []
+findNode _   _ S.EmptyL = []
 findNode end visited (x@(Node _ v) S.:< xs)
     | getNodeVal x == getNodeVal end   = reverse $ constructPathFromEnd x
     | HS.member v visited = findNode end visited (S.viewl xs)
     | otherwise = findNode end (HS.insert v visited) (S.viewl $ xs S.>< (S.fromList $ generateChildren x))
   where constructPathFromEnd :: Node -> [Node]
         constructPathFromEnd initial =
-            unfoldr (\nd@(Node p e) -> case p of
+            unfoldr (\nd@(Node p _) -> case p of
                                         Nil -> Nothing
                                         pnd -> Just (nd, pnd))
                     initial
@@ -84,6 +91,7 @@ solvePuzzle start end =
             -- start : (take 20 . generateChildren $ start)
             start : findNode end HS.empty (S.viewl . S.singleton $ start)
 
+chunk :: Int -> [a] -> [[a]]
 chunk _ []  = []
 chunk n str =
     case splitAt n str of
