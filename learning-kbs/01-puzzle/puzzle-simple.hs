@@ -1,6 +1,7 @@
 import System.IO
 import System.Environment (getArgs)
 import Data.List
+import qualified Data.HashSet as HS
 import qualified Data.Sequence as S
 
 
@@ -55,12 +56,12 @@ generateChildren p@(Node _ v) =
         at' x y =
             (getVal v) !! (y * rows + x)
 
-findNode :: Node -> [Node] -> S.ViewL Node -> [Node]
+findNode :: Node -> HS.HashSet Element -> S.ViewL Node -> [Node]
 findNode _   visited S.EmptyL = []
-findNode end visited (x S.:< xs)
-    | getNodeVal x == getNodeVal end = reverse $ constructPathFromEnd x
-    | elem x visited                 = findNode end visited (S.viewl xs)
-    | otherwise = findNode end (x:visited) (S.viewl $ xs S.>< (S.fromList $ generateChildren x))
+findNode end visited (x@(Node _ v) S.:< xs)
+    | getNodeVal x == getNodeVal end   = reverse $ constructPathFromEnd x
+    | HS.member v visited = findNode end visited (S.viewl xs)
+    | otherwise = findNode end (HS.insert v visited) (S.viewl $ xs S.>< (S.fromList $ generateChildren x))
   where constructPathFromEnd :: Node -> [Node]
         constructPathFromEnd initial =
             unfoldr (\nd@(Node p e) -> case p of
@@ -81,7 +82,7 @@ solvePuzzle start end =
     putStrLn . 
         concatMap ((++"\n") . concatMap (++"\n") . chunk 3 . getNodeVal) $
             -- start : (take 20 . generateChildren $ start)
-            start : findNode end [] (S.viewl . S.singleton $ start)
+            start : findNode end HS.empty (S.viewl . S.singleton $ start)
 
 chunk _ []  = []
 chunk n str =
