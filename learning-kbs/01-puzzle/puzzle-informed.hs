@@ -12,7 +12,7 @@
 import System.Environment (getArgs)
 import Data.List
 import qualified Data.HashSet as HS
-import qualified Data.PSQueue as PS
+import qualified Data.PQueue.Prio.Max as PS
 
 
 type Input = String
@@ -75,44 +75,41 @@ generateChildren p@(Node _ v) =
             (getVal v) !! (y * rows + x)
 
 
-calcPrio :: Node -> (Node, Int)
-calcPrio nd = (nd, 1)
--- calcPrio Nil = (Nil, 0)
--- calcPrio nd@(Node _ ((_,_), x))
---   | ('1' `elemIndex` x) `elem` firstRow ||
---     ('2' `elemIndex` x) `elem` firstRow ||
---     ('3' `elemIndex` x) `elem` firstRow    = (nd,1)
---   | ('4' `elemIndex` x) `elem` secondRow ||
---     ('5' `elemIndex` x) `elem` secondRow ||
---     ('6' `elemIndex` x) `elem` secondRow    = (nd,2)
---   | ('7' `elemIndex` x) `elem` thirdRow ||
---     ('8' `elemIndex` x) `elem` thirdRow ||
---     ('X' `elemIndex` x) `elem` thirdRow    = (nd,3)
---   | otherwise                              = (nd,1)
---   where firstRow = [Just 0, Just 1, Just 2]
---         secondRow = [Just 3, Just 4, Just 5]
---         thirdRow = [Just 6, Just 7, Just 8]
+calcPrio :: Node -> (Int, Node)
+calcPrio Nil = (0, Nil)
+calcPrio nd@(Node _ ((_,_), x))
+  | "12"  `isPrefixOf` x = (1, nd)
+  | "34"  `isInfixOf` x = (2, nd)
+  | "45"  `isInfixOf` x = (2, nd)
+  | "56"  `isInfixOf`  x = (3, nd)
+  | "78X" `isSuffixOf` x = (3, nd)
+  | otherwise            = (0,nd)
 
 
-findNode :: Node -> HS.HashSet Element -> PS.PSQ Node Int -> [Node]
+findNode :: Node -> HS.HashSet Element -> PS.MaxPQueue Int Node -> [Node]
 findNode end visited pq =
-    let que = PS.minView pq
+    let que = PS.maxView pq
     in  case que of
         Nothing      -> []
-        Just (x, xs) -> go (PS.key x) xs
-  where go :: Node -> PS.PSQ Node Int -> [Node]
+        Just (x, xs) -> go x xs
+  where go :: Node -> PS.MaxPQueue Int Node -> [Node]
         go Nil _ = []
         go x@(Node _ v) xs
             | getNodeVal x == getNodeVal end = reverse $ constructPathFromEnd x
             | HS.member v visited            = findNode end visited xs
             | otherwise = 
                 let visited' = HS.insert v visited
-                    front    = insertInPQ (map calcPrio (generateChildren x)) xs
+                    front    = 
+                        -- Insertion order matters!
+                        -- puzzle-informed "X12345678" "12345678X":
+                        -- foldr -> 500 steps
+                        -- foldl -> 234 steps
+                        -- puzzle-informed "71534X862" "12345678X":
+                        -- foldr -> 279 steps
+                        -- foldl -> 313 steps
+                        -- foldr (uncurry PS.insert) xs (map calcPrio (generateChildren x))
+                        foldl (flip . uncurry $ PS.insert) xs (map calcPrio (generateChildren x))
                 in  findNode end visited' front
-
-        insertInPQ :: [(Node, Int)] -> PS.PSQ Node Int -> PS.PSQ Node Int
-        insertInPQ []    pq' = pq'
-        insertInPQ (prio:rest) pq' = insertInPQ rest (uncurry PS.insert prio pq')
 
         constructPathFromEnd :: Node -> [Node]
         constructPathFromEnd initial =
