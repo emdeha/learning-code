@@ -18,7 +18,13 @@ insert k a (BPQueueMax arr) =
     let (f, l) = bounds arr 
     in  if f <= k && k <= l
         then BPQueueMax $ arr // [(k, (arr ! k) S.|> a)]
-        else error $ "Priority out of bounds (" ++ (show f) ++ "," ++ (show l) ++ ")"
+        else BPQueueMax $ updateIndices arr f k l a 
+  where updateIndices :: Array Int (S.Seq a) -> Int -> Int -> Int -> a -> Array Int (S.Seq a)
+        updateIndices arr' f k' l a'
+            | k' > l     = 
+                array (f, k') (assocs arr' ++ (k', S.singleton a') : (take (k'-l) (enumBPQ (l, S.empty))))
+            | otherwise =
+                error $ "Priority out of bounds (" ++ (show f) ++ "," ++ (show l) ++ ")"
 
 
 singleton :: Int -> a -> BPQueueMax a
