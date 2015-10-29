@@ -1,13 +1,5 @@
 --
--- Informed search
--- Best-first search
--- Heuristics properties 
--- A -
--- |  \
--- |   C
--- |  /
--- B -
--- dist(A,B) + dist(B,C) > dist(A,C)
+-- This search uses a heap-based priority queue.
 --
 import System.Environment (getArgs)
 import Data.List
