@@ -1,0 +1,4 @@
+When analyzing A*, use the developed priority queues to see whether there's a
+difference between using a bucket-based pqueue and heap-based pqueue.
+
+Make sure the heuristic is perfect.
