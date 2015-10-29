@@ -24,7 +24,7 @@ addPriority :: Array Int (S.Seq a) -> Int -> Int -> Int -> a -> Array Int (S.Seq
 addPriority arr f l k a
     | k > l =
         let old = assocs arr
-            new = (k, S.singleton a) : (take (k-l) $ enumBPQ (l, S.empty))
+            new = (k, S.singleton a) : (take (k-l) $ enumBPQ (l+1, S.empty))
         in  array (f, k) (old ++ new)
     | otherwise =
         error $ "Priority out of bounds (" ++ (show f) ++ "," ++ (show l) ++ ")"
