@@ -47,8 +47,8 @@ maxView :: BPQueueMax a -> Maybe (a, BPQueueMax a)
 maxView (BPQueueMax arr) =
     extractAt (snd . bounds $ arr) arr
   where extractAt :: Int -> Array Int (S.Seq a) -> Maybe (a, BPQueueMax a)
-        extractAt 0  _    = Nothing
-        extractAt ix arr' =
+        extractAt (-1) _    = Nothing
+        extractAt ix   arr' =
             let que = arr' ! ix
             in  if S.null que
                 then extractAt (ix-1) arr'
