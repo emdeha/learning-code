@@ -18,28 +18,31 @@ data City = City
     deriving Show
 
 
-replaceView :: String
-replaceView = "CREATE OR REPLACE VIEW origin AS\n" ++
+-- Delicious SQL Injection awaits ^_^
+replaceView :: String -> String
+replaceView city =
+    "CREATE OR REPLACE VIEW origin AS\n" ++
     "    (SELECT city_no, name, lon, lat, to_city\n" ++
     "        FROM cities\n" ++
     "        JOIN paths ON (city_no = from_city)\n" ++
-    "        WHERE name = 'Plovdiv')"
+    "        WHERE name = '" ++ city ++ "')"
 
 pathQuery :: String
-pathQuery = "SELECT origin.name, origin.lon, origin.lat,\n" ++
+pathQuery =
+    "SELECT origin.name, origin.lon, origin.lat,\n" ++
     "       dest.name, dest.lon, dest.lat\n" ++
     "    FROM origin,\n" ++
     "         (SELECT c.city_no, c.name, c.lon, c.lat\n" ++
     "            FROM origin o\n" ++
     "            JOIN cities c ON (o.to_city = c.city_no))\n" ++
     "         AS dest\n" ++
-    "    JOIN paths ON (dest.city_no = from_city)"
+    "    WHERE dest.city_no = origin.to_city"
 
 
 getPaths :: String -> IO [(City, City)]
 getPaths fromCity =
   withPostgreSQL "dbname=paths" $ \conn -> do
-    run conn replaceView [] --[toSql fromCity]
+    _ <- run conn (replaceView fromCity) []
     cities <- quickQuery' conn pathQuery []
     return $ map toCityPair cities
   where toCityPair :: [SqlValue] -> (City, City)
