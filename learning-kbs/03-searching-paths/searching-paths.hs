@@ -6,8 +6,12 @@
 module Main where
 
 
+import Data.List (intercalate)
+
 import Database.HDBC
 import Database.HDBC.PostgreSQL
+
+import System.Environment (getArgs)
 
 
 data City = City 
@@ -16,6 +20,13 @@ data City = City
           , lat :: Double
           }
     deriving Show
+
+
+type CityName = String
+newtype Path = Path [CityName]
+
+instance Show Path where
+  show (Path path) = intercalate (", ") path
 
 
 -- Delicious SQL Injection awaits ^_^
@@ -57,9 +68,18 @@ getPaths fromCity =
                             }
           in  (cityFrom, cityTo)
 
+printPath :: Path -> IO ()
+printPath = putStrLn . show
+
+findShortest :: CityName -> CityName -> IO Path
+findShortest from to = 
+  return $ Path [from, "Pleven",  "Varna", to]
+
 
 main :: IO ()
-main =
-  getPaths "Sofia" >>= 
-    (\paths -> 
-      putStrLn $ concatMap (\path -> show path++"\n") paths)
+main = do
+  args <- getArgs
+  case args of
+    [start, end] -> findShortest start end >>= printPath
+    _            -> putStrLn usage
+  where usage = "Usage: searching-paths <start_city> <end_city>"
