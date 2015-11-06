@@ -1,7 +1,7 @@
 {-
   This program queries a database containing cities and the
   respective paths between them. It then tries to compute the
-  cheapes way to travel from one city to another.
+  cheapest way to travel from one city to another.
 -}
 module Main where
 
@@ -73,7 +73,8 @@ printPath = putStrLn . show
 
 findShortest :: CityName -> CityName -> IO Path
 findShortest from to = 
-  return $ Path [from, "Pleven",  "Varna", to]
+  getPaths from >>= (\((one,two):_) -> return $ Path [name one, name two])
+  -- return $ Path [from, "Pleven",  "Varna", to]
 
 
 main :: IO ()
