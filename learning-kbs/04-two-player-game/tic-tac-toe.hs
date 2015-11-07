@@ -27,20 +27,24 @@ safeIndex ls i
 
 evaluate :: Node -> Int
 evaluate nd
-  | subEval 'X' (board nd) == 1 = 1
-  | subEval 'O' (board nd) == (-1) = (-1)
-  | subEval 'X' (concat . transpose . chunk 3 . board $ nd) == 1 = 1
-  | subEval 'O' (concat . transpose . chunk 3 . board $ nd) == (-1) = (-1)
+  | subEval 'X' (board nd) = 1
+  | subEval 'O' (board nd) = (-1)
+  | subEval 'X' (concat . transpose . chunk 3 . board $ nd) = 1
+  | subEval 'O' (concat . transpose . chunk 3 . board $ nd) = (-1)
   | otherwise = 0
-  where subEval ch str
-          | (replicate 3 ch) `isPrefixOf` str          = 1
-          | (replicate 3 ch) `isSuffixOf` str          = 1
-          | (replicate 3 ch) `isPrefixOf` (drop 3 str) = 1
-          | str !! 0 == ch && str !! 4 == ch && str !! 8 == ch = 1
-          | otherwise = 0
+  where subEval :: Char -> String -> Bool
+        subEval ch str
+          | (replicate 3 ch) `isPrefixOf` str          = True
+          | (replicate 3 ch) `isSuffixOf` str          = True
+          | (replicate 3 ch) `isPrefixOf` (drop 3 str) = True
+          | str !! 0 == ch && str !! 4 == ch && str !! 8 == ch = True
+          | str !! 2 == ch && str !! 4 == ch && str !! 6 == ch = True
+          | otherwise = False
 
 getChildren :: Node -> [Node]
-getChildren nd = fillNextEmpty 0 nd
+getChildren nd
+  | evaluate nd == 0 = fillNextEmpty 0 nd
+  | otherwise        = []
 
 fillNextEmpty :: Int -> Node -> [Node]
 fillNextEmpty i nd =
@@ -67,7 +71,7 @@ fillNextEmpty i nd =
 minMax :: Node -> (Node, Int)
 minMax n =
   case getChildren n of
-    []       -> (Nil, evaluate n)
+    []       -> (n, evaluate n)
     children -> bestChild children (turn n)
 
 bestChild :: [Node] -> Turn -> (Node, Int)
@@ -87,9 +91,9 @@ playTheGame initial =
   let nextTurn = case turn initial of
                    Me -> getTurnMe initial
                    Opponent -> getTurnOpponent initial
-   in  case nextTurn of
-         Nil -> getPath initial
-         n -> playTheGame n
+  in  case nextTurn of
+        Nil -> getPath initial
+        n -> playTheGame n
 
 getPath :: Node -> [Node]
 getPath = unfoldr (\nd -> case parent nd of
