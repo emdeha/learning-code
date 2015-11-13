@@ -10,8 +10,12 @@
 module Main where
 
 
+import System.Environment (getArgs)
+
 import qualified Data.Vector as V
 import qualified Data.ByteString.Lazy as BS
+import qualified Data.HashSet as HS
+import qualified Data.PQueue.Prio.Max as PS
 import Data.List
 import Data.Csv
 
@@ -36,8 +40,8 @@ data Labyrinth = Labyrinth (V.Vector (V.Vector Tile))
 
 instance Show Labyrinth where
   show (Labyrinth arr) = 
-    concatMap (++"\n") 
-      (map ((intersperse ',') . show . V.toList) (V.toList arr))
+    concatMap (++"\n")
+      (map (intercalate ", " . map show . V.toList) (V.toList arr))
 
 toVectorTiles :: [Char] -> (V.Vector Tile)
 toVectorTiles = V.fromList . map toTile
@@ -54,13 +58,61 @@ loadLabyrinth labData =
     Right rawLab ->
       let rows = V.map toVectorTiles rawLab
       in  Right $ Labyrinth rows
-  
 
 
+type Point = (Int, Int)
+type Path = [Point]
+
+findPath :: BS.ByteString -> Point -> Point -> Either String Path
+findPath labData start end =
+  case loadLabyrinth labData of
+    Left err -> Left err
+    Right lab -> Right $ solve lab start end
+
+solve :: Labyrinth -> Point -> Point -> Path
+solve lab start end = 
+  aStarSearch lab end [] HS.empty (uncurry PS.singleton . calcPrio $ start end)
+
+aStarSearch :: 
+    Labyrinth -> 
+    Point -> 
+    [Int] ->
+    HS.HashSet Point -> 
+    PS.MaxPQueue Int Point ->
+    Path
+aStarSearch lab end gScores visited pq =
+  let que = PS.maxView pq
+  in  case que of
+      Nothing -> []
+      Just (x, xs) -> go x xs
+  where go :: Point -> PS.MaxPQueue Int Point -> Path
+        go x xs
+          | x == end            = reverse $ constructPathFromEnd x
+          | HS.member x visited = aStarSearch lab end gScores visited xs
+          | otherwise =
+              let visited' = HS.insert x visited
+                  front f = 
+                    foldl (flip . uncurry $ PS.insert) xs 
+                          (map (toScore ((+) find (==x) gScores) . calcPrio) (getNeighbors lab x))
+              -- TODO: Update gScores
+              in  aStarSearch lab end gScores visited' front
+
+
+pathToString :: Either String Path -> String
+pathToString (Left err) = err
+pathToString (Right path) = intersperse ',' . show $ path
 
 main :: IO ()
 main = do
-  labData <- BS.readFile "lab1.txt"
-  case loadLabyrinth labData of
-    Left err -> putStrLn ("Error: " ++ err)
-    Right lab -> putStrLn $ show lab
+  args <- getArgs
+  case args of
+    [labFile, startX, startY, endX, endY] -> do
+        labData <- BS.readFile labFile
+        let path = findPath labData 
+                            (read startX, read startY) 
+                            (read endX, read endY)
+        putStrLn $ pathToString path
+
+    _ -> putStrLn usage
+  where usage = "Usage: feed-mitko " ++
+                "<path_to_lab_file> <start_x> <start_y> <end_x> <end_y>"
