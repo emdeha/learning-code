@@ -18,6 +18,7 @@ import qualified Data.Map as M
 import qualified Data.PQueue.Prio.Min as PS
 import Data.Maybe (catMaybes)
 import Data.List
+import Data.Char
 import Data.Csv
 
 
@@ -96,7 +97,15 @@ findPath :: BS.ByteString -> Point -> Point -> Either String Path
 findPath labData start end =
   case loadLabyrinth labData of
     Left err -> Left err
-    Right lab -> Right $ solve lab start end
+    Right lab -> 
+      case validateInput start end of
+        Just err -> Left err
+        Nothing -> Right $ solve lab start end
+  where validateInput :: Point -> Point -> Maybe String
+        validateInput (startX, startY) (endX, endY) =
+          if all (>=0) [startX, startY, endX, endY]
+          then Nothing
+          else Just "Bad input: x must be in [A..Z], y must be in [0..]"
 
 solve :: Labyrinth -> Point -> Point -> Path
 solve lab start end =
@@ -163,6 +172,12 @@ pathToString :: Either String Path -> String
 pathToString (Left err) = err
 pathToString (Right path) = show $ reverse path
 
+inputToPoint :: (String, String) -> Point 
+inputToPoint (xStr, yStr) = 
+  let xRaw = toUpper (xStr !! 0)
+      yRaw = read yStr :: Int
+  in  (ord xRaw - ord 'A', yRaw - 1)
+
 main :: IO ()
 main = do
   args <- getArgs
@@ -170,8 +185,8 @@ main = do
     [labFile, startX, startY, endX, endY] -> do
         labData <- BS.readFile labFile
         let path = findPath labData 
-                            (read startX, read startY) 
-                            (read endX, read endY)
+                            (inputToPoint (startX, startY))
+                            (inputToPoint (endX, endY))
         putStrLn $ pathToString path
 
     _ -> putStrLn usage
