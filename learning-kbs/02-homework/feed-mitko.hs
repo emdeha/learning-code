@@ -26,10 +26,9 @@ import Data.Csv
   Labyrinth data type. It's represented by an adjacency matrix.
 
   It provides convienience functions for:
-  1. Calculating price between two adjacent nodes
-  2. Getting a node at a position
-  3. Getting neighbors of a node
-  4. Construction from a CSV file based on some simple rules
+  1. Getting a node at a position
+  2. Getting neighbors of a node
+  3. Construction from a CSV file based on some simple rules
 -}
 data Tile = Empty | Wall | Water
           deriving (Eq)
@@ -52,7 +51,8 @@ toVectorTiles = V.fromList . map toTile
           | c == ' ' = Empty
           | c == 'N' = Wall
           | c == '~' = Water
-          | otherwise = error "Invalid tile" -- Bad error!
+--  TODO: Bad error! Use some kind of applicative to propagate Either.
+          | otherwise = error "Invalid tile"
 
 loadLabyrinth :: BS.ByteString -> Either String Labyrinth
 loadLabyrinth labData = 
@@ -161,7 +161,7 @@ aStarSearch lab end came_from cost_so_far pq =
                           else acc
 
 constructPath :: M.Map Point (Maybe Point) -> Point -> Path
-constructPath paths current = --error . show $ paths
+constructPath paths current =
   case M.lookup current paths of
     Just (Just parent) ->
       parent : constructPath (M.delete current paths) parent
