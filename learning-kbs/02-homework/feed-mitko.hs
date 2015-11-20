@@ -1,11 +1,10 @@
 {-
   Mitko is a hungry monster. He has to find his food in a labyrinth.
 
-  We have four types of tiles:
+  We have three types of tiles:
   1. Empty tile -> it costs 1 for Mitko to go through it
-  2. Wall -> Mitko can't go through it because he's hungry
-  3. Water -> Mitko loves water! It costs him 2 to go through water
-  4. X -> Mitko's food
+  2. Water -> Mitko loves water! It costs him 2 to go through water
+  3. Wall -> Mitko can't go through it because he's hungry
 -}
 module Main where
 
@@ -176,10 +175,7 @@ pointToInput :: Point -> (Char, Int)
 pointToInput (x, y) = (chr (x + ord 'A'), y+1)
 
 inputToPoint :: (String, String) -> Point 
-inputToPoint (xStr, yStr) = 
-  let xRaw = toUpper (xStr !! 0)
-      yRaw = read yStr :: Int
-  in  (ord xRaw - ord 'A', yRaw - 1)
+inputToPoint (xStr, yStr) = (read xStr, read yStr)
 
 main :: IO ()
 main = do
