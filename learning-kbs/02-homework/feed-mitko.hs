@@ -170,7 +170,10 @@ constructPath paths current = --error . show $ paths
 
 pathToString :: Either String Path -> String
 pathToString (Left err) = err
-pathToString (Right path) = show $ reverse path
+pathToString (Right path) = show $ map pointToInput (reverse path)
+
+pointToInput :: Point -> (Char, Int)
+pointToInput (x, y) = (chr (x + ord 'A'), y+1)
 
 inputToPoint :: (String, String) -> Point 
 inputToPoint (xStr, yStr) = 
