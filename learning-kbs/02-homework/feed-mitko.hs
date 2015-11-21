@@ -41,10 +41,10 @@ data Labyrinth = Labyrinth (V.Vector (V.Vector Tile))
 
 instance Show Labyrinth where
   show (Labyrinth arr) = 
-    concatMap (++"\n")
+    unlines
       (map (intercalate ", " . map show . V.toList) (V.toList arr))
 
-toVectorTiles :: [Char] -> (V.Vector Tile)
+toVectorTiles :: String -> V.Vector Tile
 toVectorTiles = V.fromList . map toTile
   where toTile c
           | c == ' ' = Empty
@@ -146,14 +146,14 @@ aStarSearch lab end came_from cost_so_far pq =
                     M.insert (position chld) (cost chld) acc) cost_so_far next
                   came_from' = foldr (\chld acc ->
                     M.insert (position chld) (Just x) acc) came_from next
-                  front = foldr ((uncurry PS.insert) . getNextChildPrio) xs next
+                  front = foldr (uncurry PS.insert . getNextChildPrio) xs next
               in  aStarSearch lab end came_from' cost_so_far' front
               where calcNext child acc =
                       let new_cost = cost_so_far M.! x + distance x (snd child)
                       in  if (fst child /= Wall) && 
                              (not (M.member (snd child) came_from) || 
-                             (new_cost < cost_so_far M.! (snd child)))
-                          then NextChild { position = (snd child)
+                             (new_cost < cost_so_far M.! snd child))
+                          then NextChild { position = snd child
                                          , prio = new_cost + calcPrio child
                                          , cost = new_cost
                                          } : acc
