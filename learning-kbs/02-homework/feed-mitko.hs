@@ -77,7 +77,7 @@ getAtPositions lab = map (getAtPosition lab)
 children :: Labyrinth -> Point -> [(Tile, Point)]
 children lab (x, y) = 
   catMaybes . getAtPositions lab $ [(x-1,y),(x,y-1),(x+1,y),(x,y+1),
-                                    (x-1,y-1),(x-1,y+1),(x+1,y+1),(x+1,y+1)]
+                                    (x-1,y-1),(x-1,y+1),(x+1,y+1),(x+1,y-1)]
 
 distance :: Point -> Point -> Int
 distance (x1, y1) (x2, y2) = (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1)
