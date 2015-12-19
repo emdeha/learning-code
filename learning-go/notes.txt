@@ -1,0 +1,3 @@
+-- GOPATH must be set to the current workspace.
+-- A workspace contains all of the projects.  I'll have two workspaces - one
+for learning go, and one for work.
