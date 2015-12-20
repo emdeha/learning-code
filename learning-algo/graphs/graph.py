@@ -20,6 +20,20 @@ class Vertex:
             "\tColor: " + str(self.color) + "\n"
             "\tDist:  " + str(self.distance) + "\n")
 
+# Special type of vertex for solving the graph coloring problem
+# in pro-wrestlers.py
+class VertexColoring:
+    def __init__(self, name):
+        self.name = name
+        self.passed = False
+        self.color = colors.GRAY
+
+    def __repr__(self):
+        return ("\tName: " + str(self.name) + "\n"
+            "\tColor: " + str(self.color) + "\n"
+            "\tPassed: " + str(self.passed) + "\n")
+
+
 class Graph:
     def __init__(self):
         self.vertices = {}
