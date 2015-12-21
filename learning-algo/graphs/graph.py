@@ -1,3 +1,6 @@
+from sets import Set
+
+
 def enum(**enums):
     return type('Enum', (), enums)
 
@@ -37,6 +40,7 @@ class VertexColoring:
 class Graph:
     def __init__(self):
         self.vertices = {}
+        self.nodes = Set()
 
     def __repr__(self):
         graph_repr = ""
@@ -46,3 +50,4 @@ class Graph:
 
     def addVertex(self, v, children):
         self.vertices[v] = children
+        self.nodes.update(children)
