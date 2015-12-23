@@ -23,6 +23,22 @@ class Vertex:
             "\tColor: " + str(self.color) + "\n"
             "\tDist:  " + str(self.distance) + "\n")
 
+class VertexDFS:
+    def __init__(self, name):
+        self.name = name
+        self.path = None
+        self.color = colors.WHITE
+        self.discovery_t = 0
+        self.finish_t = 0
+
+    def __repr__(self):
+        return ("\tName:  " + str(self.name) + "\n"
+            "\tPath:  " + parent(self.path) + "\n"
+            "\tColor: " + str(self.color) + "\n"
+            "\tDiscovery Time:  " + str(self.discovery_t) + "\n"
+            "\tFinish Time: " + str(self.finish_t) + "\n")
+
+
 # Special type of vertex for solving the graph coloring problem
 # in pro-wrestlers.py
 class VertexColoring:
@@ -44,10 +60,12 @@ class Graph:
 
     def __repr__(self):
         graph_repr = ""
-        for v in self.vertices.keys():
-            graph_repr += v + ":\n" + str(self.vertices[v]) + "\n";
+        for n in self.nodes:
+            graph_repr += str(n) + "\n"
         return graph_repr
 
-    def addVertex(self, v, children):
+    def addEdge(self, v, children):
         self.vertices[v] = children
-        self.nodes.update(children)
+
+    def addVertex(self, node):
+        self.nodes.update([node])

@@ -42,12 +42,20 @@ seiko    = VertexColoring('seiko')
 
 
 rivalries = Graph()
-rivalries.addVertex('john', [mike, vladimir, badface])
-rivalries.addVertex('badface', [mike, john])
-rivalries.addVertex('mike', [ilian, badface, john])
-rivalries.addVertex('vladimir', [john, ilian])
-rivalries.addVertex('ilian', [mike, seiko, vladimir])
-rivalries.addVertex('seiko', [ilian])
+
+rivalries.addVertex(john)
+rivalries.addVertex(badface)
+rivalries.addVertex(mike)
+rivalries.addVertex(vladimir)
+rivalries.addVertex(ilian)
+rivalries.addVertex(seiko)
+
+rivalries.addEdge('john', [mike, vladimir, badface])
+rivalries.addEdge('badface', [mike, john])
+rivalries.addEdge('mike', [ilian, badface, john])
+rivalries.addEdge('vladimir', [john, ilian])
+rivalries.addEdge('ilian', [mike, seiko, vladimir])
+rivalries.addEdge('seiko', [ilian])
 
 def get_babyfaces(wrestlers):
     babyfaces = []
