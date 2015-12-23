@@ -4,14 +4,15 @@ from graph import *
 time = 0
 
 def dfs(graph):
-    global time
-    for node in graph.nodes:
+    for node in sorted(graph.nodes, key=lambda item: item.name):
         if node.color == colors.WHITE:
-            dfs_visit_rec(graph, node)
+            print "Creating new tree: " + node.name
+            dfs_visit_iter(graph, node)
 
 
 def dfs_visit_rec(graph, start):
     global time
+
     time = time + 1
     start.discovery_t = time
     start.color = colors.GRAY
