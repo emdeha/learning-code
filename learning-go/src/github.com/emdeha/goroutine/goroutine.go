@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"sync"
 )
 
 type Fetcher interface {
@@ -20,7 +21,10 @@ func IsIn(visited []string, url string) bool {
 	return false
 }
 
-var found = make([]string, 1) 
+var found = struct {
+	sync.RWMutex
+	f []string
+}{f: make([]string, 1)}
 
 // Crawl uses fetcher to recursively crawl
 // pages starting with url, to a maximum of depth.
@@ -42,17 +46,25 @@ func Crawl(url string, depth int, fetcher Fetcher, ready chan string) {
 	fmt.Printf("found: %s %q\n", url, body)
 	
 	childrenCount := 0
+	found.RLock()
 	for _, u := range urls {
-		if !IsIn(found, u) {
+		if !IsIn(found.f, u) {
 			childrenCount += 1
 		}
 	}
+	found.RUnlock()
 	
 	readyChildren := make(chan string, childrenCount)
 	for _, u := range urls {
-		if !IsIn(found, u) {
-			found = append(found, u)
+		found.RLock()
+		if !IsIn(found.f, u) {
+			found.RUnlock()
+			found.Lock()
+			found.f = append(found.f, u)
+			found.Unlock()
 			go Crawl(u, depth-1, fetcher, readyChildren)
+		} else {
+			found.RUnlock()
 		}
 	}
 	
@@ -65,7 +77,7 @@ func Crawl(url string, depth int, fetcher Fetcher, ready chan string) {
 
 func main() {
 	ready := make(chan string, 1)
-	found = append(found, "http://golang.org/")
+	found.f = append(found.f, "http://golang.org/")
 	Crawl("http://golang.org/", 4, fetcher, ready)
 	<-ready
 }
