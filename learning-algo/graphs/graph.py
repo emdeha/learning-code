@@ -38,6 +38,15 @@ class VertexDFS:
             "\tDiscovery Time:  " + str(self.discovery_t) + "\n"
             "\tFinish Time: " + str(self.finish_t) + "\n")
 
+class VertexConnected(VertexDFS):
+    def __init__(self, name):
+        VertexDFS.__init__(self, name)
+        self.cc = None
+
+    def __repr__(self):
+        base_repr = VertexDFS.__repr__(self)
+        return base_repr + "\tConnected Component: " + str(self.cc) + "\n"
+
 
 # Special type of vertex for solving the graph coloring problem
 # in pro-wrestlers.py
