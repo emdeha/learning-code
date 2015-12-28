@@ -57,14 +57,17 @@ def cut_rod_extended(p, n, c):
     for j in range(1, n+1):
         best = float("-inf")
         for i in range(1, j+1):
-            if best < p[i] + r[j-i] - c:
-                best = p[i] + r[j-i] - c
+            if best < p[i] + r[j-i]:
+                best = p[i] + r[j-i]
+
+                # if we ARE doing a cut,
+                # subtract the price of the cut
+                if j != i:
+                    best = best - c
+
                 s[j] = i
-            else:
-                best = best
         r[j] = best
 
-    r[-1]
     return (r, s)
 
 def cut_rod_print_solution(p, n, c):
@@ -85,13 +88,13 @@ def cut_rod_price(p, n, c):
         best = float("-inf")
         for i in range(1, j+1):
             # We subtract the price from the current `best` solution
-            best = max(best - c, p[i] + r[j - i])
+            best = max(best, p[i] + r[j - i])
         r[j] = best
 
-    return r[n]
+    return r[-1]
 
 
 # p = [1, 5, 8, 9, 10, 17, 17, 20, 24, 30, 35, 35, 50, 70, 90, 96, 101, 112, 120, 125, 156]
 p = [4, 4, 3, 3, 3]
-# print "Best: " + str(cut_rod_price(p, 4, 1))
-cut_rod_print_solution(p, 3, 2)
+#print "Best: " + str(cut_rod_price(p, 5, 2))
+cut_rod_print_solution(p, 3, 5)
