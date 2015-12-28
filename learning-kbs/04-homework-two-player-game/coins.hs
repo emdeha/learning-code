@@ -10,21 +10,27 @@ import Data.Char
 import Data.List
 
 
+type Board = [Bool]
+type IndexedBoard = (Int, Bool)
+
+type Take = [Bool]
+type IndexedTake = (Int, Bool)
+
 data Turn = Me | Opponent
     deriving (Show, Eq)
 
 data Node = Node
           { parent :: Node
-            -- TODO: Add starting index to board
-          , board :: [Bool]
+--          , startIdx :: Int
+          , board :: Board
           , turn :: Turn
           }
           | Nil
     deriving Show
 
-makeChild :: Node -> [Bool] -> Node
-makeChild parent board =
-    Node { parent = parent, board = board, turn = neg . turn $ parent }
+makeChild :: Node -> Board -> Node
+makeChild p b =
+    Node { parent = p, board = b, turn = neg . turn $ p }
   where 
     neg Me = Opponent
     neg Opponent = Me
@@ -34,36 +40,51 @@ getChildren p =
     let boards = takeCoins $ board p
     in  map (makeChild p) boards
   where
-    takeCoins board =
-      let boardLen = length board
+    takeCoins b =
+      let boardLen = length b
           cycleLen = boardLen + 3 - 1
 
-          cycledBd = take cycleLen . cycle $ board
+          cycledBd = take cycleLen . cycle $ b
           cycledIndices = 
             take cycleLen . cycle $ take boardLen . cycle $ iterate ((+) 1) 0
           cycleListIndexed = zip cycledIndices cycledBd
 
           possibleTakes = unfoldr getTakes cycleListIndexed
-          -- It's a shitty life we live...
-          validTakes = concatMap (\take -> 
-            nub $ concatMap (\i -> unfoldr (getValidTakes i) take) [1,2,3]) possibleTakes
-      in  unfoldr (nextChildBoard board) validTakes
 
-    spanMinus p ls = (takeWhile p ls, dropWhile (not . p) $ dropWhile p ls)
+          validTakes = concatMap (\t -> 
+            nub $ 
+              concatMap (\i -> 
+                unfoldr (getValidTakes i) t
+              ) [1,2,3]
+            ) possibleTakes
+      in  unfoldr (nextChildBoard b) validTakes
 
+    spanMinus :: 
+      (IndexedBoard -> Bool) -> 
+      [IndexedBoard] ->
+      ([IndexedTake], [IndexedTake])
+    spanMinus b ls =
+      (takeWhile b ls, dropWhile (not . b) $ dropWhile b ls)
+
+    getTakes ::
+      [IndexedBoard] -> 
+      Maybe ([IndexedTake], [IndexedTake])
     getTakes ls
       | length ls == 0 = Nothing
       | otherwise      = Just $ spanMinus snd ls
 
+    getValidTakes :: 
+      Int -> 
+      [IndexedTake] -> 
+      Maybe ([IndexedTake], [IndexedTake])
     getValidTakes i ls
       | length ls == 0 = Nothing
       | otherwise      = Just (take i ls, drop 1 ls)
 
-    nextChildBoard board toTake
-      | length toTake == 0 = Nothing
-      | otherwise          = Just (appendUpdateWith (toTake !! 0) board, drop 1 toTake)
-
-    appendUpdateWith :: [(Int, Bool)] -> [Bool] -> [Bool]
+    appendUpdateWith :: 
+      [IndexedTake] ->
+      Board ->
+      Board
     appendUpdateWith updateIndices ls =
         snd . unzip $
           map (updateOrLeaveAt updateIndices) (zip (iterate ((+) 1) 0) ls)
@@ -71,12 +92,24 @@ getChildren p =
               case find ((==i) . fst) indices of
                 Nothing      -> (i, e)
                 Just (_, e') -> (i, not e')
+
+    nextChildBoard :: 
+      Board ->
+      [[IndexedTake]] ->
+      Maybe (Board, [[IndexedTake]])
+    nextChildBoard b toTake
+      | length toTake == 0 = Nothing
+      | otherwise          = Just (appendUpdateWith (toTake !! 0) b, drop 1 toTake)
       
 evaluate :: Node -> Int
 evaluate nd =
   case turn nd of
-    Me -> (-1)
-    Opponent -> 1
+    Me -> length . filter and . group $ board nd
+    Opponent -> (-1) * (length . filter (not . and) . group $ board nd)
+--  let maxTakes = length . filter and . group $ board nd
+--  in  case turn nd of
+--        Me -> maxTakes
+--        Opponent -> maxTakes
 
 
 -- TODO: Should we use lastEval?
@@ -137,7 +170,7 @@ countToBoard = flip replicate True
 
 validate :: String -> Either String Int
 validate n
-  | isNumber' n && (read n) > 0 = Right (read n)
+  | isNumber' n && (read n) > (0 :: Int) = Right (read n)
   | otherwise = Left ("There must be a positive number of coins.")
 
 isNumber' :: String -> Bool
