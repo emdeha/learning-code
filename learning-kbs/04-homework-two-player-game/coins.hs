@@ -143,18 +143,22 @@ best (n1, val1) (n2, val2) t
 
 getBestMove :: [Bool] -> (Int, Int, Int)
 getBestMove startBoard =
-    let (firstCount, moves) =
+    let (winBoard, moves) =
           minMax (Node {parent = Nil, board = startBoard, turn = Me}) (length startBoard)
-    in  (0, getSecondRound firstCount, moves)
+        secondMove = getSecondMove winBoard
+        coinsTaken = length . filter (==False) $ board secondMove
+    in  (startIdx secondMove, coinsTaken, moves)
   -- The first move comes from the first child
-  where getSecondRound nd =
+  where getSecondMove nd =
           case parent nd of
-            Nil -> 
-              length . filter (==False) $ board nd
-            p -> 
-              case parent p of
-                Nil -> length . filter (==False) $ board p
-                _   -> getSecondRound p
+            p -> case parent p of
+                   Nil -> nd
+                   _   -> getSecondMove p
+
+        startIdx nd =
+          case find ((==False) . snd) $ zip (iterate ((+) 1) 0) (board nd) of
+            Nothing -> 0
+            Just a  -> fst a
 
 
 main :: IO ()
