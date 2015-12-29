@@ -99,6 +99,7 @@ nextChildBoard ::
 nextChildBoard b toTake
   | length toTake == 0 = Nothing
   | otherwise          = Just (appendUpdateWith (toTake !! 0) b, drop 1 toTake)
+
       
 threeNode :: Node
 threeNode = Node { parent=Nil, board=replicate 3 True, turn=Me }
@@ -110,28 +111,28 @@ fiveNode :: Node
 fiveNode = Node { parent=Nil, board=replicate 5 True, turn=Me }
 
 
-evaluate :: Node -> Int
-evaluate nd =
+evaluate :: Node -> Int -> Int
+evaluate nd maxMoves =
     let depth = moves nd
     in  case turn nd of
-          Me -> (-1) * depth
-          Opponent -> 1 * depth
+          Me -> (-1) * (maxMoves - depth)
+          Opponent -> maxMoves - depth
   where moves nd =
           case parent nd of
             Nil -> 0
             p   -> 1 + moves p 
 
 
-minMax :: Node -> (Node, Int)
-minMax n =
+minMax :: Node -> Int -> (Node, Int)
+minMax n maxMoves =
   case getChildren n of
-    []       -> (n, evaluate n)
-    children -> bestChild children (turn n)
+    []       -> (n, evaluate n maxMoves)
+    children -> bestChild children (turn n) maxMoves
 
-bestChild :: [Node] -> Turn -> (Node, Int)
-bestChild []     _ = error "No children"
-bestChild (x:[]) _ = minMax x
-bestChild (x:xs) t = best (minMax x) (bestChild xs t) t
+bestChild :: [Node] -> Turn -> Int -> (Node, Int)
+bestChild []     _ _        = error "No children"
+bestChild (x:[]) _ maxMoves = minMax x maxMoves
+bestChild (x:xs) t maxMoves = best (minMax x maxMoves) (bestChild xs t maxMoves) t
 
 best :: (Node, Int) -> (Node, Int) -> Turn -> (Node, Int)
 best (n1, val1) (n2, val2) t
@@ -142,7 +143,8 @@ best (n1, val1) (n2, val2) t
 
 getBestMove :: [Bool] -> (Int, Int, Int)
 getBestMove startBoard =
-    let (firstCount, moves) = minMax (Node {parent = Nil, board = startBoard, turn = Me})
+    let (firstCount, moves) =
+          minMax (Node {parent = Nil, board = startBoard, turn = Me}) (length startBoard)
     in  (0, getSecondRound firstCount, moves)
   -- The first move comes from the first child
   where getSecondRound nd =
