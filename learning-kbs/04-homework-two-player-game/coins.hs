@@ -112,31 +112,26 @@ fiveNode = Node { parent=Nil, board=replicate 5 True, turn=Me }
 
 evaluate :: Node -> Int
 evaluate nd =
-  case turn nd of
-    Me -> length . filter and . group $ board nd
-    Opponent -> (-1) * (length . filter (not . and) . group $ board nd)
---  let maxTakes = length . filter and . group $ board nd
---  in  case turn nd of
---        Me -> maxTakes
---        Opponent -> maxTakes
+    let depth = moves nd
+    in  case turn nd of
+          Me -> (-1) * depth
+          Opponent -> 1 * depth
+  where moves nd =
+          case parent nd of
+            Nil -> 0
+            p   -> 1 + moves p 
 
 
--- TODO: Should we use lastEval?
--- TODO: Add alpha-beta slicing
-minMax :: Node -> Int -> (Node, Int)
-minMax n lastEval =
+minMax :: Node -> (Node, Int)
+minMax n =
   case getChildren n of
-    []       -> 
-      let eval = evaluate n
-      in  if eval < 0
-          then (n, (-1) * lastEval)
-          else (n, lastEval)
-    children -> bestChild children (turn n) (lastEval+1)
+    []       -> (n, evaluate n)
+    children -> bestChild children (turn n)
 
-bestChild :: [Node] -> Turn -> Int -> (Node, Int)
-bestChild []     _ _        = error "No children"
-bestChild (x:[]) _ lastEval = minMax x lastEval
-bestChild (x:xs) t lastEval = best (minMax x lastEval) (bestChild xs t lastEval) t
+bestChild :: [Node] -> Turn -> (Node, Int)
+bestChild []     _ = error "No children"
+bestChild (x:[]) _ = minMax x
+bestChild (x:xs) t = best (minMax x) (bestChild xs t) t
 
 best :: (Node, Int) -> (Node, Int) -> Turn -> (Node, Int)
 best (n1, val1) (n2, val2) t
@@ -147,7 +142,7 @@ best (n1, val1) (n2, val2) t
 
 getBestMove :: [Bool] -> (Int, Int, Int)
 getBestMove startBoard =
-    let (firstCount, moves) = minMax (Node {parent = Nil, board = startBoard, turn = Me}) 0
+    let (firstCount, moves) = minMax (Node {parent = Nil, board = startBoard, turn = Me})
     in  (0, getSecondRound firstCount, moves)
   -- The first move comes from the first child
   where getSecondRound nd =
