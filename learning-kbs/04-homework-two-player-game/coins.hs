@@ -59,47 +59,47 @@ getChildren p =
             ) possibleTakes
       in  unfoldr (nextChildBoard b) validTakes
 
-    spanMinus :: 
-      (IndexedBoard -> Bool) -> 
-      [IndexedBoard] ->
-      ([IndexedTake], [IndexedTake])
-    spanMinus b ls =
-      (takeWhile b ls, dropWhile (not . b) $ dropWhile b ls)
+spanMinus :: 
+  (IndexedBoard -> Bool) -> 
+  [IndexedBoard] ->
+  ([IndexedTake], [IndexedTake])
+spanMinus b ls =
+  (takeWhile b ls, dropWhile (not . b) $ dropWhile b ls)
 
-    getTakes ::
-      [IndexedBoard] -> 
-      Maybe ([IndexedTake], [IndexedTake])
-    getTakes ls
-      | length ls == 0 = Nothing
-      | otherwise      = Just $ spanMinus snd ls
+getTakes ::
+  [IndexedBoard] -> 
+  Maybe ([IndexedTake], [IndexedTake])
+getTakes ls
+  | length ls == 0 = Nothing
+  | otherwise      = Just $ spanMinus snd ls
 
-    getValidTakes :: 
-      Int -> 
-      [IndexedTake] -> 
-      Maybe ([IndexedTake], [IndexedTake])
-    getValidTakes i ls
-      | length ls == 0 = Nothing
-      | otherwise      = Just (take i ls, drop 1 ls)
+getValidTakes :: 
+  Int -> 
+  [IndexedTake] -> 
+  Maybe ([IndexedTake], [IndexedTake])
+getValidTakes i ls
+  | length ls == 0 = Nothing
+  | otherwise      = Just (take i ls, drop 1 ls)
 
-    appendUpdateWith :: 
-      [IndexedTake] ->
-      Board ->
-      Board
-    appendUpdateWith updateIndices ls =
-        snd . unzip $
-          map (updateOrLeaveAt updateIndices) (zip (iterate ((+) 1) 0) ls)
-      where updateOrLeaveAt indices (i, e) =
-              case find ((==i) . fst) indices of
-                Nothing      -> (i, e)
-                Just (_, e') -> (i, not e')
+appendUpdateWith :: 
+  [IndexedTake] ->
+  Board ->
+  Board
+appendUpdateWith updateIndices ls =
+    snd . unzip $
+      map (updateOrLeaveAt updateIndices) (zip (iterate ((+) 1) 0) ls)
+  where updateOrLeaveAt indices (i, e) =
+          case find ((==i) . fst) indices of
+            Nothing      -> (i, e)
+            Just (_, e') -> (i, not e')
 
-    nextChildBoard :: 
-      Board ->
-      [[IndexedTake]] ->
-      Maybe (Board, [[IndexedTake]])
-    nextChildBoard b toTake
-      | length toTake == 0 = Nothing
-      | otherwise          = Just (appendUpdateWith (toTake !! 0) b, drop 1 toTake)
+nextChildBoard :: 
+  Board ->
+  [[IndexedTake]] ->
+  Maybe (Board, [[IndexedTake]])
+nextChildBoard b toTake
+  | length toTake == 0 = Nothing
+  | otherwise          = Just (appendUpdateWith (toTake !! 0) b, drop 1 toTake)
       
 evaluate :: Node -> Int
 evaluate nd =
