@@ -3,12 +3,13 @@ package main
 
 import (
 	"fmt"
-	"rand"
+	"math/rand"
 	"container/heap"
+	"time"
 )
 
 
-var nWorker int = 10
+var nWorker int64 = 10
 
 
 /*
@@ -19,10 +20,17 @@ type Request struct {
 	c  chan int
 }
 
+func workFn() int {
+	fmt.Println("Worked some time...")
+	return rand.Int()
+}
+
 func requester(work chan<- Request) {
 	c := make(chan int)
 	for {
-		Sleep(rand.Int63n(nWorker * 2 * Second))
+		timeUntilRequest := rand.Int63n(nWorker * 2 * int64(time.Second))
+		time.Sleep(time.Duration(timeUntilRequest))
+
 		work <- Request{workFn, c}
 		result := <-c
 
@@ -71,17 +79,18 @@ func (p Pool) Swap(i, j int) {
 }
 
 
-func (p Pool) Push(w *Worker) {
-	n := len(p)
+func (p *Pool) Push(x interface{}) {
+	n := len(*p)
+	w := x.(*Worker)
 	w.index = n
 	*p = append(*p, w)
 }
 
-func (p Pool) Pop() *Worker {
+func (p *Pool) Pop() interface{} {
 	old := *p
 	n := len(old)
 	w := old[n-1]
-	w.index := -1
+	w.index = -1
 	*p = old[0:n-1]
 	return w
 }
@@ -120,5 +129,36 @@ func (b *Balancer) completed(w *Worker) {
 /*
   Program entry point
 */
+func startRequesters(count int) (chan Request) {
+	work := make(chan Request)
+
+	for i := 0; i < count; i++ {
+		go requester(work)
+	}
+	
+	return work
+}
+
+func startWorkers(count int64) ([]*Worker, chan *Worker) {
+	done := make(chan *Worker)
+	workers := make([]*Worker, 0)
+
+	for i := int64(0); i < count; i++ {
+		rqs := make(chan Request, 3)
+		w := Worker{rqs, 0, 0}
+		workers = append(workers, &w)
+		go w.work(done)
+	}
+
+	return workers, done
+}
+
 func main() {
+	work := startRequesters(30)
+
+	nWorker = 1
+	workers, done := startWorkers(nWorker)
+
+	b := Balancer{workers, done}
+	b.balance(work)
 }
