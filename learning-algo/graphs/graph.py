@@ -78,3 +78,6 @@ class Graph:
 
     def addVertex(self, node):
         self.nodes.update([node])
+
+    def clearEdges(self):
+        self.vertices = {}
