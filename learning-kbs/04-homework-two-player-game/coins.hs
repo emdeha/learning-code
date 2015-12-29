@@ -52,12 +52,11 @@ getChildren p =
           possibleTakes = unfoldr getTakes cycleListIndexed
 
           validTakes = concatMap (\t -> 
-            nub $ 
               concatMap (\i -> 
                 unfoldr (getValidTakes i) t
               ) [1,2,3]
             ) possibleTakes
-      in  unfoldr (nextChildBoard b) validTakes
+      in  nub $ unfoldr (nextChildBoard b) validTakes
 
 spanMinus :: 
   (IndexedBoard -> Bool) -> 
