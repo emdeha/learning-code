@@ -100,6 +100,16 @@ nextChildBoard b toTake
   | length toTake == 0 = Nothing
   | otherwise          = Just (appendUpdateWith (toTake !! 0) b, drop 1 toTake)
       
+threeNode :: Node
+threeNode = Node { parent=Nil, board=replicate 3 True, turn=Me }
+
+fourNode :: Node
+fourNode = Node { parent=Nil, board=replicate 4 True, turn=Me }
+
+fiveNode :: Node
+fiveNode = Node { parent=Nil, board=replicate 5 True, turn=Me }
+
+
 evaluate :: Node -> Int
 evaluate nd =
   case turn nd of
