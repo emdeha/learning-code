@@ -27,18 +27,34 @@ def dfs_visit_rec(graph, start):
     start.finish_t = time
 
 
-def dfs_visit_iter(graph, start, time):
-    stack = [start]
+def dfs_visit_iter(graph, start):
+    global time
+
+    start.color = colors.GRAY
+
+    stack = [(start, None)]
     while len(stack):
-        u = stack.pop()
+        (u, p) = stack.pop()
 
         time = time+1
         u.discovery_t = time
         u.color = colors.GRAY
 
-        for v in graph.vertices[u.name]:
+        allGray = True
+        for v in sorted(graph.vertices[u.name], key=lambda item: item.name):
             if v.color == colors.WHITE:
-                stack.append(v)
+                allGray = False
+                stack.append((v, u))
+
+        if allGray:
+            time = time + 1
+            u.finish_t = time
+            u.color = colors.BLACK
+            u.path = p
+
+            time = time + 1
+            p.color = colors.BLACK
+            p.finish_t = time
 
 
 u = VertexDFS('u')
@@ -66,4 +82,5 @@ testGraph.addEdge('z', [z])
 
 
 dfs(testGraph)
+import pdb; pdb.set_trace()
 print "Done!"
