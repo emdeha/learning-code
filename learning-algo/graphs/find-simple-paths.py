@@ -3,10 +3,13 @@ from graph import VertexDFS, colors, Graph
 
 time = 0
 
-def dfs(graph):
+def dfs_check_dag(graph):
     for u in sorted(graph.nodes, key=lambda n: n.name):
         if u.color == colors.WHITE:
-            dfs_visit(graph, u)
+            if dfs_visit(graph, u) == False:
+                return False
+
+    return True
 
 def dfs_visit(graph, u):
     global time
@@ -17,18 +20,49 @@ def dfs_visit(graph, u):
 
     if u.name in graph.vertices:
         for v in graph.vertices[u.name]:
+            if v.color == colors.GRAY:
+                return False
+
             if v.color == colors.WHITE:
                 v.path = u
-                dfs_visit(graph, v)
+                if dfs_visit(graph, v) == False:
+                    return False
 
     time = time + 1
     u.finish_t = time
     u.color = colors.BLACK
 
+    return True
+
 
 def topo_sort(graph):
-    dfs(graph)
-    return sorted(graph.nodes, key=lambda n: n.finish_t)
+    if dfs_check_dag(graph):
+        return sorted(graph.nodes, key=lambda n: n.finish_t)
+    return None
+
+
+def find_simple_paths_count(graph, start, end):
+    cnt = 0
+
+    sorted_nodes = topo_sort(graph)
+    if sorted_nodes:
+        visited = []
+        find_simple_paths_count_step(start, end.parents, visited, cnt)
+
+    return cnt
+
+
+def find_simple_paths_count_step(start, parents, visited, cnt):
+    for p in parents:
+        if p == start:
+            cnt += 1
+            break
+        elif p in visited:
+            cnt += 1
+        else:
+            if p.parents:
+                visited.append(p)
+                find_simple_paths_count_step(start, p.parents, visited, cnt)
 
 
 m = VertexDFS('m')
@@ -74,5 +108,5 @@ graph.addEdge(v, [x,w], True)
 graph.addEdge(w, [z], True)
 graph.addEdge(y, [v], True)
 
-sorted_nodes = topo_sort(graph)
-print "Done!"
+paths_cnt = find_simple_paths_count(graph, p, v)
+print "Done! " + str(paths_cnt)
