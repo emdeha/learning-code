@@ -75,9 +75,9 @@ graph.addVertex(k)
 #
 # Tests
 #
-graph.addEdge('a', [b,c,d])
-graph.addEdge('b', [d])
-graph.addEdge('d', [e])
+graph.addEdge(a, [b,c,d])
+graph.addEdge(b, [d])
+graph.addEdge(d, [e])
 
 ok(is_singly_connected(graph), False,\
         "five-node random graph")
@@ -86,10 +86,10 @@ graph.clearEdges()
 
 ###
 
-graph.addEdge('a', [b])
-graph.addEdge('b', [c])
-graph.addEdge('c', [d])
-graph.addEdge('d', [a])
+graph.addEdge(a, [b])
+graph.addEdge(b, [c])
+graph.addEdge(c, [d])
+graph.addEdge(d, [a])
 
 ok(is_singly_connected(graph), True,\
         "four-node circular")
@@ -98,11 +98,11 @@ graph.clearEdges()
 
 ###
 
-graph.addEdge('a', [b])
-graph.addEdge('b', [c])
-graph.addEdge('c', [d])
-graph.addEdge('d', [e])
-graph.addEdge('e', [b])
+graph.addEdge(a, [b])
+graph.addEdge(b, [c])
+graph.addEdge(c, [d])
+graph.addEdge(d, [e])
+graph.addEdge(e, [b])
 
 ok(is_singly_connected(graph), False,\
         "five-node circular")

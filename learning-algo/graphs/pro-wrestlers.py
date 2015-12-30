@@ -50,12 +50,12 @@ rivalries.addVertex(vladimir)
 rivalries.addVertex(ilian)
 rivalries.addVertex(seiko)
 
-rivalries.addEdge('john', [mike, vladimir, badface])
-rivalries.addEdge('badface', [mike, john])
-rivalries.addEdge('mike', [ilian, badface, john])
-rivalries.addEdge('vladimir', [john, ilian])
-rivalries.addEdge('ilian', [mike, seiko, vladimir])
-rivalries.addEdge('seiko', [ilian])
+rivalries.addEdge(john, [mike, vladimir, badface])
+rivalries.addEdge(badface, [mike, john])
+rivalries.addEdge(mike, [ilian, badface, john])
+rivalries.addEdge(vladimir, [john, ilian])
+rivalries.addEdge(ilian, [mike, seiko, vladimir])
+rivalries.addEdge(seiko, [ilian])
 
 def get_babyfaces(wrestlers):
     babyfaces = []

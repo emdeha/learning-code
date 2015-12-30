@@ -73,12 +73,12 @@ testGraph.addVertex(x)
 testGraph.addVertex(y)
 testGraph.addVertex(z)
 
-testGraph.addEdge('u', [v, x])
-testGraph.addEdge('v', [y])
-testGraph.addEdge('w', [y, z])
-testGraph.addEdge('x', [v])
-testGraph.addEdge('y', [x])
-testGraph.addEdge('z', [z])
+testGraph.addEdge(u, [v, x])
+testGraph.addEdge(v, [y])
+testGraph.addEdge(w, [y, z])
+testGraph.addEdge(x, [v])
+testGraph.addEdge(y, [x])
+testGraph.addEdge(z, [z])
 
 
 dfs(testGraph)

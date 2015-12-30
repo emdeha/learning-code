@@ -65,20 +65,20 @@ testGraph.addVertex(y)
 testGraph.addVertex(z)
 
 # Undirected graph
-# testGraph.addEdge('u', [v, x])
-# testGraph.addEdge('v', [u, x, y])
-# testGraph.addEdge('w', [y, z])
-# testGraph.addEdge('x', [u, v, y])
-# testGraph.addEdge('y', [x, v, w])
-# testGraph.addEdge('z', [z, w])
+# testGraph.addEdge(u, [v, x])
+# testGraph.addEdge(v, [u, x, y])
+# testGraph.addEdge(w, [y, z])
+# testGraph.addEdge(x, [u, v, y])
+# testGraph.addEdge(y, [x, v, w])
+# testGraph.addEdge(z, [z, w])
 
 # Directed graph
-testGraph.addEdge('u', [v, x])
-testGraph.addEdge('v', [y])
-testGraph.addEdge('w', [y, z])
-testGraph.addEdge('x', [v])
-testGraph.addEdge('y', [x])
-testGraph.addEdge('z', [z])
+testGraph.addEdge(u, [v, x])
+testGraph.addEdge(v, [y])
+testGraph.addEdge(w, [y, z])
+testGraph.addEdge(x, [v])
+testGraph.addEdge(y, [x])
+testGraph.addEdge(z, [z])
 
 
 dfs(testGraph)
