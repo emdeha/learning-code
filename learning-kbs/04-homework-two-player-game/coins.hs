@@ -117,22 +117,37 @@ evaluate nd maxMoves =
     in  case turn nd of
           Me -> (-1) * (maxMoves - depth)
           Opponent -> maxMoves - depth
-  where moves nd =
-          case parent nd of
+  where moves b =
+          case parent b of
             Nil -> 0
             p   -> 1 + moves p 
 
 
-minMax :: Node -> Int -> (Node, Int)
-minMax n maxMoves =
+{-
+  Alpha-Beta slicing
+-}
+negInf :: Int
+negInf = -99999
+
+posInf :: Int
+posInf = 99999
+
+alphaBeta :: Node -> Int -> (Node, Int)
+alphaBeta n maxMoves =
   case getChildren n of
     []       -> (n, evaluate n maxMoves)
-    children -> bestChild children (turn n) maxMoves
+    children -> bestChild children (turn n) maxMoves negInf posInf
 
-bestChild :: [Node] -> Turn -> Int -> (Node, Int)
-bestChild []     _ _        = error "No children"
-bestChild (x:[]) _ maxMoves = minMax x maxMoves
-bestChild (x:xs) t maxMoves = best (minMax x maxMoves) (bestChild xs t maxMoves) t
+bestChild :: [Node] -> Turn -> Int -> Int -> Int -> (Node, Int)
+bestChild []       _ _        _     _    = error "No children"
+bestChild (x:[])   _ maxMoves _     _    = alphaBeta x maxMoves
+bestChild (x:y:xs) t maxMoves alpha beta = 
+  let v = best (alphaBeta x maxMoves) (alphaBeta y maxMoves) t
+  in  if (snd v) >= beta
+      then v
+      else case xs of 
+             [] -> v
+             _  -> best v (bestChild xs t maxMoves (max (snd v) alpha) beta) t
 
 best :: (Node, Int) -> (Node, Int) -> Turn -> (Node, Int)
 best (n1, val1) (n2, val2) t
@@ -140,11 +155,25 @@ best (n1, val1) (n2, val2) t
     val1 <= val2 && t == Opponent = (n1, val1)
   | otherwise = (n2, val2)
 
+{-
+  Min-Max procedure
+-}
+minMax :: Node -> Int -> (Node, Int)
+minMax n maxMoves =
+  case getChildren n of
+    []       -> (n, evaluate n maxMoves)
+    children -> bestChild' children (turn n) maxMoves
+
+bestChild' :: [Node] -> Turn -> Int -> (Node, Int)
+bestChild' []     _ _        = error "No children"
+bestChild' (x:[]) _ maxMoves = minMax x maxMoves
+bestChild' (x:xs) t maxMoves = best (minMax x maxMoves) (bestChild' xs t maxMoves) t
+
 
 getBestMove :: [Bool] -> (Int, Int, Int)
 getBestMove startBoard =
     let (winBoard, moves) =
-          minMax (Node {parent = Nil, board = startBoard, turn = Me}) (length startBoard)
+          alphaBeta (Node {parent = Nil, board = startBoard, turn = Me}) (length startBoard)
         secondMove = getSecondMove winBoard
         coinsTaken = length . filter (==False) $ board secondMove
     in  (startIdx secondMove, coinsTaken, moves)
