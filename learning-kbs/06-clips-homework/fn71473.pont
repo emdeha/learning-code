@@ -1,4 +1,4 @@
-; Thu Dec 31 10:53:50 EET 2015
+; Sat Jan 02 12:03:27 EET 2016
 ; 
 ;+ (version "3.5")
 ;+ (build "Build 663")
@@ -11,6 +11,11 @@
 ;+		(comment "Represents the time a Working Student can spend each day for activities other than work and university.")
 		(type INTEGER)
 		(range 1 24)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot book-name
+;+		(comment "Represents the name of a Book.")
+		(type STRING)
 ;+		(cardinality 1 1)
 		(create-accessor read-write))
 	(single-slot network_size
@@ -36,10 +41,22 @@
 		(type INTEGER)
 ;+		(cardinality 1 1)
 		(create-accessor read-write))
+	(single-slot genre
+;+		(comment "Represents the genre of a Book.")
+		(type SYMBOL)
+		(allowed-values Fiction Science-Fiction Philosophy Classic Fairy-tale Biography Speech Self-help Horror Technical Exploration Romance Business-self-help Management)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
 	(single-slot gender
 ;+		(comment "Represents the gender of a Person.")
 		(type SYMBOL)
 		(allowed-values M F)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot time-to-read
+;+		(comment "Represents the time in hours needed to read a Book.")
+		(type INTEGER)
+		(range 1 %3FVARIABLE)
 ;+		(cardinality 1 1)
 		(create-accessor read-write))
 	(single-slot time_spent_studying
@@ -81,6 +98,12 @@
 		(range 1 %3FVARIABLE)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
+	(single-slot difficulty
+;+		(comment "Represents how difficult it is to read a Book in a 1 to 5 scale.")
+		(type INTEGER)
+		(range 1 5)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
 	(single-slot type
 ;+		(comment "Represents the type of business a Businessman can have. It's not a problem for a Businessman to run multiple types of businesses.")
 		(type SYMBOL)
@@ -104,6 +127,12 @@
 		(type INTEGER)
 ;+		(cardinality 1 1)
 		(create-accessor read-write))
+	(single-slot authenticity
+;+		(comment "If the book is nonfiction, this represents how authentic and trustworthy is the content of the Book in a scale from 1 to 10.")
+		(type INTEGER)
+		(range 1 10)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
 	(multislot business
 ;+		(comment "The businesses a Businessman has.")
 		(type INSTANCE)
@@ -125,6 +154,11 @@
 ;+		(comment "Represents the type of business a Businessman can have. It's not a problem for a Businessman to run multiple types of businesses.")
 		(type SYMBOL)
 		(allowed-values Investment Trading Psychology IT Manufacturing Architecture Banking)
+		(cardinality 1 ?VARIABLE)
+		(create-accessor read-write))
+	(multislot author
+;+		(comment "Represents the name of the author of the Book. A book can have multiple authors.")
+		(type STRING)
 		(cardinality 1 ?VARIABLE)
 		(create-accessor read-write))
 	(single-slot money_per_month
@@ -286,4 +320,42 @@
 		(type INTEGER)
 		(range 1 %3FVARIABLE)
 ;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass Book "A Book is represented by its `name`, `author`, `genre`, `time-to-read`, `difficulty` and `authenticity`."
+	(is-a USER)
+	(role concrete)
+	(single-slot difficulty
+;+		(comment "Represents how difficult it is to read a Book in a 1 to 5 scale.")
+		(type INTEGER)
+		(range 1 5)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot authenticity
+;+		(comment "If the book is nonfiction, this represents how authentic and trustworthy is the content of the Book in a scale from 1 to 10.")
+		(type INTEGER)
+		(range 1 10)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot book-name
+;+		(comment "Represents the name of a Book.")
+		(type STRING)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(multislot author
+;+		(comment "Represents the name of the author of the Book. A book can have multiple authors.")
+		(type STRING)
+		(cardinality 1 ?VARIABLE)
+		(create-accessor read-write))
+	(single-slot genre
+;+		(comment "Represents the genre of a Book.")
+		(type SYMBOL)
+		(allowed-values Fiction Science-Fiction Philosophy Classic Fairy-tale Biography Speech Self-help Horror Technical Exploration Romance Business-self-help Management)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot time-to-read
+;+		(comment "Represents the time in hours needed to read a Book.")
+		(type INTEGER)
+		(range 1 %3FVARIABLE)
+;+		(cardinality 1 1)
 		(create-accessor read-write)))

@@ -1,4 +1,4 @@
-; Thu Dec 31 10:53:50 EET 2015
+; Sat Jan 02 12:03:06 EET 2016
 ; 
 ;+ (version "3.5")
 ;+ (build "Build 663")
@@ -20,9 +20,9 @@
 ([BROWSER_SLOT_NAMES] of  Property_List
 
 	(properties
-		[fn71473_ProjectKB_Class10228]
-		[fn71473_ProjectKB_Class10229]
-		[fn71473_ProjectKB_Class10230]))
+		[fn71473_ProjectKB_Class75]
+		[fn71473_ProjectKB_Class76]
+		[fn71473_ProjectKB_Class77]))
 
 ([CLSES_TAB] of  Widget
 
@@ -44,21 +44,6 @@
 
 ([fn71473_ProjectKB_Class10] of  Property_List
 )
-
-([fn71473_ProjectKB_Class10228] of  String
-
-	(name ":INSTANCE-ANNOTATION")
-	(string_value "%3AANNOTATION-TEXT"))
-
-([fn71473_ProjectKB_Class10229] of  String
-
-	(name ":PAL-CONSTRAINT")
-	(string_value "%3APAL-NAME"))
-
-([fn71473_ProjectKB_Class10230] of  String
-
-	(name ":META-CLASS")
-	(string_value "%3ANAME"))
 
 ([fn71473_ProjectKB_Class105] of  String
 
@@ -379,6 +364,21 @@
 ([fn71473_ProjectKB_Class74] of  Property_List
 )
 
+([fn71473_ProjectKB_Class75] of  String
+
+	(name ":INSTANCE-ANNOTATION")
+	(string_value "%3AANNOTATION-TEXT"))
+
+([fn71473_ProjectKB_Class76] of  String
+
+	(name ":PAL-CONSTRAINT")
+	(string_value "%3APAL-NAME"))
+
+([fn71473_ProjectKB_Class77] of  String
+
+	(name ":META-CLASS")
+	(string_value "%3ANAME"))
+
 ([fn71473_ProjectKB_Class8] of  Property_List
 )
 
@@ -515,7 +515,7 @@
 
 	(properties [fn71473_ProjectKB_Class105]))
 
-([KB_728778_Class0] of  Map
+([KB_479769_Class0] of  Map
 )
 
 ([LAYOUT_PROPERTIES] of  Property_List
@@ -600,11 +600,11 @@
 
 	(browser_slot_names [BROWSER_SLOT_NAMES])
 	(customized_instance_widgets
-		[STANDARD_FACET_FORM_WIDGET]
-		[PAL_FORM_WIDGET]
-		[STANDARD_CLASS_FORM_WIDGET]
 		[INSTANCE_ANNOTATION_FORM_WIDGET]
-		[STANDARD_SLOT_FORM_WIDGET])
+		[STANDARD_FACET_FORM_WIDGET]
+		[STANDARD_SLOT_FORM_WIDGET]
+		[PAL_FORM_WIDGET]
+		[STANDARD_CLASS_FORM_WIDGET])
 	(default_cls_metaclass ":STANDARD-CLASS")
 	(default_facet_metaclass ":STANDARD-FACET")
 	(default_instance_widget_class_name "edu.stanford.smi.protege.widget.FormWidget")
