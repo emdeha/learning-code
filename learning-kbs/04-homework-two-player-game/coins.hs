@@ -131,17 +131,17 @@ negInf = -99999
 posInf :: Int
 posInf = 99999
 
-alphaBeta :: Node -> Int -> (Node, Int)
-alphaBeta n maxMoves =
+alphaBeta :: Node -> Int -> Int -> Int -> (Node, Int)
+alphaBeta n maxMoves alpha beta =
   case getChildren n of
     []       -> (n, evaluate n maxMoves)
-    children -> bestChild (reverse children) (turn n) maxMoves negInf posInf
+    children -> bestChild children (turn n) maxMoves alpha beta
 
 bestChild :: [Node] -> Turn -> Int -> Int -> Int -> (Node, Int)
 bestChild []     _ _        _     _    = error "No children"
-bestChild (x:[]) _ maxMoves _     _    = alphaBeta x maxMoves
+bestChild (x:[]) _ maxMoves alpha beta = alphaBeta x maxMoves alpha beta
 bestChild (x:xs) t maxMoves alpha beta = 
-    let v = alphaBeta x maxMoves
+    let v = alphaBeta x maxMoves alpha beta
     in  prune v
   where prune v
           | t == Me       && (snd v) >= beta ||
@@ -157,25 +157,12 @@ best (n1, val1) (n2, val2) t
     val1 <= val2 && t == Opponent = (n1, val1)
   | otherwise = (n2, val2)
 
-{-
-  Min-Max procedure
--}
-minMax :: Node -> Int -> (Node, Int)
-minMax n maxMoves =
-  case getChildren n of
-    []       -> (n, evaluate n maxMoves)
-    children -> bestChild' children (turn n) maxMoves
-
-bestChild' :: [Node] -> Turn -> Int -> (Node, Int)
-bestChild' []     _ _        = error "No children"
-bestChild' (x:[]) _ maxMoves = minMax x maxMoves
-bestChild' (x:xs) t maxMoves = best (minMax x maxMoves) (bestChild' xs t maxMoves) t
-
 
 getBestMove :: [Bool] -> (Int, Int, Int)
 getBestMove startBoard =
-    let (winBoard, moves) =
-          alphaBeta (Node {parent = Nil, board = startBoard, turn = Me}) (length startBoard)
+    let startNode = (Node {parent = Nil, board = startBoard, turn = Me})
+        (winBoard, moves) =
+          alphaBeta startNode (length startBoard) negInf posInf
         secondMove = getSecondMove winBoard
         coinsTaken = length . filter (==False) $ board secondMove
     in  (startIdx secondMove, coinsTaken, moves)
