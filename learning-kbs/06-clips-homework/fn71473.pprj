@@ -1,4 +1,4 @@
-; Sat Jan 02 12:03:06 EET 2016
+; Sat Jan 02 12:14:33 EET 2016
 ; 
 ;+ (version "3.5")
 ;+ (build "Build 663")
@@ -371,13 +371,13 @@
 
 ([fn71473_ProjectKB_Class76] of  String
 
-	(name ":PAL-CONSTRAINT")
-	(string_value "%3APAL-NAME"))
+	(name ":META-CLASS")
+	(string_value "%3ANAME"))
 
 ([fn71473_ProjectKB_Class77] of  String
 
-	(name ":META-CLASS")
-	(string_value "%3ANAME"))
+	(name ":PAL-CONSTRAINT")
+	(string_value "%3APAL-NAME"))
 
 ([fn71473_ProjectKB_Class8] of  Property_List
 )
@@ -515,7 +515,7 @@
 
 	(properties [fn71473_ProjectKB_Class105]))
 
-([KB_479769_Class0] of  Map
+([KB_324300_Class0] of  Map
 )
 
 ([LAYOUT_PROPERTIES] of  Property_List
@@ -601,8 +601,8 @@
 	(browser_slot_names [BROWSER_SLOT_NAMES])
 	(customized_instance_widgets
 		[INSTANCE_ANNOTATION_FORM_WIDGET]
-		[STANDARD_FACET_FORM_WIDGET]
 		[STANDARD_SLOT_FORM_WIDGET]
+		[STANDARD_FACET_FORM_WIDGET]
 		[PAL_FORM_WIDGET]
 		[STANDARD_CLASS_FORM_WIDGET])
 	(default_cls_metaclass ":STANDARD-CLASS")
