@@ -21,12 +21,11 @@ data Turn = Me | Opponent
 
 data Node = Node
           { parent :: Node
---          , startIdx :: Int
           , board :: Board
           , turn :: Turn
           }
           | Nil
-    deriving Show
+    deriving (Show, Eq)
 
 makeChild :: Node -> Board -> Node
 makeChild p b =
@@ -124,7 +123,7 @@ evaluate nd maxMoves =
 
 
 {-
-  Alpha-Beta slicing
+  Alpha-Beta pruning
 -}
 negInf :: Int
 negInf = -99999
@@ -136,18 +135,21 @@ alphaBeta :: Node -> Int -> (Node, Int)
 alphaBeta n maxMoves =
   case getChildren n of
     []       -> (n, evaluate n maxMoves)
-    children -> bestChild children (turn n) maxMoves negInf posInf
+    children -> bestChild (reverse children) (turn n) maxMoves negInf posInf
 
 bestChild :: [Node] -> Turn -> Int -> Int -> Int -> (Node, Int)
-bestChild []       _ _        _     _    = error "No children"
-bestChild (x:[])   _ maxMoves _     _    = alphaBeta x maxMoves
-bestChild (x:y:xs) t maxMoves alpha beta = 
-  let v = best (alphaBeta x maxMoves) (alphaBeta y maxMoves) t
-  in  if (snd v) >= beta
-      then v
-      else case xs of 
-             [] -> v
-             _  -> best v (bestChild xs t maxMoves (max (snd v) alpha) beta) t
+bestChild []     _ _        _     _    = error "No children"
+bestChild (x:[]) _ maxMoves _     _    = alphaBeta x maxMoves
+bestChild (x:xs) t maxMoves alpha beta = 
+    let v = alphaBeta x maxMoves
+    in  prune v
+  where prune v
+          | t == Me       && (snd v) >= beta ||
+            t == Opponent && (snd v) <= alpha = v
+          | otherwise =
+              let alpha' = if t == Me then max (snd v) alpha else alpha
+                  beta'  = if t == Opponent then min (snd v) beta  else beta
+              in best v (bestChild xs t maxMoves alpha' beta') t
 
 best :: (Node, Int) -> (Node, Int) -> Turn -> (Node, Int)
 best (n1, val1) (n2, val2) t
