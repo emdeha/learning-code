@@ -45,7 +45,7 @@ getChildren p =
 
           cycledBd = take cycleLen . cycle $ b
           cycledIndices = 
-            take cycleLen . cycle $ take boardLen . cycle $ iterate ((+) 1) 0
+            take cycleLen . cycle $ take boardLen . cycle $ iterate (1 +) 0
           cycleListIndexed = zip cycledIndices cycledBd
 
           possibleTakes = unfoldr getTakes cycleListIndexed
@@ -68,16 +68,16 @@ getTakes ::
   [IndexedBoard] -> 
   Maybe ([IndexedTake], [IndexedTake])
 getTakes ls
-  | length ls == 0 = Nothing
-  | otherwise      = Just $ spanMinus snd ls
+  | null ls   = Nothing
+  | otherwise = Just $ spanMinus snd ls
 
 getValidTakes :: 
   Int -> 
   [IndexedTake] -> 
   Maybe ([IndexedTake], [IndexedTake])
 getValidTakes i ls
-  | length ls == 0 = Nothing
-  | otherwise      = Just (take i ls, drop 1 ls)
+  | null ls   = Nothing
+  | otherwise = Just (take i ls, drop 1 ls)
 
 appendUpdateWith :: 
   [IndexedTake] ->
@@ -85,7 +85,7 @@ appendUpdateWith ::
   Board
 appendUpdateWith updateIndices ls =
     snd . unzip $
-      map (updateOrLeaveAt updateIndices) (zip (iterate ((+) 1) 0) ls)
+      map (updateOrLeaveAt updateIndices) (zip (iterate (1 +) 0) ls)
   where updateOrLeaveAt indices (i, e) =
           case find ((==i) . fst) indices of
             Nothing      -> (i, e)
@@ -96,8 +96,8 @@ nextChildBoard ::
   [[IndexedTake]] ->
   Maybe (Board, [[IndexedTake]])
 nextChildBoard b toTake
-  | length toTake == 0 = Nothing
-  | otherwise          = Just (appendUpdateWith (toTake !! 0) b, drop 1 toTake)
+  | null toTake = Nothing
+  | otherwise   = Just (appendUpdateWith (head toTake) b, drop 1 toTake)
 
       
 threeNode :: Node
@@ -144,8 +144,8 @@ bestChild (x:xs) t maxMoves alpha beta =
     let v = alphaBeta x maxMoves alpha beta
     in  prune v
   where prune v
-          | t == Me       && (snd v) >= beta ||
-            t == Opponent && (snd v) <= alpha = v
+          | t == Me       && snd v >= beta ||
+            t == Opponent && snd v <= alpha = v
           | otherwise =
               let alpha' = if t == Me then max (snd v) alpha else alpha
                   beta'  = if t == Opponent then min (snd v) beta  else beta
@@ -160,7 +160,7 @@ best (n1, val1) (n2, val2) t
 
 getBestMove :: [Bool] -> (Int, Int, Int)
 getBestMove startBoard =
-    let startNode = (Node {parent = Nil, board = startBoard, turn = Me})
+    let startNode = Node{parent = Nil, board = startBoard, turn = Me}
         (winBoard, moves) =
           alphaBeta startNode (length startBoard) negInf posInf
         secondMove = getSecondMove winBoard
@@ -174,7 +174,7 @@ getBestMove startBoard =
                    _   -> getSecondMove p
 
         startIdx nd =
-          case find ((==False) . snd) $ zip (iterate ((+) 1) 0) (board nd) of
+          case find ((==False) . snd) $ zip (iterate (1 +) 0) (board nd) of
             Nothing -> 0
             Just a  -> fst a
 
@@ -183,14 +183,14 @@ main :: IO ()
 main = do
   args <- getArgs
   case args of
-    [coins_count] -> case (validate coins_count) of
+    [coins_count] -> case validate coins_count of
                    Left err -> error err
                    Right count -> printResult $ getBestMove (countToBoard count)
     _         -> putStrLn usage
   where printResult (idx, count, moves) =
-          putStrLn $ "{ " ++ (show idx) ++ ", " ++ 
-                             (show count) ++ ", " ++ 
-                             (show moves) ++ " }"
+          putStrLn $ "{ " ++ show idx ++ ", " ++ 
+                             show count ++ ", " ++ 
+                             show moves ++ " }"
         usage = "Usage: coins <coins_count>"
 
 countToBoard :: Int -> [Bool]
@@ -198,8 +198,8 @@ countToBoard = flip replicate True
 
 validate :: String -> Either String Int
 validate n
-  | isNumber' n && (read n) > (0 :: Int) = Right (read n)
-  | otherwise = Left ("There must be a positive number of coins.")
+  | isNumber' n && read n > (0 :: Int) = Right (read n)
+  | otherwise = Left "There must be a positive number of coins."
 
 isNumber' :: String -> Bool
-isNumber' = and . map isDigit
+isNumber' = all isDigit
