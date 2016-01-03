@@ -47,7 +47,7 @@ def find_simple_paths_count(graph, start, end):
     sorted_nodes = topo_sort(graph)
     if sorted_nodes:
         visited = []
-        find_simple_paths_count_step(start, end.parents, visited, cnt)
+        cnt = find_simple_paths_count_step(start, end.parents, visited, cnt)
 
     return cnt
 
@@ -56,13 +56,14 @@ def find_simple_paths_count_step(start, parents, visited, cnt):
     for p in parents:
         if p == start:
             cnt += 1
-            break
         elif p in visited:
             cnt += 1
         else:
             if p.parents:
                 visited.append(p)
-                find_simple_paths_count_step(start, p.parents, visited, cnt)
+                cnt = find_simple_paths_count_step(start, p.parents, visited, cnt)
+
+    return cnt
 
 
 m = VertexDFS('m')
