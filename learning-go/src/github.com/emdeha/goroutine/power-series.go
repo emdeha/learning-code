@@ -17,7 +17,7 @@ func psmk() ps {
 }
 
 func psprint(F ps) {
-	for ; ; {
+	for {
 		select {
 		case el := <-F:
 			asString := el.FloatString(50)
@@ -56,6 +56,99 @@ func psderiv(F ps) ps {
 	}()
 
 	return D
+}
+
+
+func pscmul(f big.Rat, F ps) ps {
+	M := psmk()
+
+	go func() {
+		for {
+			g := <-F
+			M <- *f.Mul(&f, &g)
+		}
+	}()
+
+	return M
+}
+
+func psxmul(F ps) ps {
+	M := psmk()
+
+	go func() {
+		M <- *big.NewRat(0, 1)
+		for {
+			f := <-F
+			M <- f
+		}
+	}()
+
+	return M
+}
+
+type pspair [2]ps
+
+func pspairmk(F, G ps) pspair {
+	return [2]ps{F, G}
+}
+
+func doSplit(F, F0, F1 ps) {
+	f := <-F
+	H := psmk()
+	select {
+	case F0 <- f:
+		go doSplit(F, F0, H)
+		F1 <- f
+
+		pscopy(H, F1)
+		return
+	case F1 <- f:
+		go doSplit(F, H, F1)
+		F0 <- f
+
+		pscopy(H, F0)
+		return
+	}
+}
+
+func pscopy(F, C ps) {
+	for {
+		C <- <-F
+	}
+}
+
+func split(F ps) pspair {
+	FF := pspairmk(psmk(), psmk())
+
+	go doSplit(F, FF[0], FF[1])
+	
+	return FF
+}
+
+func psmul(F, G ps) ps {
+	M := psmk()
+
+	go func() {
+		f := <-F
+		g := <-G
+		f.Mul(&f, &g)
+		M <- f
+		FF := split(F)
+		GG := split(G)
+		fG := pscmul(f, GG[0])
+		gF := pscmul(g, FF[0])
+		xFG := psxmul(psmul(FF[1], GG[1]))
+		for {
+			fg := <-fG
+			gf := <-gF
+			xfg := <- xFG
+			fg.Add(&fg, &gf)
+			fg.Add(&fg, &xfg)
+			M <- fg
+		}
+	}()
+
+	return M
 }
 
 
@@ -100,12 +193,12 @@ func psOnes() ps {
 }
 
 func main() {
-//	F := psExp(1.0)
-//	G := psExp(1.0)
+	F := psExp(1.0)
+	G := psExp(1.0)
 //
 //	S := psadd(F, G)
 //	D := psderiv(F)
-	Ones := psOnes()
+//	Ones := psOnes()
 
-	psprint(psderiv(Ones))
+	psprint(psmul(F, G))
 }
