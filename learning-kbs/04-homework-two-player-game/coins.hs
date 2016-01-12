@@ -135,7 +135,7 @@ alphaBeta :: Node -> Int -> Int -> Int -> (Node, Int)
 alphaBeta n maxMoves alpha beta =
   case getChildren n of
     []       -> (n, evaluate n maxMoves)
-    children -> bestChild children (turn n) maxMoves alpha beta
+    children -> bestChild (reverse children) (turn n) maxMoves alpha beta
 
 bestChild :: [Node] -> Turn -> Int -> Int -> Int -> (Node, Int)
 bestChild []     _ _        _     _    = error "No children"
