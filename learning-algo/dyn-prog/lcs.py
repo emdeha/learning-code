@@ -24,6 +24,39 @@ def find_lcs(x, y):
 
     return c, b
 
+memo = [[]]
+
+iters = 0
+
+def find_lcs_memo(x, y): 
+    global memo
+    lenX = len(x)
+    lenY = len(y)
+    memo = [[0 for j in range(-1, lenY)] for i in range(-1, lenX)]
+
+    return find_lcs_memo_aux(x, y, lenX-1, lenY-1)
+
+def find_lcs_memo_aux(x, y, i, j):
+    if i == -1 or j == -1:
+        return 0
+
+    global memo
+    if memo[i][j] > 0:
+        return memo[i][j]
+
+    global iters
+    iters = iters + 1
+
+    best = 0
+    if x[i] == y[j]:
+        best = find_lcs_memo_aux(x, y, i-1, j-1) + 1
+    else:
+        best = max(find_lcs_memo_aux(x, y, i-1, j), find_lcs_memo_aux(x, y, i, j-1))
+
+    memo[i][j] = best
+    return best
+
+
 def print_lcs(b, x, i, j):
     if i == -1 or j == -1:
         return
@@ -47,11 +80,15 @@ def print_lcs_c_table(c, x, y, i, j):
     else:
         print_lcs_c_table(c, x, y, i, j-1)
 
-# x = [1,0,0,1,0,1,0,1]
-# y = [0,1,0,1,1,0,1,1,0]
+x = [1,0,0,1,0,1,0,1]
+y = [0,1,0,1,1,0,1,1,0]
 
-x = list("ABCBDAB")
-y = list("BDCABA")
+#x = list("ABCBDAB")
+#y = list("BDCABA")
 
-c, b = find_lcs(x, y)
-print_lcs_c_table(c, x, y, len(x) - 1, len(y) - 1)
+#c, b = find_lcs(x, y)
+#print_lcs_c_table(c, x, y, len(x) - 1, len(y) - 1)
+length = find_lcs_memo(x, y)
+print_lcs_c_table(memo, x, y, len(x) - 1, len(y) - 1)
+print "len: " + str(length)
+print "iters: " + str(iters)
