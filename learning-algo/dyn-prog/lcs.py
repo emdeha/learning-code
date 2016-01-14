@@ -35,9 +35,23 @@ def print_lcs(b, x, i, j):
     else:
         print_lcs(b, x, i, j-1)
 
+def print_lcs_c_table(c, x, y, i, j):
+    if i == -1 or j == -1:
+        return
+
+    if x[i] == y[j]:
+        print_lcs_c_table(c, x, y, i-1, j-1)
+        print x[i]
+    elif c[i-1][j] >= c[i][j-1]:
+        print_lcs_c_table(c, x, y, i-1, j)
+    else:
+        print_lcs_c_table(c, x, y, i, j-1)
+
+# x = [1,0,0,1,0,1,0,1]
+# y = [0,1,0,1,1,0,1,1,0]
 
 x = list("ABCBDAB")
 y = list("BDCABA")
 
 c, b = find_lcs(x, y)
-print_lcs(b, x, len(x) - 1, len(y) - 1)
+print_lcs_c_table(c, x, y, len(x) - 1, len(y) - 1)
