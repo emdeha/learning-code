@@ -3,7 +3,6 @@ def enum(**enums):
 
 dirs = enum(LEFT=0, UP=1, UP_LEFT=2)
 
-
 def find_lcs(x, y):
     lenX = len(x)
     lenY = len(y)
@@ -80,15 +79,23 @@ def print_lcs_c_table(c, x, y, i, j):
     else:
         print_lcs_c_table(c, x, y, i, j-1)
 
-x = [1,0,0,1,0,1,0,1]
-y = [0,1,0,1,1,0,1,1,0]
+def find_longest_monot(x):
+    y = sorted(x)
+    c, b = find_lcs(x, y)
+    print_lcs(b, x, len(x) - 1, len(y) - 1)
+
+#x = [1,0,0,1,0,1,0,1]
+#y = [0,1,0,1,1,0,1,1,0]
 
 #x = list("ABCBDAB")
 #y = list("BDCABA")
 
+x = [3, 10, 7, 22, 11, 1, 33, 11, 15, 202, 30, 15]
+find_longest_monot(x)
+
 #c, b = find_lcs(x, y)
 #print_lcs_c_table(c, x, y, len(x) - 1, len(y) - 1)
-length = find_lcs_memo(x, y)
-print_lcs_c_table(memo, x, y, len(x) - 1, len(y) - 1)
-print "len: " + str(length)
-print "iters: " + str(iters)
+# length = find_lcs_memo(x, y)
+# print_lcs_c_table(memo, x, y, len(x) - 1, len(y) - 1)
+# print "len: " + str(length)
+# print "iters: " + str(iters)
