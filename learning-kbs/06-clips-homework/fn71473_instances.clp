@@ -261,7 +261,7 @@
     (degree Bachelor)
     (gender M)
     (invested 100000)
-    (name "John Smith")
+    (name_ "John Smith")
     (network_size 20)
     (university SU)
     (year 3))
@@ -278,7 +278,7 @@
     (degree Bachelor Masters)
     (gender M)
     (invested 2000000)
-    (name "Peter Maurice")
+    (name_ "Peter Maurice")
     (network_size 60)
     (university UNWE)
     (year 3))
@@ -293,7 +293,7 @@
     (age 25)
     (debth 30000)
     (gender M)
-    (name "Poor Son")
+    (name_ "Poor Son")
     (worries 30))
 
   ([fn71473_Class16] of  Poor
@@ -301,7 +301,7 @@
     (age 22)
     (debth 10000)
     (gender F)
-    (name "Junky Daughter")
+    (name_ "Junky Daughter")
     (worries 20))
 
   ([fn71473_Class17] of  NotStudying
@@ -312,7 +312,7 @@
     (disco_time 160)
     (gender F)
     (money_per_month 300)
-    (name "Smiley Face")
+    (name_ "Smiley Face")
     (speech_skill 20.0)
     (university UNWE)
     (year 1))
@@ -325,7 +325,7 @@
     (disco_time 80)
     (gender M)
     (money_per_month 400)
-    (name "Jack Hanger")
+    (name_ "Jack Hanger")
     (speech_skill 50.0)
     (university SU)
     (year 3))
@@ -337,7 +337,7 @@
     (disco_time 20)
     (gender F)
     (money_per_month 200)
-    (name "Clever Girl")
+    (name_ "Clever Girl")
     (time_spent_studying 12)
     (university TU)
     (year 2))
@@ -349,7 +349,7 @@
     (disco_time 160)
     (gender M)
     (money_per_month 400)
-    (name "Simply Dumb")
+    (name_ "Simply Dumb")
     (time_spent_studying 8)
     (university TU)
     (year 3))
@@ -360,7 +360,7 @@
     (degree Bachelor)
     (free_time 10)
     (gender M)
-    (name "Work Aholic")
+    (name_ "Work Aholic")
     (university NBU)
     (year 4))
 
@@ -370,7 +370,7 @@
     (degree Bachelor)
     (free_time 8)
     (gender F)
-    (name "Servility Vane")
+    (name_ "Servility Vane")
     (university NBU)
     (year 2))
 
@@ -391,7 +391,7 @@
       [fn71473_Class5]
       [fn71473_Class8])
     (gender M)
-    (name "Doug Armstrong")
+    (name_ "Doug Armstrong")
     (network_size 100))
 
   ([fn71473_Class8] of  Business
@@ -404,6 +404,6 @@
     (age 30)
     (business [fn71473_Class10])
     (gender F)
-    (name "Mary Kate")
+    (name_ "Mary Kate")
     (network_size 50))
 )
