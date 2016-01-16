@@ -4,7 +4,7 @@
 ;+ (build "Build 663")
 
 
-(defclass %3ACLIPS_TOP_LEVEL_SLOT_CLASS "Fake class to save top-level slot information"
+(defclass :CLIPS_TOP_LEVEL_SLOT_CLASS "Fake class to save top-level slot information"
 	(is-a USER)
 	(role abstract)
 	(single-slot free_time
@@ -33,7 +33,7 @@
 	(single-slot count_exams
 ;+		(comment "The amount of exams a student has to take.")
 		(type INTEGER)
-		(range 0 %3FVARIABLE)
+		(range 0 ?VARIABLE)
 ;+		(cardinality 1 1)
 		(create-accessor read-write))
 	(single-slot worries
@@ -56,7 +56,7 @@
 	(single-slot time-to-read
 ;+		(comment "Represents the time in hours needed to read a Book.")
 		(type INTEGER)
-		(range 1 %3FVARIABLE)
+		(range 1 ?VARIABLE)
 ;+		(cardinality 1 1)
 		(create-accessor read-write))
 	(single-slot time_spent_studying
@@ -95,7 +95,7 @@
 	(single-slot yearly-income
 ;+		(comment "Represents the money a Business earns each year. Some businessmen may prefer not to share this information.")
 		(type INTEGER)
-		(range 1 %3FVARIABLE)
+		(range 1 ?VARIABLE)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot difficulty
@@ -142,7 +142,7 @@
 	(single-slot yearly_income
 ;+		(comment "Represents the money a Businessman earns each year. Some businessmen may prefer not to share this information.")
 		(type INTEGER)
-		(range 1 %3FVARIABLE)
+		(range 1 ?VARIABLE)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot name_
@@ -164,7 +164,7 @@
 	(single-slot money_per_month
 ;+		(comment "Represents the amount of money given to an Ordinary Student each month by his parents.")
 		(type INTEGER)
-		(range 1 %3FVARIABLE)
+		(range 1 ?VARIABLE)
 ;+		(cardinality 1 1)
 		(create-accessor read-write)))
 
@@ -192,6 +192,7 @@
 (defclass Student "The Student is a Person who attends a specific `university`, pursues a specific `degree` and is in a `year` of studying."
 	(is-a Person)
 	(role concrete)
+  (pattern-match reactive)
 	(single-slot year
 ;+		(comment "Represent the current year of studying the student attends.")
 		(type INTEGER)
@@ -216,6 +217,7 @@
 (defclass Working "A Working Student has `free_time` in hours per day."
 	(is-a Student)
 	(role concrete)
+  (pattern-match reactive)
 	(single-slot free_time
 ;+		(comment "Represents the time a Working Student can spend each day for activities other than work and university.")
 		(type INTEGER)
@@ -226,6 +228,7 @@
 (defclass Ordinary "An Ordinary Student has `money` which is given to him each month by his parents and `disco_time` he spends partying."
 	(is-a Student)
 	(role concrete)
+  (pattern-match reactive)
 	(single-slot disco_time
 ;+		(comment "Represents the time spent partying each month in hours. Its maximum amount is 4 weeks * 168 hours a week.\n\nThe default value is based on an old chalga song. The lyrics go like this: 'Only 8 hours we study, only 8 hours we sleep, and the remaining 8 we go after girlfriends.' So, given 5 work days a week * 4 weeks * 8 hours of girlfriends = 160 hours for party.")
 		(type INTEGER)
@@ -236,13 +239,14 @@
 	(single-slot money_per_month
 ;+		(comment "Represents the amount of money given to an Ordinary Student each month by his parents.")
 		(type INTEGER)
-		(range 1 %3FVARIABLE)
+		(range 1 ?VARIABLE)
 ;+		(cardinality 1 1)
 		(create-accessor read-write)))
 
 (defclass Studying "A Studying Student has `time_spent_studying`."
 	(is-a Ordinary)
 	(role concrete)
+  (pattern-match reactive)
 	(single-slot time_spent_studying
 ;+		(comment "Represents the time in hours per day the student spends on studying.")
 		(type INTEGER)
@@ -254,6 +258,7 @@
 (defclass NotStudying "A NotStudying Student has `count_exams` he has to take and `speech_skill` level which determines how good he is at convincing professors he has to pass."
 	(is-a Ordinary)
 	(role concrete)
+  (pattern-match reactive)
 	(single-slot speech_skill
 ;+		(comment "Represents how good a student is at convincing people to do things for him.")
 		(type FLOAT)
@@ -264,13 +269,14 @@
 	(single-slot count_exams
 ;+		(comment "The amount of exams a student has to take.")
 		(type INTEGER)
-		(range 0 %3FVARIABLE)
+		(range 0 ?VARIABLE)
 ;+		(cardinality 1 1)
 		(create-accessor read-write)))
 
 (defclass Businessman "Businessman is a Person who has a `business`, and the `network_size` of people he knows."
 	(is-a Person)
 	(role concrete)
+  (pattern-match reactive)
 	(single-slot network_size
 ;+		(comment "Represents the number of people a Businessman knows and can rely on. Again, some businessmen may prefer not to share this information.")
 		(type INTEGER)
@@ -286,6 +292,7 @@
 (defclass StartupFounder "A StartupFounder is a Businessman who has founded a startup while being a Student. He has `invested` money in the founded startup.C"
 	(is-a Student Businessman)
 	(role concrete)
+  (pattern-match reactive)
 	(single-slot invested
 ;+		(comment "Represents money invested in the startup.")
 		(type INTEGER)
@@ -295,6 +302,7 @@
 (defclass Poor "A Poor Person has only accumulated `debth` and accumulated `worries`. A person who has only `debth` or only `worries` is not considered poor."
 	(is-a Person)
 	(role concrete)
+  (pattern-match reactive)
 	(single-slot debth
 ;+		(comment "Accumulated debth in dollars.")
 		(type INTEGER)
@@ -309,6 +317,7 @@
 (defclass Business "A Business has a `type` and an `yearly_income`."
 	(is-a USER)
 	(role concrete)
+  (pattern-match reactive)
 	(single-slot type
 ;+		(comment "Represents the type of business a Businessman can have. It's not a problem for a Businessman to run multiple types of businesses.")
 		(type SYMBOL)
@@ -318,13 +327,14 @@
 	(single-slot yearly-income
 ;+		(comment "Represents the money a Business earns each year. Some businessmen may prefer not to share this information.")
 		(type INTEGER)
-		(range 1 %3FVARIABLE)
+		(range 1 ?VARIABLE)
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))
 
 (defclass Book "A Book is represented by its `name`, `author`, `genre`, `time-to-read`, `difficulty` and `authenticity`."
 	(is-a USER)
 	(role concrete)
+  (pattern-match reactive)
 	(single-slot difficulty
 ;+		(comment "Represents how difficult it is to read a Book in a 1 to 5 scale.")
 		(type INTEGER)
@@ -356,6 +366,6 @@
 	(single-slot time-to-read
 ;+		(comment "Represents the time in hours needed to read a Book.")
 		(type INTEGER)
-		(range 1 %3FVARIABLE)
+		(range 1 ?VARIABLE)
 ;+		(cardinality 1 1)
 		(create-accessor read-write)))
