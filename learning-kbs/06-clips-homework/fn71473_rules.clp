@@ -119,6 +119,11 @@
   ?sb <- (suggest-book)
   (poor ?p)
 =>
-  (printout t "Book suggested." crlf)
-  (send [p] print)
+  (do-for-instance ((?b Book)) 
+   (numberp 1)
+   (progn (printout t "Book suggested." crlf) (send ?b print)))
 )
+
+; (deffunction poor-query (?b ?debth ?worries)
+;   
+; )
