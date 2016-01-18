@@ -79,24 +79,46 @@
 ;   (assert suggest-book)
 ; )
 ; 
-; (defrule determine-poor
-;   (occupation Poor)
-;   (type-checked)
-; =>
-;   (retract type-checked)
-;   (assert poor-determined)
-; )
-; 
-; (defrule check-input-poor
-;   (poor-determined)
-; =>
-;   (retract poor-determined)
-;   (assert suggest-book)
-; )
+(defrule determine-poor
+  (occupation Poor)
+  ?tc <- (type-checked)
+=>
+  (printout t "How many worries do you have?" crlf)
+  (assert (worries (read)))
+  (printout t "How much debth do you have?" crlf)
+  (assert (debth (read)))
 
-(defrule determine-book
+  (retract ?tc)
+  (assert (poor-determined))
+)
+
+(defrule check-input-poor
+  ?pd <- (poor-determined)
+  (worries ?w & :(numberp ?w))
+  (debth ?d & :(numberp ?d))
+  (age ?age)
+  (gender ?g)
+  (occupation ?o)
+  (name ?n)
+=>
+  (make-instance p of Poor
+    (age ?age)
+    (debth ?d)
+    (gender ?g)
+    (name_ ?n)
+    (worries ?w))
+  (assert (poor p))
+
+  (printout t "Poor input checked." crlf)
+
+  (retract ?pd)
+  (assert (suggest-book))
+)
+
+(defrule determine-book-poor
   ?sb <- (suggest-book)
+  (poor ?p)
 =>
   (printout t "Book suggested." crlf)
-  (retract ?sb)
+  (send [p] print)
 )
