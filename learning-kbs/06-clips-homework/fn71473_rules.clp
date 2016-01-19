@@ -115,15 +115,24 @@
   (assert (suggest-book))
 )
 
-(defrule determine-book-poor
-  ?sb <- (suggest-book)
-  (poor ?p)
-=>
-  (do-for-instance ((?b Book)) 
-   (numberp 1)
-   (progn (printout t "Book suggested." crlf) (send ?b print)))
+(deffunction poor-query (?b ?debth ?worries)
+  (bind ?authenticity (send ?b get-authenticity))
+  (bind ?difficulty (send ?b get-difficulty))
+  (bind ?timeToRead (send ?b get-time-to-read))
+
+  (and (<= ?timeToRead ?worries) 
+       (<= (/ ?debth 1000) (* ?authenticity ?difficulty))
+  )
 )
 
-; (deffunction poor-query (?b ?debth ?worries)
-;   
-; )
+(defrule determine-book-poor
+  ?sb <- (suggest-book)
+  (poor p)
+=>
+  (bind ?books (find-all-instances ((?b Book)) 
+    (poor-query ?b (send [p] get-debth) (send [p] get-worries))))
+  (bind ?n (random 1 (length ?books)))
+
+  (printout t "Possible books: " (length ?books) crlf)
+  (send (nth$ ?n ?books) print)
+)
