@@ -19,6 +19,10 @@
 ; \end{itemize}
 ;
 
+;
+; От тук почва програмата.
+; Опитваме се да определим прости факти за човека, а също така и какъв е по
+; професия - Бедняк, Бизнесмен или Студент.
 (defrule determine-type
   (initial-fact)
 =>
@@ -33,6 +37,7 @@
   (assert (type-determined))
 )
 
+; Това правило проверява входа.
 (defrule check-input-type
   ?td <- (type-determined)
   (age ?age)
@@ -47,6 +52,10 @@
   (assert (type-checked))
 )
 
+;
+; Следващите правила препоръчват книга на бизнесмен.
+;
+; Това правило дохарактеризира бизнесмен.
 (defrule determine-business
   (occupation Businessman)
   ?tc <- (type-checked)
@@ -56,6 +65,7 @@
   (assert (business-determined))
 )
 
+; Това правило проверява данните от характеристиката на бизнесмен.
 (defrule check-input-business
   ?bd <- (business-determined)
 =>
@@ -64,21 +74,29 @@
   (assert (suggest-book))
 )
 
-; (defrule determine-student
-;   (occupation Student)
-;   (type-checked)
-; =>
-;   (retract type-checked)
-;   (assert student-determined)
-; )
-; 
-; (defrule check-input-student
-;   (student-determined)
-; =>
-;   (retract student-determined)
-;   (assert suggest-book)
-; )
-; 
+;
+; Следващите правила препоръчват книга на студент.
+;
+; Това правило дохарактеризира студент.
+(defrule determine-student
+  (occupation Student)
+  (type-checked)
+=>
+  (retract type-checked)
+  (assert student-determined)
+)
+
+(defrule check-input-student
+  (student-determined)
+=>
+  (retract student-determined)
+  (assert suggest-book)
+)
+
+;
+; Следващите правила препоръчват книга на бедняк.
+;
+; Това правило характеризира бедняк.
 (defrule determine-poor
   (occupation Poor)
   ?tc <- (type-checked)
@@ -92,6 +110,7 @@
   (assert (poor-determined))
 )
 
+; Това правило проверява входа от характеризацията на бедняка.
 (defrule check-input-poor
   ?pd <- (poor-determined)
   (worries ?w & :(numberp ?w))
@@ -115,6 +134,7 @@
   (assert (suggest-book))
 )
 
+; Тази функция определя евристиката за препоръчване на книга на бедняк.
 (deffunction poor-query (?b ?debth ?worries)
   (bind ?authenticity (send ?b get-authenticity))
   (bind ?difficulty (send ?b get-difficulty))
@@ -125,6 +145,7 @@
   )
 )
 
+; Това правило препоръчва книга на бедняк.
 (defrule determine-book-poor
   ?sb <- (suggest-book)
   (poor p)
