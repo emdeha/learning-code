@@ -28,28 +28,35 @@
 =>
   (printout t "What's your name?" crlf)
   (assert (name (read)))
-  (printout t "What's your age?" crlf)
-  (assert (age (read)))
-  (printout t "What's your gender: M/F?" crlf)
-  (assert (gender (read)))
-  (printout t "What's your current occupation: Poor/Businessman/Student?" crlf)
-  (assert (occupation (read)))
-  (assert (type-determined))
-)
 
-; Това правило проверява входа.
-(defrule check-input-type
-  ?td <- (type-determined)
-  (age ?age)
-  (gender ?g)
-  (occupation ?o)
-  (test (and (>= ?age 2) (<= ?age 150)))
-  (test (or (eq ?g M) (eq ?g F)))
-  (test (or (eq ?o Businessman) (eq ?o Poor) (eq ?o Student)))
-=>
-  (printout t "Input checked." crlf)
-  (retract ?td)
-  (assert (type-checked))
+  (printout t "What's your age?" crlf)
+  (bind ?age (read))
+  (if (and (>= ?age 2) (<= ?age 150))
+      then
+      (assert (age ?age))
+      else
+      (printout t "Age must be between 2 and 150" crlf)
+      (return))
+
+  (printout t "What's your gender: M/F?" crlf)
+  (bind ?g (read))
+  (if (or (eq ?g M) (eq ?g F))
+      then
+      (assert (gender ?g))
+      else
+      (printout t "Gender must be either M or F" crlf)
+      (return))
+
+  (printout t "What's your current occupation: Poor/Businessman/Student?" crlf)
+  (bind ?o (read))
+  (if (or (eq ?o Businessman) (eq ?o Poor) (eq ?o Student))
+      then 
+      (assert (occupation ?o))
+      else
+      (printout t "Occupation must be either Poor/Businessman/Student" crlf)
+      (return))
+
+  (assert (type-determined))
 )
 
 ;
@@ -58,10 +65,10 @@
 ; Това правило дохарактеризира бизнесмен.
 (defrule determine-business
   (occupation Businessman)
-  ?tc <- (type-checked)
+  ?td <- (type-determined)
 =>
   (printout t "Business determined." crlf)
-  (retract ?tc)
+  (retract ?td)
   (assert (business-determined))
 )
 
@@ -80,17 +87,17 @@
 ; Това правило дохарактеризира студент.
 (defrule determine-student
   (occupation Student)
-  (type-checked)
+  ?td <- (type-determined)
 =>
-  (retract type-checked)
-  (assert student-determined)
+  (retract ?td)
+  (assert (student-determined))
 )
 
 (defrule check-input-student
   (student-determined)
 =>
   (retract student-determined)
-  (assert suggest-book)
+  (assert (suggest-book))
 )
 
 ;
@@ -99,14 +106,27 @@
 ; Това правило характеризира бедняк.
 (defrule determine-poor
   (occupation Poor)
-  ?tc <- (type-checked)
+  ?td <- (type-determined)
 =>
   (printout t "How many worries do you have?" crlf)
-  (assert (worries (read)))
-  (printout t "How much debth do you have?" crlf)
-  (assert (debth (read)))
+  (bind ?w (read))
+  (if (numberp ?w)
+      then
+      (assert (worries ?w))
+      else
+      (printout t "Worries must be a number" crlf)
+      (return))
 
-  (retract ?tc)
+  (printout t "How much debth do you have?" crlf)
+  (bind ?d (read))
+  (if (numberp ?d)
+      then
+      (assert (debth ?d)) 
+      else
+      (printout t "Debth must be a number" crlf)
+      (return))
+
+  (retract ?td)
   (assert (poor-determined))
 )
 
