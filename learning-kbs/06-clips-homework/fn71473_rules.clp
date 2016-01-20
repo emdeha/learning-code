@@ -60,10 +60,38 @@
 )
 
 ;
+; Следващите функции са общи за някои правила.
+;
+; Определя с бизнес.
+(deffunction determine-business ()
+  (printout t "What type of business do you have?" crlf)
+  (printout t (slot-allowed-values Bussiness type) crlf)
+  (bind ?type (read))
+  (if (not (member ?type (slot-allowed-values Business type)))
+      then
+      (printout t "Not in allowed types" crlf)
+      (return))
+
+  (printout t "What's your yearly income?")
+  (bind ?yearlyIncome (read))
+  (if (< ?yearlyIncome 0)
+      then
+      (printout t "Must be positive" crlf)
+      (return))
+
+  (make-instance b of Business
+    (type ?type)
+    (yearly_income ?yearlyIncome)
+  )
+
+  (return b)
+)
+
+;
 ; Следващите правила препоръчват книга на бизнесмен.
 ;
 ; Това правило дохарактеризира бизнесмен.
-(defrule determine-business
+(defrule determine-businessman
   (occupation Businessman)
   ?td <- (type-determined)
 =>
@@ -72,32 +100,210 @@
   (assert (business-determined))
 )
 
-; Това правило проверява данните от характеристиката на бизнесмен.
-(defrule check-input-business
-  ?bd <- (business-determined)
-=>
-  (printout t "Business input checked." crlf)
-  (retract ?bd)
-  (assert (suggest-book))
-)
-
 ;
 ; Следващите правила препоръчват книга на студент.
-;
+(deffunction determine-working (?a ?n ?g ?uni ?yr ?deg)
+  (printout t "How much free time do you have?" crlf)
+  (bind ?ft (read))
+  (if (not (and (>= ?ft 1) (<= ?ft 24)))
+      then
+      (printout t "Free time must be between 1 and 24" crlf)
+      (return))
+  
+  (make-instance ws of Working
+    (age ?a)
+    (name ?n)
+    (grade ?g)
+    (university ?uni)
+    (year ?yr)
+    (degree ?deg)
+    (free_time ?ft))
+  (assert (working-student ws))
+)
+
+(deffunction determine-ordinary ()
+  (printout t "How much time do you spend to party in a month?" crlf)
+  (bind ?dt (read))
+  (if (not (and (>= ?dt 0) (<= ?dt 672)))
+      then
+      (printout t "Must be in [0;672]" crlf)
+      (return))
+
+  (printout t "How much money per month do you have?" crlf)
+  (bind ?mpm (read))
+  (if (< ?mpm 1)
+      then
+      (printout t "Must be positive" crlf)
+      (return))
+
+  (return (create$ ?dt ?mpm))
+)
+
+(deffunction determine-studying (?a ?n ?g ?uni ?yr ?deg)
+  (bind ?ls (determine-ordinary))
+  (bind ?dt (nth 1 ?ls))
+  (bind ?mpm (nth 2 ?ls))
+
+  (printout t "How much time do you spend stydying?" crlf)
+  (bind ?tss (read))
+  (if (not (and (>= ?tss 1) (<= ?tss 24)))
+      then
+      (printout t "Must be [1;24]" crlf)
+      (return))
+
+  (make-instance sts of Studying
+    (age ?a)
+    (name ?n)
+    (grade ?g)
+    (university ?uni)
+    (year ?yr)
+    (degree ?deg)
+    (disco_time ?dt)
+    (money_per_month ?mpm)
+    (time_spent_studying ?tss))
+  (assert (studying-student sts))
+)
+
+(deffunction determine-not-studying (?a ?n ?g ?uni ?yr ?deg)
+  (bind ?ls (determine-ordinary))
+  (bind ?dt (nth 1 ?ls))
+  (bind ?mpm (nth 2 ?ls))
+
+  (printout t "What's your speech skill (1 to 100)?" crlf)
+  (bind ?ss (read))
+  (if (not (and (>= ?ss 1) (<= ?ss 100)))
+      then
+      (printout t "Must be in [1;100]" crlf)
+      (return))
+
+  (printout t "How many exams do you have?" crlf)
+  (bind ?ce (read))
+  (if (< ?ce 0)
+      then
+      (printout t "Must be positive" crlf)
+      (return))
+
+  (make-instance nsts of NotStudying
+    (age ?a)
+    (name ?n)
+    (grade ?g)
+    (university ?uni)
+    (year ?yr)
+    (degree ?deg)
+    (disco_time ?dt)
+    (money_per_month ?mpm)
+    (speech_skill ?ss)
+    (count_exams ?ce))
+  (assert (not-studying-student nsts))
+)
+
+(deffunction determine-startup-founder (?a ?n ?g ?uni ?yr ?deg)
+  (bind ?b (determine-business))
+
+  (printout t "How much money are invested in your business?" crlf)
+  (bind ?in (read))
+  (if (< ?in 0) 
+      then
+      (printout t "Must be positive" crlf)
+      (return))
+
+  (printout t "How large is your network?" crlf)
+  (bind ?ns (read))
+  (if (< ?ns 0)
+      then
+      (printout t "Must be positive" crlf)
+      (return))
+
+  (make-instance sf of StartupFounder
+    (age ?a)
+    (name ?n)
+    (gender ?g)
+    (university ?uni)
+    (year ?yr)
+    (degree ?deg)
+    (invested ?in)
+    (business ?b)
+    (network_size ?ns))
+  (assert (startup-founder sf))
+)
+
+; Типовете студенти
+(defglobal ?*student-types* = (create$ Studying NotStudying Working StartupFounder))
+
 ; Това правило дохарактеризира студент.
 (defrule determine-student
   (occupation Student)
+  (age ?a)
+  (name ?n)
+  (gender ?g)
   ?td <- (type-determined)
 =>
-  (retract ?td)
-  (assert (student-determined))
+  (printout t "What year are you?" crlf)
+  (bind ?yr (read))
+  (if (not (and (>= ?yr 1) (<= ?yr 8)))
+      then
+      (printout t "Year must be between 1 and 8" crlf)
+      (return))
+
+  (printout t "In which university are you?" crlf)
+  (printout t (slot-allowed-values Student university) crlf)
+  (bind ?uni (read))
+  (if (not (member ?uni (slot-allowed-values Student university)))
+      then
+      (printout t "Uni not in allowed values" crlf)
+      (return))
+
+  (printout t "What degree are you pursuing?" crlf)
+  (printout t (slot-allowed-values Student degree) crlf)
+  (bind ?deg (read))
+  (if (not (member ?deg (slot-allowed-values Student degree)))
+      then
+      (printout t "Degree not in allowed values" crlf)
+      (return))
+
+  (printout t "What type of student are you?" crlf)
+  (printout t ?*student-types* crlf)
+  (bind ?t (read))
+  (if (not (member ?t ?*student-types*))
+      then
+      (printout t "Type not in allowed values" crlf)
+      (return))
+
+  (bind ?success 
+    (switch ?t
+      (case "Working" then (determine-working ?a ?n ?g ?uni ?yr ?deg))
+      (case "Studying" then (determine-studying ?a ?n ?g ?uni ?yr ?deg))
+      (case "NotStudying" then (determine-not-studying ?a ?n ?g ?uni ?yr ?deg))
+      (case "StartupFounder" then (determine-startup-founder ?a ?n ?g ?uni ?yr ?deg))
+      (default "none")))
+
+  (if (neq ?success "none")
+      then
+      (retract ?td))
 )
 
-(defrule check-input-student
-  (student-determined)
+(defrule suggest-book-working-student
+  ?sb <- (suggest-book)
+  (working-student ws)
 =>
-  (retract student-determined)
-  (assert (suggest-book))
+)
+
+(defrule suggest-book-studying-student
+  ?sb <- (suggest-book)
+  (studying-student sts)
+=>
+)
+
+(defrule check-input-not-studying-student
+  ?sb <- (suggest-book)
+  (not-studying-student nsts)
+=>
+)
+
+(defrule check-input-startup-founder
+  ?sb <- (suggest-book)
+  (startup-founder sf)
+=>
 )
 
 ;
@@ -106,6 +312,9 @@
 ; Това правило характеризира бедняк.
 (defrule determine-poor
   (occupation Poor)
+  (age ?a)
+  (name ?n)
+  (gender ?g)
   ?td <- (type-determined)
 =>
   (printout t "How many worries do you have?" crlf)
@@ -126,32 +335,15 @@
       (printout t "Debth must be a number" crlf)
       (return))
 
-  (retract ?td)
-  (assert (poor-determined))
-)
-
-; Това правило проверява входа от характеризацията на бедняка.
-(defrule check-input-poor
-  ?pd <- (poor-determined)
-  (worries ?w & :(numberp ?w))
-  (debth ?d & :(numberp ?d))
-  (age ?age)
-  (gender ?g)
-  (occupation ?o)
-  (name ?n)
-=>
   (make-instance p of Poor
-    (age ?age)
-    (debth ?d)
+    (age ?a)
     (gender ?g)
-    (name_ ?n)
-    (worries ?w))
+    (name ?n)
+    (worries ?w)
+    (debth ?d))
   (assert (poor p))
 
-  (printout t "Poor input checked." crlf)
-
-  (retract ?pd)
-  (assert (suggest-book))
+  (retract ?td)
 )
 
 ; Тази функция определя евристиката за препоръчване на книга на бедняк.
