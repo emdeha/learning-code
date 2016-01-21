@@ -282,32 +282,95 @@
       (retract ?td))
 )
 
+; Тази функция определя евристиката за препоръчване на книга 
+; на работещ студент
+(deffunction working-query (?b ?year ?freetime) 
+  (bind ?authenticity (send ?b get-authenticity))
+  (bind ?difficulty (send ?b get-difficulty))
+  (bind ?timeToRead (send ?b get-time-to-read))
+
+  (and (> ?freetime ?timeToRead)
+       (< ?difficulty ?year))
+)
+
 (defrule suggest-book-working-student
   (working-student ws)
 =>
-  (printout t "Working student" crlf)
-  (send [ws] print)
+  (bind ?books (find-all-instances ((?b Book)) 
+    (working-query ?b (send [ws] get-year) (send [ws] get-free_time))))
+  (bind ?n (random 1 (length ?books)))
+
+  (printout t "Possible books: " (length ?books) crlf)
+  (send (nth$ ?n ?books) print)
+)
+
+; Тази функция определя евристиката за препоръчване на книга на
+; учещ студент
+(deffunction studying-query (?b ?year ?timespentstudying)
+  (bind ?authenticity (send ?b get-authenticity))
+  (bind ?difficulty (send ?b get-difficulty))
+  (bind ?timeToRead (send ?b get-time-to-read))
+
+  (and (> (* (- 24 ?timespentstudying) 1.5) ?timeToRead)
+       (< ?difficulty ?year))
 )
 
 (defrule suggest-book-studying-student
   (studying-student sts)
 =>
-  (printout t "Studying student" crlf)
-  (send [sts] print)
+  (bind ?books (find-all-instances ((?b Book)) 
+    (studying-query ?b (send [sts] get-year) (send [sts] get-time_spent_studying))))
+  (bind ?n (random 1 (length ?books)))
+
+  (printout t "Possible books: " (length ?books) crlf)
+  (send (nth$ ?n ?books) print)
 )
 
-(defrule check-input-not-studying-student
+; Тази функция определя евристиката за препоръчване на книга на
+; неучещ студент
+(deffunction not-studying-query (?b ?year ?speechskill ?countexams)
+  (bind ?authenticity (send ?b get-authenticity))
+  (bind ?difficulty (send ?b get-difficulty))
+  (bind ?timeToRead (send ?b get-time-to-read))
+
+  (and (> (/ ?speechskill (/ ?countexams 20)) (* ?difficulty ?authenticity))
+       (< ?difficulty ?year))
+)
+
+(defrule suggest-book-not-studying-student
   (not-studying-student nsts)
 =>
-  (printout t "Not studying student" crlf)
-  (send [nsts] print)
+  (bind ?books (find-all-instances ((?b Book)) 
+    (not-studying-query ?b (send [nsts] get-year) 
+                           (send [nsts] get-speech_skill)
+                           (send [nsts] get-count_exams))))
+  (bind ?n (random 1 (length ?books)))
+
+  (printout t "Possible books: " (length ?books) crlf)
+  (send (nth$ ?n ?books) print)
 )
 
-(defrule check-input-startup-founder
+; Тази функция определя евристиката за препоръчване на книга на
+; основател на стартъп
+(deffunction startup-founder-query (?b ?year ?invested)
+  (bind ?authenticity (send ?b get-authenticity))
+  (bind ?difficulty (send ?b get-difficulty))
+  (bind ?timeToRead (send ?b get-time-to-read))
+
+  (and (< (* ?authenticity ?difficulty ?timeToRead) ?invested)
+       (< ?difficulty ?year))
+)
+
+(defrule suggest-book-startup-founder
   (startup-founder sf)
 =>
-  (printout t "Startup Founder" crlf)
-  (send [sf] print)
+  (bind ?books (find-all-instances ((?b Book)) 
+    (startup-founder-query ?b (send [sf] get-year)
+                              (send [sf] get-invested))))
+  (bind ?n (random 1 (length ?books)))
+
+  (printout t "Possible books: " (length ?books) crlf)
+  (send (nth$ ?n ?books) print)
 )
 
 ;
@@ -357,8 +420,7 @@
   (bind ?timeToRead (send ?b get-time-to-read))
 
   (and (<= ?timeToRead ?worries) 
-       (<= (/ ?debth 1000) (* ?authenticity ?difficulty))
-  )
+       (<= (/ ?debth 1000) (* ?authenticity ?difficulty)))
 )
 
 ; Това правило препоръчва книга на бедняк.
