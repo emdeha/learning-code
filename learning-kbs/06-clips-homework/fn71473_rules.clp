@@ -424,7 +424,7 @@
 )
 
 ; Това правило препоръчва книга на бедняк.
-(defrule determine-book-poor
+(defrule suggest-book-poor
   (poor p)
 =>
   (bind ?books (find-all-instances ((?b Book)) 
