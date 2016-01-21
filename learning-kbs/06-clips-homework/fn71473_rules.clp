@@ -65,14 +65,14 @@
 ; Определя с бизнес.
 (deffunction determine-business ()
   (printout t "What type of business do you have?" crlf)
-  (printout t (slot-allowed-values Bussiness type) crlf)
+  (printout t (slot-allowed-values Business type) crlf)
   (bind ?type (read))
   (if (not (member ?type (slot-allowed-values Business type)))
       then
       (printout t "Not in allowed types" crlf)
       (return))
 
-  (printout t "What's your yearly income?")
+  (printout t "What's your yearly income?" crlf)
   (bind ?yearlyIncome (read))
   (if (< ?yearlyIncome 0)
       then
@@ -81,7 +81,7 @@
 
   (make-instance b of Business
     (type ?type)
-    (yearly_income ?yearlyIncome)
+    (yearly-income ?yearlyIncome)
   )
 
   (return b)
@@ -112,8 +112,8 @@
   
   (make-instance ws of Working
     (age ?a)
-    (name ?n)
-    (grade ?g)
+    (name_ ?n)
+    (gender ?g)
     (university ?uni)
     (year ?yr)
     (degree ?deg)
@@ -144,7 +144,7 @@
   (bind ?dt (nth 1 ?ls))
   (bind ?mpm (nth 2 ?ls))
 
-  (printout t "How much time do you spend stydying?" crlf)
+  (printout t "How much time do you spend studying [1:24]?" crlf)
   (bind ?tss (read))
   (if (not (and (>= ?tss 1) (<= ?tss 24)))
       then
@@ -153,8 +153,8 @@
 
   (make-instance sts of Studying
     (age ?a)
-    (name ?n)
-    (grade ?g)
+    (name_ ?n)
+    (gender ?g)
     (university ?uni)
     (year ?yr)
     (degree ?deg)
@@ -185,8 +185,8 @@
 
   (make-instance nsts of NotStudying
     (age ?a)
-    (name ?n)
-    (grade ?g)
+    (name_ ?n)
+    (gender ?g)
     (university ?uni)
     (year ?yr)
     (degree ?deg)
@@ -216,7 +216,7 @@
 
   (make-instance sf of StartupFounder
     (age ?a)
-    (name ?n)
+    (name_ ?n)
     (gender ?g)
     (university ?uni)
     (year ?yr)
@@ -271,10 +271,10 @@
 
   (bind ?success 
     (switch ?t
-      (case "Working" then (determine-working ?a ?n ?g ?uni ?yr ?deg))
-      (case "Studying" then (determine-studying ?a ?n ?g ?uni ?yr ?deg))
-      (case "NotStudying" then (determine-not-studying ?a ?n ?g ?uni ?yr ?deg))
-      (case "StartupFounder" then (determine-startup-founder ?a ?n ?g ?uni ?yr ?deg))
+      (case Working then (determine-working ?a ?n ?g ?uni ?yr ?deg))
+      (case Studying then (determine-studying ?a ?n ?g ?uni ?yr ?deg))
+      (case NotStudying then (determine-not-studying ?a ?n ?g ?uni ?yr ?deg))
+      (case StartupFounder then (determine-startup-founder ?a ?n ?g ?uni ?yr ?deg))
       (default "none")))
 
   (if (neq ?success "none")
@@ -283,27 +283,31 @@
 )
 
 (defrule suggest-book-working-student
-  ?sb <- (suggest-book)
   (working-student ws)
 =>
+  (printout t "Working student" crlf)
+  (send [ws] print)
 )
 
 (defrule suggest-book-studying-student
-  ?sb <- (suggest-book)
   (studying-student sts)
 =>
+  (printout t "Studying student" crlf)
+  (send [sts] print)
 )
 
 (defrule check-input-not-studying-student
-  ?sb <- (suggest-book)
   (not-studying-student nsts)
 =>
+  (printout t "Not studying student" crlf)
+  (send [nsts] print)
 )
 
 (defrule check-input-startup-founder
-  ?sb <- (suggest-book)
   (startup-founder sf)
 =>
+  (printout t "Startup Founder" crlf)
+  (send [sf] print)
 )
 
 ;
@@ -338,7 +342,7 @@
   (make-instance p of Poor
     (age ?a)
     (gender ?g)
-    (name ?n)
+    (name_ ?n)
     (worries ?w)
     (debth ?d))
   (assert (poor p))
@@ -359,7 +363,6 @@
 
 ; Това правило препоръчва книга на бедняк.
 (defrule determine-book-poor
-  ?sb <- (suggest-book)
   (poor p)
 =>
   (bind ?books (find-all-instances ((?b Book)) 
