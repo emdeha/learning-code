@@ -9,13 +9,23 @@
 ; препоръча книга.  В крайна сметка, това не би направило щастливи този тип
 ; хора.
 ;
-; Препоръката на книга ще става на базата на следните правила:
+; Системата работи като първо определя какъв тип е човека:
 ; \begin{itemize}
 ;   \item determine-type - определя типа на човека; оттук стартираме
 ;   \item determine-business - доспецифицира бизнес човек
 ;   \item determine-student - доспецифицира студент
 ;   \item determine-poor - доспецифицира бедняк
-;   \item determine-book - на базата на информацията от предишните правила, препоръчва книга
+; \end{itemize}
+;
+; След това, на базата на разни параметри от типа човек, системата определя
+; каква книга да му препоръча:
+; \begin{itemize}
+;   \item suggest-book-poor - препоръчва книга на бедняк
+;   \item suggest-book-working - препоръчва книга на работещ студент
+;   \item suggest-book-studying - препоръчва книга на учещ студент
+;   \item suggest-book-not-studying - препоърчва книга на неучещ студент
+;   \item suggest-book-startup-founder - препоръчва книга на основател на стартъп
+;   \item suggest-book-businessman - препоръчва книга на бизнесмен
 ; \end{itemize}
 ;
 
@@ -62,7 +72,7 @@
 ;
 ; Следващите функции са общи за някои правила.
 ;
-; Определя с бизнес.
+; Определя какъв бизнес има даден човек.
 (deffunction determine-business ()
   (printout t "What type of business do you have?" crlf)
   (printout t (slot-allowed-values Business type) crlf)
@@ -101,7 +111,9 @@
 )
 
 ;
-; Следващите правила препоръчват книга на студент.
+; Следващите правила и функции препоръчват книга на студент.
+;
+; Тази функция има за цел да характеризира работещ студент.
 (deffunction determine-working (?a ?n ?g ?uni ?yr ?deg)
   (printout t "How much free time do you have?" crlf)
   (bind ?ft (read))
@@ -121,6 +133,7 @@
   (assert (working-student ws))
 )
 
+; Това е помощна функция за суперкласа `Ordinary` студент.
 (deffunction determine-ordinary ()
   (printout t "How much time do you spend to party in a month?" crlf)
   (bind ?dt (read))
@@ -139,6 +152,7 @@
   (return (create$ ?dt ?mpm))
 )
 
+; Тази функция определя учещ студент с помощта на `determine-ordinary`.
 (deffunction determine-studying (?a ?n ?g ?uni ?yr ?deg)
   (bind ?ls (determine-ordinary))
   (bind ?dt (nth 1 ?ls))
@@ -164,6 +178,7 @@
   (assert (studying-student sts))
 )
 
+; Тази функция определя неучещ студент с помощта на `determine-ordinary`.
 (deffunction determine-not-studying (?a ?n ?g ?uni ?yr ?deg)
   (bind ?ls (determine-ordinary))
   (bind ?dt (nth 1 ?ls))
@@ -197,6 +212,7 @@
   (assert (not-studying-student nsts))
 )
 
+; Тази функция определя основател на стартъп.
 (deffunction determine-startup-founder (?a ?n ?g ?uni ?yr ?deg)
   (bind ?b (determine-business))
 
@@ -289,10 +305,12 @@
   (bind ?difficulty (send ?b get-difficulty))
   (bind ?timeToRead (send ?b get-time-to-read))
 
-  (and (> ?freetime ?timeToRead)
+  (and (> (* ?freetime 2.5) ?timeToRead)
        (< ?difficulty ?year))
 )
 
+; Това правило препоръчва книга на работещ студент на базата на евристиката
+; `working-query`.
 (defrule suggest-book-working-student
   (working-student ws)
 =>
@@ -315,6 +333,8 @@
        (< ?difficulty ?year))
 )
 
+; Това правило препоръчва книга на учещ студент на базата на евристиката
+; `studying-query`.
 (defrule suggest-book-studying-student
   (studying-student sts)
 =>
@@ -337,6 +357,8 @@
        (< ?difficulty ?year))
 )
 
+; Това правило препоръчва книга на неучещ студент на базата на евристиката
+; `not-studying-query`.
 (defrule suggest-book-not-studying-student
   (not-studying-student nsts)
 =>
@@ -361,6 +383,8 @@
        (< ?difficulty ?year))
 )
 
+; Това правило препоръчва книга на основател на стартъп на базата на 
+; евристиката `startup-founder-query`.
 (defrule suggest-book-startup-founder
   (startup-founder sf)
 =>
@@ -423,7 +447,8 @@
        (<= (/ ?debth 1000) (* ?authenticity ?difficulty)))
 )
 
-; Това правило препоръчва книга на бедняк.
+; Това правило препоръчва книга на бедняк на базата на евристиката 
+; `poor-query`.
 (defrule suggest-book-poor
   (poor p)
 =>
