@@ -1,0 +1,149 @@
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\inputencoding{utf8}
+\usepackage[bulgarian]{babel}
+\selectlanguage{bulgarian}
+
+\usepackage{titling}
+\newcommand{\subtitle}[1]{%
+  \posttitle{%
+    \par\end{center}
+    \begin{center}\large#1\end{center}
+    \vskip0.5em}%
+}
+
+\usepackage{amsmath}
+\usepackage[margin=1in]{geometry}
+\title{Документация към проект по \\* ``Системи основани на знания''}
+\subtitle{``Препоърчване на кинга''}
+\author{Цветан Цветанов, студент 3 курс, ИС, ФМИ}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+\newpage
+
+\section{Описание.}
+
+Следната система основана на знания има за цел да препоръчва книги на 
+определени типове хора.  Хората могат да са в три категории - бизнесмени,
+студенти или бедняци.  Всеки човек се определя от някакви полезни за него
+характеристики, на базата на които се прави заключение за това каква книга 
+би му била полезна.  Нормално е за някой тип хора, например студентите, 
+които не учат и ходят твърде често на партита, системата да не може да
+препоръча книга.  В крайна сметка, това не би направило щастливи този тип
+хора.
+
+Системата работи като първо определя какъв тип е човека:
+\begin{itemize}
+\item determine-type - определя типа на човека; оттук стартираме
+\item determine-business - доспецифицира бизнес човек
+\item determine-student - доспецифицира студент
+\item determine-poor - доспецифицира бедняк
+\end{itemize}
+
+След това, на базата на разни параметри от типа човек, системата определя
+каква книга да му препоръча:
+\begin{itemize}
+\item suggest-book-poor - препоръчва книга на бедняк
+\item suggest-book-working - препоръчва книга на работещ студент
+\item suggest-book-studying - препоръчва книга на учещ студент
+\item suggest-book-not-studying - препоърчва книга на неучещ студент
+\item suggest-book-startup-founder - препоръчва книга на основател на стартъп
+\item suggest-book-businessman - препоръчва книга на бизнесмен
+\end{itemize}
+
+\section{Определяне на прости факти.}
+\begin{verbatim}правило determine-type\end{verbatim}
+
+Опитваме се да определим прости факти за човека, а също така и какъв е по
+професия - Бедняк, Бизнесмен или Студент.
+\section{Общи функции.}
+\begin{verbatim}функция determine-business\end{verbatim}
+
+Определя какъв бизнес има даден човек.
+\section{Правила за бизнесмен.}
+\begin{verbatim}правило determine-businessman\end{verbatim}
+
+Това правило дохарактеризира бизнесмен.
+\begin{verbatim}функция businessman-query\end{verbatim}
+
+Тази функция определя евристиката за препоръчване на книга на бизнесмен.
+\begin{verbatim}правило suggest-book-businessman\end{verbatim}
+
+Това правило препоръчва книга на бизнесмен на базата на евристиката
+`businessman-query`.
+\section{Правила и функции за студент}
+\begin{verbatim}функция determine-working\end{verbatim}
+
+Тази функция има за цел да характеризира работещ студент.
+\begin{verbatim}функция determine-ordinary\end{verbatim}
+
+Това е помощна функция за суперкласа `Ordinary` студент.
+
+672]" crlf)
+\begin{verbatim}функция determine-studying\end{verbatim}
+
+Тази функция определя учещ студент с помощта на `determine-ordinary`.
+
+24]" crlf)
+\begin{verbatim}функция determine-not-studying\end{verbatim}
+
+Тази функция определя неучещ студент с помощта на `determine-ordinary`.
+
+100]" crlf)
+\begin{verbatim}функция determine-startup-founder\end{verbatim}
+
+Тази функция определя основател на стартъп.
+
+В тази глобална променлива се държат възможните типове студенти с цел
+предоставянето на списък за избор на човека, на който се препоръчва книга.
+\begin{verbatim}правило determine-student\end{verbatim}
+
+Това правило дохарактеризира студент.
+\begin{verbatim}функция working-query\end{verbatim}
+
+Тази функция определя евристиката за препоръчване на книга 
+на работещ студент.
+\begin{verbatim}правило suggest-book-working-student\end{verbatim}
+
+Това правило препоръчва книга на работещ студент на базата на евристиката
+`working-query`.
+\begin{verbatim}функция studying-query\end{verbatim}
+
+Тази функция определя евристиката за препоръчване на книга на
+учещ студент.
+\begin{verbatim}правило suggest-book-studying-student\end{verbatim}
+
+Това правило препоръчва книга на учещ студент на базата на евристиката
+`studying-query`.
+\begin{verbatim}функция not-studying-query\end{verbatim}
+
+Тази функция определя евристиката за препоръчване на книга на
+неучещ студент.
+\begin{verbatim}правило suggest-book-not-studying-student\end{verbatim}
+
+Това правило препоръчва книга на неучещ студент на базата на евристиката
+`not-studying-query`.
+\begin{verbatim}функция startup-founder-query\end{verbatim}
+
+Тази функция определя евристиката за препоръчване на книга на
+основател на стартъп.
+\begin{verbatim}правило suggest-book-startup-founder\end{verbatim}
+
+Това правило препоръчва книга на основател на стартъп на базата на 
+евристиката `startup-founder-query`.
+\section{Правила за бедняк.}
+\begin{verbatim}правило determine-poor\end{verbatim}
+
+Това правило характеризира бедняк.
+\begin{verbatim}функция poor-query\end{verbatim}
+
+Тази функция определя евристиката за препоръчване на книга на бедняк.
+\begin{verbatim}правило suggest-book-poor\end{verbatim}
+
+Това правило препоръчва книга на бедняк на базата на евристиката 
+`poor-query`.
+
+\end{document}

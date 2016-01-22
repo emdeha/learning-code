@@ -1,0 +1,16 @@
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\inputencoding{utf8}
+\usepackage[bulgarian]{babel}
+\selectlanguage{bulgarian}
+
+\usepackage{titling}
+\newcommand{\subtitle}[1]{%
+  \posttitle{%
+    \par\end{center}
+    \begin{center}\large#1\end{center}
+    \vskip0.5em}%
+}
+
+\usepackage{amsmath}
+\usepackage[margin=1in]{geometry}
