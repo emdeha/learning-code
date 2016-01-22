@@ -103,11 +103,49 @@
 ; Това правило дохарактеризира бизнесмен.
 (defrule determine-businessman
   (occupation Businessman)
+  (age ?a)
+  (name ?n)
+  (gender ?g)
   ?td <- (type-determined)
 =>
-  (printout t "Business determined." crlf)
-  (retract ?td)
-  (assert (business-determined))
+  (printout t "How large is your network?" crlf)
+  (bind ?ns (read))
+  (if (< ?ns 0)
+      then
+      (printout t "Must be positive" crlf)
+      (return))
+
+  (bind ?b (determine-business))
+
+  (make-instance bm of Businessman
+    (age ?a)
+    (name_ ?n)
+    (gender ?g)
+    (network_size ?ns)
+    (business ?b))
+  (assert (businessman bm))
+)
+
+; Тази функция определя евристиката за препоръчване на книга на бизнесмен.
+(deffunction businessman-query (?b ?ns)
+  (bind ?authenticity (send ?b get-authenticity))
+  (bind ?difficulty (send ?b get-difficulty))
+  (bind ?timeToRead (send ?b get-time-to-read))
+
+  (< ?ns (* ?authenticity ?difficulty))
+)
+
+; Това правило препоръчва книга на бизнесмен на базата на евристиката
+; `businessman-query`.
+(defrule suggest-book-businessman
+  (businessman bm)
+=>
+  (bind ?books (find-all-instances ((?b Book))
+    (businessman-query ?b (send [bm] get-network_size))))
+  (bind ?n (random 1 (length ?books)))
+
+  (printout t "Possible books: " (length ?books) crlf)
+  (send (nth$ ?n ?books) print)
 )
 
 ;
@@ -243,7 +281,8 @@
   (assert (startup-founder sf))
 )
 
-; Типовете студенти
+; В тази глобална променлива се държат възможните типове студенти с цел
+; предоставянето на списък за избор на човека, на който се препоръчва книга.
 (defglobal ?*student-types* = (create$ Studying NotStudying Working StartupFounder))
 
 ; Това правило дохарактеризира студент.
@@ -299,7 +338,7 @@
 )
 
 ; Тази функция определя евристиката за препоръчване на книга 
-; на работещ студент
+; на работещ студент.
 (deffunction working-query (?b ?year ?freetime) 
   (bind ?authenticity (send ?b get-authenticity))
   (bind ?difficulty (send ?b get-difficulty))
@@ -323,7 +362,7 @@
 )
 
 ; Тази функция определя евристиката за препоръчване на книга на
-; учещ студент
+; учещ студент.
 (deffunction studying-query (?b ?year ?timespentstudying)
   (bind ?authenticity (send ?b get-authenticity))
   (bind ?difficulty (send ?b get-difficulty))
@@ -347,7 +386,7 @@
 )
 
 ; Тази функция определя евристиката за препоръчване на книга на
-; неучещ студент
+; неучещ студент.
 (deffunction not-studying-query (?b ?year ?speechskill ?countexams)
   (bind ?authenticity (send ?b get-authenticity))
   (bind ?difficulty (send ?b get-difficulty))
@@ -373,7 +412,7 @@
 )
 
 ; Тази функция определя евристиката за препоръчване на книга на
-; основател на стартъп
+; основател на стартъп.
 (deffunction startup-founder-query (?b ?year ?invested)
   (bind ?authenticity (send ?b get-authenticity))
   (bind ?difficulty (send ?b get-difficulty))
