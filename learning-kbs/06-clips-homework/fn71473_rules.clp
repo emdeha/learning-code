@@ -142,10 +142,14 @@
 =>
   (bind ?books (find-all-instances ((?b Book))
     (businessman-query ?b (send [bm] get-network_size))))
-  (bind ?n (random 1 (length ?books)))
 
-  (printout t "Possible books: " (length ?books) crlf)
-  (send (nth$ ?n ?books) print)
+  (if (>= (length ?books) 1)
+      then
+      (bind ?n (random 1 (length ?books)))
+      (printout t "Possible books: " (length ?books) crlf)
+      (send (nth$ ?n ?books) print)
+      else
+      (printout t "No book for you!" crlf))
 )
 
 ;
@@ -355,10 +359,14 @@
 =>
   (bind ?books (find-all-instances ((?b Book)) 
     (working-query ?b (send [ws] get-year) (send [ws] get-free_time))))
-  (bind ?n (random 1 (length ?books)))
 
-  (printout t "Possible books: " (length ?books) crlf)
-  (send (nth$ ?n ?books) print)
+  (if (>= (length ?books) 1)
+      then
+      (bind ?n (random 1 (length ?books)))
+      (printout t "Possible books: " (length ?books) crlf)
+      (send (nth$ ?n ?books) print)
+      else
+      (printout t "No book for you!" crlf))
 )
 
 ; Тази функция определя евристиката за препоръчване на книга на
@@ -379,10 +387,14 @@
 =>
   (bind ?books (find-all-instances ((?b Book)) 
     (studying-query ?b (send [sts] get-year) (send [sts] get-time_spent_studying))))
-  (bind ?n (random 1 (length ?books)))
 
-  (printout t "Possible books: " (length ?books) crlf)
-  (send (nth$ ?n ?books) print)
+  (if (>= (length ?books) 1)
+      then
+      (bind ?n (random 1 (length ?books)))
+      (printout t "Possible books: " (length ?books) crlf)
+      (send (nth$ ?n ?books) print)
+      else
+      (printout t "No book for you!" crlf))
 )
 
 ; Тази функция определя евристиката за препоръчване на книга на
@@ -405,10 +417,14 @@
     (not-studying-query ?b (send [nsts] get-year) 
                            (send [nsts] get-speech_skill)
                            (send [nsts] get-count_exams))))
-  (bind ?n (random 1 (length ?books)))
 
-  (printout t "Possible books: " (length ?books) crlf)
-  (send (nth$ ?n ?books) print)
+  (if (>= (length ?books) 1)
+      then
+      (bind ?n (random 1 (length ?books)))
+      (printout t "Possible books: " (length ?books) crlf)
+      (send (nth$ ?n ?books) print)
+      else
+      (printout t "No book for you!" crlf))
 )
 
 ; Тази функция определя евристиката за препоръчване на книга на
@@ -430,10 +446,14 @@
   (bind ?books (find-all-instances ((?b Book)) 
     (startup-founder-query ?b (send [sf] get-year)
                               (send [sf] get-invested))))
-  (bind ?n (random 1 (length ?books)))
 
-  (printout t "Possible books: " (length ?books) crlf)
-  (send (nth$ ?n ?books) print)
+  (if (>= (length ?books) 1)
+      then
+      (bind ?n (random 1 (length ?books)))
+      (printout t "Possible books: " (length ?books) crlf)
+      (send (nth$ ?n ?books) print)
+      else
+      (printout t "No book for you!" crlf))
 )
 
 ;
@@ -493,8 +513,12 @@
 =>
   (bind ?books (find-all-instances ((?b Book)) 
     (poor-query ?b (send [p] get-debth) (send [p] get-worries))))
-  (bind ?n (random 1 (length ?books)))
 
-  (printout t "Possible books: " (length ?books) crlf)
-  (send (nth$ ?n ?books) print)
+  (if (>= (length ?books) 1)
+      then
+      (bind ?n (random 1 (length ?books)))
+      (printout t "Possible books: " (length ?books) crlf)
+      (send (nth$ ?n ?books) print)
+      else
+      (printout t "No book for you!" crlf))
 )
