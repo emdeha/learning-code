@@ -1,10 +1,12 @@
-positions = range(0, 21)
+positions = [1, 10, 15, 18] # range(0, 2)
 strlen = 21
 iters = 0
 
 memo = [[0 for i in range(0, strlen)] for j in range(0, strlen)]
 s = [[0 for i in range(0, strlen)] for j in range(0, strlen)]
 
+# Work in `Omega(k^2)` time
+# Where k = len(positions)
 def break_string(i, j):
     global memo
     global iters
@@ -17,9 +19,10 @@ def break_string(i, j):
     if valid == []:
         best = 0
 
+    iters = iters + 1
+
     bestK = -1
     for k in valid:
-        iters = iters + 1
         bs = break_string(i, k) + break_string(k, j) + j - i
         if best > bs:
             best = bs
