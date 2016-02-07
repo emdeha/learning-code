@@ -78,3 +78,34 @@ weaken( $cianne->{mother} );
 weaken( $cianne->{father} );
 
 say "weaker: " . Dumper $cianne;
+
+#
+# Sort by ranks
+#
+my $i = 0;
+my %rank;
+for ( qw(lead wife son daughter pal pet) ) { $rank{$_} = ++$i };
+
+my %HoH = (
+  flintstones => {
+    lead => "fred",
+    pal => "barney",
+  },
+  jetsons => {
+    lead => "george",
+    wife => "jane",
+  },
+  simpsons => {
+    lead => "homer",
+    wife => "marge",
+    son => "bart",
+  },
+);
+
+for my $family ( sort { keys %{$HoH{$b}} <=> keys %{$HoH{$a}} } keys %HoH ) {
+  print "$family: { ";
+  for my $role ( sort { $rank{$a} <=> $rank{$b} } keys %{ $HoH{$family} } ) {
+    print "$role=$HoH{$family}{$role} ";
+  }
+  print "}\n";
+}
