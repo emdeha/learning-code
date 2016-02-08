@@ -1,0 +1,2 @@
+Consider a function to create the Fibonacci series as you need its elements.
+Why? To check your Haskell homework.
