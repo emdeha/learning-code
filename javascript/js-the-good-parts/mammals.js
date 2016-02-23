@@ -1,3 +1,5 @@
+// Classical javascript -- BAD
+//
 // Mammal object
 var Mammal = function (name) {
   this.name = name;
@@ -43,3 +45,34 @@ var myCat = new Cat('Henrietta'); // She's a mean go-getter \ Gonna write her a 
 document.writeln(myCat.says());
 document.writeln(myCat.purr(5));
 document.writeln(myCat.get_name());
+
+// Provide some syntactic sugar
+Function.prototype.method = function (name, func) {
+  if (!this.prototype[name]) {
+    this.prototype[name] = func;
+  }
+  return this;
+};
+
+Function.method('inherits', function (Parent) {
+  this.prototype = new Parent();
+  return this;
+});
+
+// Make a Dog, using inherits
+var Dog = function (name) {
+  this.name = name;
+  this.saying = 'balo';
+}.inherits(Mammal).
+  method('roar', function () {
+    return 'roar-balo';
+  }).
+  method('get_name', function () {
+    return this.says() + ' ' + this.name;
+  });
+
+var myDog = new Dog('Jeof');
+
+document.writeln(myDog.says());
+document.writeln(myDog.roar());
+document.writeln(myDog.get_name());
