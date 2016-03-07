@@ -1,4 +1,4 @@
-#!/usr/bin/env node --harmony
+#!/usr/bin/node --harmony
 
 const
   request = require('request'),
