@@ -15,5 +15,5 @@ file.walk(__dirname + '/cache', function(err, dirPath, dirs, files) {
         console.log(doc);
       }
     });
-  }
-}
+  });
+});
