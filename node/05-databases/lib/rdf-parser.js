@@ -14,13 +14,31 @@ module.exports = function(filename, callback) {
       $ = cheerio.load(data.toString()),
       collect = function(index, elem) {
         return $(elem).text();
-      };
+      },
+      authors = [],
+      names = {},
+      subjects = [],
+      values = {};
+
+    names = $('pgterms\\:agent pgterms\\:name').map(collect);
+    for (var i in names) {
+      if (!isNaN(parseFloat(i)) && isFinite(i)) {
+        authors.push(names[i]);
+      }
+    }
+
+    values = $('dcterms\\:subject rdf\\:value').map(collect);
+    for (var i in values) {
+      if (!isNaN(parseFloat(i)) && isFinite(i)) {
+        subjects.push(values[i]);
+      }
+    }
 
     callback(null, {
       _id: $('pgterms\\:ebook').attr('rdf:about').replace('ebooks/', ''), 
       title: $('dcterms\\:title').text(), 
-      authors: $('pgterms\\:agent pgterms\\:name').map(collect), 
-      subjects: $('dcterms\\:subject rdf\\:value').map(collect) 
+      authors: authors,
+      subjects: subjects  
     });
   });
 };
