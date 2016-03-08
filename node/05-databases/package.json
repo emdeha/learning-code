@@ -4,6 +4,7 @@
   "description": "Tools for creating an ebook database.",
   "author": "Tsvetan ...",
   "dependencies": {
+    "async": "^1.5.2",
     "cheerio": "^0.20.0",
     "file": "^0.2.2",
     "request": "^2.69.0"

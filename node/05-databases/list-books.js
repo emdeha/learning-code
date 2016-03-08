@@ -6,7 +6,7 @@ const
 
 console.log('beginning directory walk');
 
-file.walk(__dirname + '/cache', function(err, dirPath, dirs, files) {
+file.walk(__dirname + '/cache/epub', function(err, dirPath, dirs, files) {
   files.forEach(function(path) {
     rdfParser(path, function(err, doc) {
       if (err) {
