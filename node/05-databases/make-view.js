@@ -1,5 +1,5 @@
 #!/usr/bin/node --harmony
-'use strict;
+'use strict';
 
 const
   async = require('async'),
