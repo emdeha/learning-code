@@ -46,4 +46,27 @@ $f : X \rightarrow Y, F$
 & dom F = \{ x | f(x) \in Y, x \in X \} \implies F \subseteq X \implies F \in G_f
 \end{align*}
 
+\section*{Задача 3}
+
+Да се провери, че във всяка съждителна формула $F$, има еднакъв брой затварящи и отварящи скоби.
+
+Дефинираме функцията $m : X \rightarrow \{0, 1\}$:
+
+\[ m(x) =
+\begin{cases}
+  1    & \quad x = P \text{ или } x = (P)\\
+  m(A) & \quad x = \neg A \text{ или } x = (\neg A)\\
+  m(A)\;\&\&\;m(B) & \quad x = A \sigma B \text{ или } x = (A \sigma B)\\
+  0 & \quad \text{ иначе }
+\end{cases}
+\]
+
+F съждителна формула:
+\begin{align*}
+&  1) x \in V \implies x \in F\\
+&  2) \phi, \psi \text{ са съждителни формули } \implies (\neg \phi), (\phi \land \psi), (\phi \lor \psi) \in F
+\end{align*}
+
+По дефиницията на $F$, за всяко $F$, $m \text{ връща } 1 \implies F \subseteq X$.
+
 \end{document}
