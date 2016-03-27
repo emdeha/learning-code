@@ -1,0 +1,41 @@
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\inputencoding{utf8}
+\usepackage[bulgarian]{babel}
+\selectlanguage{bulgarian}
+
+\usepackage{amsmath}
+\usepackage[margin=1in]{geometry}
+\title{Домашно 1 по \\* ``Ламбда смятане и теория на доказателствата''}
+\author{Цветан Цветанов, студент 3 курс, ИС, ФМИ}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+\newpage
+
+\section*{Задача 1}
+
+Докажете, че двете дефиниции за числа на Хеминг са еквивалентни:
+
+\begin{align*}
+H_{1} = \{ x \mid p/x, p \in \{2, 3, 5\}\} \iff \quad H_{2}: \quad & 1)\; 1 \in H_{2} \\
+                                                                   & 2)\; h \in H_{2} \implies 2h, 3h, 5h \in H_{2}
+\end{align*}
+
+Д-во:
+\begin{align*}
+& 1)\; 1 \in H_{2} \implies 1 \in H_{1}, \text{ защото 1 дели 2, 3 и 5 } \\
+& 2)\; h \in H_{2} \implies \\ 
+      & \qquad 2h \in H_{2}, \text{ но } 2/2h = 1/h \implies h \in H_{1} \text{ или} \\
+      & \qquad 3h \in H_{2}, \text{ но } 3/3h = 1/h \implies h \in H_{1} \text{ или} \\
+      & \qquad 5h \in H_{2}, \text{ но } 5/5h = 1/h \implies h \in H_{1} \\
+      & \implies H_{2} \subseteq H_{1} \\
+& \text{Аналогично } H_{1} \subseteq H_{2} \implies H_{1} = H_{2} \\
+Q.E.D.
+\end{align*}
+
+\section*{Задача 2}
+
+\end{document}
