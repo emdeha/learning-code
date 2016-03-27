@@ -43,7 +43,8 @@ $f : X \rightarrow Y, F$
 
 Д-во:
 \begin{align*}
-& dom F = \{ x | f(x) \in Y, x \in X \} \implies F \subseteq X \implies F \in G_f
+& dom F = \{ x | f(x) \in Y, x \in X \} \implies F \subseteq X \implies F \in G_f \\
+Q.E.D.
 \end{align*}
 
 \section*{Задача 3}
@@ -68,5 +69,17 @@ F съждителна формула:
 \end{align*}
 
 По дефиницията на $F$, за всяко $F$, $m \text{ връща } 1 \implies F \subseteq X$.
+
+Q.E.D.
+
+\section*{Задача 4}
+
+Дефинирайте $M^x_y$ заместване на променливата $x$ с променливата $y$ в $M$, ако $x \in BV(M), y \notin BF(M) \cup FV(M)$, а $M$ е $\lambda$-терм.
+
+\begin{align*}
+& 1) M \equiv x \implies M^x_y := y \\
+& 2) M \equiv (M_1, M_2) \implies M^x_y := ({M_1}^x_y)({M_2}^x_y) \\
+& 3) M \equiv \lambda_xM' \implies M^x_y := \lambda_yM'^x_y
+\end{align*}
 
 \end{document}
