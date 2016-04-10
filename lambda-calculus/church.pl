@@ -98,10 +98,45 @@ sub chyp {
 }
 
 #
+# Boolean functions
+sub cTrue {
+  my $x = shift;
+
+  sub { my $y = shift;
+    $x;
+  }
+}
+
+sub cFalse {
+  my $x = shift;
+
+  sub { my $y = shift;
+    $y;
+  }
+}
+
+sub cIf {
+  my $x = shift;
+  return $x;
+}
+
+sub cIsZero {
+  my $n = shift;
+
+  $n->(sub { my $x = shift; \&cFalse })->(\&cTrue);
+}
+
+#
 # Tests
 say cprint(c(2));
 say cprint(cplus(c(2))->(c(4)));
 say cprint(cmult(c(2))->(c(4)));
 say cprint(cexp(c(2))->(c(4)));
+# say cprint(chyp(c(4))->(c(2)));
 
-say cprint(chyp(c(4))->(c(2)));
+# Bools
+say cprint(cTrue(c(5))->(c(8)));
+say cprint(cFalse(c(5))->(c(8)));
+
+say cprint(cIsZero(c(0))->(c(5))->(c(8)));
+say cprint(cIsZero(c(10))->(c(5))->(c(8)));
