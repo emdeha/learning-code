@@ -64,7 +64,7 @@ sub cplus {
   }
 }
 
-sub cmult {
+sub cMult {
   my $n = shift;
 
   sub { my $m = shift;
@@ -197,6 +197,17 @@ sub cPred {
   );
 }
 
+sub cFact {
+  my $n = shift;
+
+  cRight(
+    $n->(sub { my $z = shift;
+      cPair(cSucc(cLeft($z)))->(cMult(cSucc(cLeft($z)))->(cRight($z)));
+    })
+    ->(cPair(c(0))->(c(1)))
+  );
+}
+
 #
 # Tests
 say "\nA single num:";
@@ -204,7 +215,7 @@ say cprint(c(2));
 say "\nPlus:";
 say cprint(cplus(c(2))->(c(4)));
 say "\nMult:";
-say cprint(cmult(c(2))->(c(4)));
+say cprint(cMult(c(2))->(c(4)));
 say "\nExp:";
 say cprint(cexp(c(2))->(c(4)));
 # say "\nHyp:";
@@ -238,4 +249,7 @@ say cprint(cLeft(cPair(c(4))->(\&cTrue)));
 say cprintBool(cRight(cPair(c(4))->(\&cTrue)));
 
 say "\nPredecessor:";
-say cprint(cPred(c(0)));
+say cprint(cPred(c(10)));
+
+say "\nFactorial:";
+say cprint(cFact(c(5)));
