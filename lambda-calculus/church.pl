@@ -132,6 +132,12 @@ sub cIsZero {
   $n->(sub { my $x = shift; \&cFalse })->(\&cTrue);
 }
 
+sub cEven {
+  my $n = shift;
+
+  $n->(\&cNeg)->(\&cTrue);
+}
+
 sub cNeg {
   my $p = shift;
 
@@ -160,23 +166,36 @@ sub cOr {
 
 #
 # Tests
+say "\nA single num:";
 say cprint(c(2));
+say "\nPlus:";
 say cprint(cplus(c(2))->(c(4)));
+say "\nMult:";
 say cprint(cmult(c(2))->(c(4)));
+say "\nExp:";
 say cprint(cexp(c(2))->(c(4)));
+# say "\nHyp:";
 # say cprint(chyp(c(4))->(c(2)));
 
 # Bools
+say "\nSimple bools:";
 say cprint(cTrue(c(5))->(c(8)));
 say cprint(cFalse(c(5))->(c(8)));
 
+say "\nIsZero:";
 say cprint(cIsZero(c(0))->(c(5))->(c(8)));
 say cprint(cIsZero(c(10))->(c(5))->(c(8)));
 
+say "\nNeg:";
 say cprint(cNeg(cIsZero(c(0)))->(c(5))->(c(8)));
 say cprintBool(cNeg(\&cTrue));
 say cprintBool(cNeg(\&cFalse));
 
+say "\nAnd/Or:";
 say cprintBool(cAnd(\&cTrue)->(\&cFalse));
 say cprintBool(cOr(\&cTrue)->(\&cFalse));
 say cprintBool(cOr(\&cFalse)->(\&cFalse));
+
+say "\nEven:";
+say cprintBool(cEven(c(8)));
+say cprintBool(cEven(c(11)));
