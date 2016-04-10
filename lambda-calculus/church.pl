@@ -13,6 +13,12 @@ sub cprint {
   $n->(sub { $_[0] + 1 })->(0);
 }
 
+sub cprintBool {
+  my $b = shift;
+
+  return $b->(1)->(0);
+}
+
 sub repeat {
   my ($n, $f, $x) = @_;
 
@@ -126,6 +132,32 @@ sub cIsZero {
   $n->(sub { my $x = shift; \&cFalse })->(\&cTrue);
 }
 
+sub cNeg {
+  my $p = shift;
+
+  $p->(\&cFalse)->(\&cTrue);
+}
+
+sub cAnd {
+  my $p = shift;
+
+  sub { 
+    my $q = shift;
+
+    $p->($q)->(\&cFalse);
+  }
+}
+
+sub cOr {
+  my $p = shift;
+
+  sub {
+    my $q = shift;
+
+    $p->(\&cTrue)->($q);
+  }
+}
+
 #
 # Tests
 say cprint(c(2));
@@ -140,3 +172,11 @@ say cprint(cFalse(c(5))->(c(8)));
 
 say cprint(cIsZero(c(0))->(c(5))->(c(8)));
 say cprint(cIsZero(c(10))->(c(5))->(c(8)));
+
+say cprint(cNeg(cIsZero(c(0)))->(c(5))->(c(8)));
+say cprintBool(cNeg(\&cTrue));
+say cprintBool(cNeg(\&cFalse));
+
+say cprintBool(cAnd(\&cTrue)->(\&cFalse));
+say cprintBool(cOr(\&cTrue)->(\&cFalse));
+say cprintBool(cOr(\&cFalse)->(\&cFalse));
