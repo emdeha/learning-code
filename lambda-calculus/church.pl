@@ -147,8 +147,7 @@ sub cNeg {
 sub cAnd {
   my $p = shift;
 
-  sub { 
-    my $q = shift;
+  sub { my $q = shift;
 
     $p->($q)->(\&cFalse);
   }
@@ -157,8 +156,7 @@ sub cAnd {
 sub cOr {
   my $p = shift;
 
-  sub {
-    my $q = shift;
+  sub { my $q = shift;
 
     $p->(\&cTrue)->($q);
   }
