@@ -40,13 +40,13 @@ sub c {
   }
 }
 
-sub cs {
+sub cSucc {
   my $n = shift;
 
   sub { my $f = shift;
     sub { my $x = shift;
 
-      $f->($n->($f), $x);
+      $f->($n->($f)->($x));
     }
   }
 }
@@ -163,6 +163,41 @@ sub cOr {
 }
 
 #
+# Pairs
+sub cPair {
+  my $x = shift;
+
+  sub { my $y = shift;
+    sub { my $z = shift;
+      $z->($x)->($y);
+    }
+  }
+}
+
+sub cLeft {
+  my $t = shift;
+
+  $t->(\&cTrue);
+}
+
+sub cRight {
+  my $t = shift;
+
+  $t->(\&cFalse);
+}
+
+sub cPred {
+  my $n = shift;
+
+  cRight(
+    $n->(sub { my $z = shift;
+      cPair(cSucc(cLeft($z)))->(cLeft($z));
+    })
+    ->(cPair(c(0))->(c(0)))
+  );
+}
+
+#
 # Tests
 say "\nA single num:";
 say cprint(c(2));
@@ -197,3 +232,10 @@ say cprintBool(cOr(\&cFalse)->(\&cFalse));
 say "\nEven:";
 say cprintBool(cEven(c(8)));
 say cprintBool(cEven(c(11)));
+
+say "\nPairs:";
+say cprint(cLeft(cPair(c(4))->(\&cTrue)));
+say cprintBool(cRight(cPair(c(4))->(\&cTrue)));
+
+say "\nPredecessor:";
+say cprint(cPred(c(0)));
