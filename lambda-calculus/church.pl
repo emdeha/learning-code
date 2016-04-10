@@ -209,6 +209,41 @@ sub cFact {
 }
 
 #
+# Y-combinators
+sub Y {
+  my $F = shift;
+  my $wF = sub { my $x = shift; 
+    $F->($x)->($x); 
+  };
+
+  $wF->($wF);
+}
+
+sub YL {
+  my $F = shift;
+  my $wF = sub { my $x = shift;
+    $F->(sub { my $y = shift;
+      $x->($x)->($y);
+    })
+  };
+
+  $wF->($wF);
+}
+
+sub factY { 
+  my $f = shift;
+
+  sub {
+    my $n = shift;
+    cIsZero($n)
+      ->(c(1))
+      ->(sub { my $y = shift;
+          cMult($n)->($f->(cPred($n))->($y)); 
+        });
+  }
+}
+
+#
 # Tests
 say "\nA single num:";
 say cprint(c(2));
@@ -253,3 +288,6 @@ say cprint(cPred(c(10)));
 
 say "\nFactorial:";
 say cprint(cFact(c(5)));
+
+say "\nFact w/ Y-comb:";
+say cprint(YL(factY)->(c(5)));
