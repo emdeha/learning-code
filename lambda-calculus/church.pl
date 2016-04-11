@@ -51,7 +51,7 @@ sub cSucc {
   }
 }
 
-sub cplus {
+sub cPlus {
   my $n = shift;
 
   sub { my $m = shift;
@@ -77,7 +77,7 @@ sub cMult {
   }
 }
 
-sub cexp {
+sub cExp {
   my $n = shift;
 
   sub { my $m = shift;
@@ -90,14 +90,14 @@ sub cexp {
   }
 }
 
-sub chyp {
+sub cHyp {
   my $n = shift;
 
   sub { my $m = shift;
     sub { my $f = shift;
       sub { my $x = shift;
 
-        (($n->(cexp($m)))->($m))->($f)->($x);
+        (($n->(cExp($m)))->($m))->($f)->($x);
       }
     }
   }
@@ -257,13 +257,13 @@ sub Fact2 { # NR
 say "\nA single num:";
 say cprint(c(2));
 say "\nPlus:";
-say cprint(cplus(c(2))->(c(4)));
+say cprint(cPlus(c(2))->(c(4)));
 say "\nMult:";
 say cprint(cMult(c(2))->(c(4)));
 say "\nExp:";
-say cprint(cexp(c(2))->(c(4)));
+say cprint(cExp(c(2))->(c(4)));
 # say "\nHyp:";
-# say cprint(chyp(c(4))->(c(2)));
+# say cprint(cHyp(c(4))->(c(2)));
 
 # Bools
 say "\nSimple bools:";
