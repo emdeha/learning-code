@@ -210,36 +210,45 @@ sub cFact {
 
 #
 # Y-combinators
-sub Y {
+sub Y { # AR
   my $F = shift;
   my $wF = sub { my $x = shift; 
-    $F->($x)->($x); 
+    $F->($x->($x)); 
   };
 
   $wF->($wF);
 }
 
-sub YL {
+sub Fact { # AR
+  my $f = shift;
+
+  sub { my $n = shift;
+    cIsZero($n)
+      ->(c(1))
+      ->(cMult($n)->($f->(cPred($n))));
+  }
+}
+
+sub Y2 { # NR
   my $F = shift;
   my $wF = sub { my $x = shift;
     $F->(sub { my $y = shift;
-      $x->($x)->($y);
-    })
+        $x->($x)->($y);
+    });
   };
 
   $wF->($wF);
 }
 
-sub factY { 
+sub Fact2 { # NR
   my $f = shift;
 
-  sub {
-    my $n = shift;
+  sub { my $n = shift;
     cIsZero($n)
       ->(c(1))
       ->(sub { my $y = shift;
-          cMult($n)->($f->(cPred($n))->($y)); 
-        });
+          cMult($n)->($f->(cPred($n)))->($y);
+      });
   }
 }
 
@@ -290,4 +299,4 @@ say "\nFactorial:";
 say cprint(cFact(c(5)));
 
 say "\nFact w/ Y-comb:";
-say cprint(YL(factY)->(c(5)));
+say cprint(Y2(\&Fact2)->(c(5)));
