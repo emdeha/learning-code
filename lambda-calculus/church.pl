@@ -138,6 +138,44 @@ sub cEven {
   $n->(\&cNeg)->(\&cTrue);
 }
 
+sub cEq {
+  my $n = shift;
+
+  sub { my $m = shift;
+    cRight(
+      cSucc($n)->(sub { my $z = shift;
+        cIsZero(cRight($z))
+          ->(cIsZero(cLeft($z))
+              ->(cPair(cLeft($z))->(\&cTrue))
+              ->(cPair(cLeft($z))->(\&cFalse)))
+          ->(cIsZero(cLeft($z))
+              ->(cPair(c(1))->(c(0)))
+              ->(cPair(cPred(cLeft($z)))->(cPred(cRight($z)))))
+      })
+      ->(cPair($m)->($n))
+    );
+  }
+}
+
+sub cLessThan {
+  my $n = shift;
+
+  sub { my $m = shift;
+    cRight(
+      cSucc($n)->(sub { my $z = shift;
+        cIsZero(cRight($z))
+          ->(cIsZero(cLeft($z))
+              ->(cPair(cLeft($z))->(\&cFalse))
+              ->(cPair(cLeft($z))->(\&cTrue)))
+          ->(cIsZero(cLeft($z))
+              ->(cPair(c(0))->(c(0)))
+              ->(cPair(cPred(cLeft($z)))->(cPred(cRight($z)))))
+      })
+      ->(cPair($m)->($n))
+    );
+  }
+}
+
 sub cNeg {
   my $p = shift;
 
@@ -252,6 +290,22 @@ sub Fact2 { # NR
   }
 }
 
+sub Ackermann {
+  my $f = shift;
+
+  sub { my $x = shift;
+    sub { my $y = shift;
+      cIsZero($x)
+        ->(cSucc($y))
+        ->(sub { my $z = shift;
+            cIsZero($y)
+              ->($f->(cPred($x))->(c(1))->($z))
+              ->($f->(cPred($x))->($f->($x)->(cPred($y)))->($z));
+        });
+    }
+  }
+}
+
 #
 # Tests
 say "\nA single num:";
@@ -300,3 +354,56 @@ say cprint(cFact(c(5)));
 
 say "\nFact w/ Y-comb:";
 say cprint(Y2(\&Fact2)->(c(5)));
+
+say "\nAckermann w/ Y-comb:";
+say cprint(Y2(\&Ackermann)->(c(0))->(c(0)));
+say cprint(Y2(\&Ackermann)->(c(0))->(c(1)));
+say cprint(Y2(\&Ackermann)->(c(1))->(c(0)));
+say cprint(Y2(\&Ackermann)->(c(1))->(c(1)));
+say cprint(Y2(\&Ackermann)->(c(0))->(c(2)));
+
+say "\nc=:";
+print "2 = 2: ";
+say cprintBool(cEq(c(2))->(c(2)));
+print "4 = 2: ";
+say cprintBool(cEq(c(4))->(c(2)));
+print "2 = 4: ";
+say cprintBool(cEq(c(2))->(c(4)));
+print "0 = 0: ";
+say cprintBool(cEq(c(0))->(c(0)));
+print "0 = 2: ";
+say cprintBool(cEq(c(0))->(c(2)));
+print "2 = 0: ";
+say cprintBool(cEq(c(2))->(c(0)));
+print "1 = 0: ";
+say cprintBool(cEq(c(1))->(c(0)));
+print "0 = 1: ";
+say cprintBool(cEq(c(0))->(c(1)));
+print "1 = 1: ";
+say cprintBool(cEq(c(1))->(c(1)));
+print "3 = 3: ";
+say cprintBool(cEq(c(3))->(c(3)));
+print "4 = 3: ";
+say cprintBool(cEq(c(4))->(c(3)));
+print "3 = 4: ";
+say cprintBool(cEq(c(3))->(c(4)));
+
+say "\nc<:";
+print "2 < 4: ";
+say cprintBool(cLessThan(c(2))->(c(4)));
+print "4 < 2: ";
+say cprintBool(cLessThan(c(4))->(c(2)));
+print "2 < 2: ";
+say cprintBool(cLessThan(c(2))->(c(2)));
+print "0 < 1: ";
+say cprintBool(cLessThan(c(0))->(c(1)));
+print "1 < 0: ";
+say cprintBool(cLessThan(c(1))->(c(0)));
+print "0 < 0: ";
+say cprintBool(cLessThan(c(0))->(c(0)));
+print "2 < 1: ";
+say cprintBool(cLessThan(c(2))->(c(1)));
+print "1 < 2: ";
+say cprintBool(cLessThan(c(1))->(c(2)));
+print "1 < 5: ";
+say cprintBool(cLessThan(c(1))->(c(5)));
