@@ -306,6 +306,22 @@ sub Ackermann {
   }
 }
 
+sub While {
+  my $f = shift;
+
+  sub { my $p = shift;
+    sub { my $b = shift;
+      sub { my $t = shift;
+        $p->($t)
+          ->(sub { my $z = shift;
+              $f->($p)->($b)->($b->($t))->($z);
+          })
+          ->($t)
+      }
+    }
+  }
+}
+
 #
 # Tests
 say "\nA single num:";
@@ -407,3 +423,19 @@ print "1 < 2: ";
 say cprintBool(cLessThan(c(1))->(c(2)));
 print "1 < 5: ";
 say cprintBool(cLessThan(c(1))->(c(5)));
+
+say "\nWhile:";
+say cprint(
+  Y2(\&While)
+    ->(sub {
+      my $c = shift;
+
+      cNeg(cIsZero($c));
+    })
+    ->(sub {
+      my $c = shift;
+      say cprint($c);
+
+      cPred($c);
+    })
+    ->(c(2)));
