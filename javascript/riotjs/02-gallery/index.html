@@ -1,0 +1,37 @@
+<!doctype html>
+
+<html>
+  <head>
+    <title>Text gallery</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="gallery.css">
+
+    <!--[if lt IE 9]>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.0.5/es5-shim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script>html5.addElements('todo')</script>
+    <![endif]-->
+
+  </head>
+
+  <body>
+
+    <post-text></post-text>
+
+    <script src="post-text.tag" type="riot/tag"></script>
+    <script src="lib/riot-compiler.min.js"></script>
+
+    <script>
+      riot.mount('post-text', {
+        posts: [
+        { content: "Hello", isHidden: true },
+        { content: "I'm pesho and I really like spaghetti.", isHidden: true },
+        { content: "Pizzeti is my personal nightmare. I love wine and sugar and spice. And everything nice", isHidden: true },
+          ]
+      })
+    </script>
+
+  </body>
+
+</html>

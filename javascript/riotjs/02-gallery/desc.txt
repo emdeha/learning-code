@@ -1,0 +1,5 @@
+A simple text gallery.
+
+You have a text area and a button.  Typing text in the area and pressing the
+button puts the text in a feed below.  You can select any text feed and focus
+it.
