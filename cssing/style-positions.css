@@ -1,1 +1,83 @@
+div.box {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+}
 
+div.box-fixed {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 30px;
+  background: #ee3e64;
+}
+
+div.box-inner {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  bottom: 20px;
+  left: 20px;
+  background: white;
+}
+div.box-outer {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  bottom: 10px;
+  left: 10px;
+  background: red;
+}
+
+div.box-content {
+  position: absolute;
+  top: 0;
+  right: 20%;
+  bottom: 0;
+  left: 0;
+  background: #ee3e64;
+}
+div.box-sidebar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 80%;
+  background: #b7d84d;
+}
+
+div.orange {
+  position: relative;
+  top: 39%;
+  left: 41%;
+  width: 40px;
+  height: 40px;
+  background: #f95b34;
+}
+
+div.top-left {
+  top: 0;
+  left: 0;
+}
+div.top-right {
+  top: 0;
+  right: 0;
+}
+div.bottom-left {
+  bottom: 0;
+  left: 0;
+}
+div.bottom-right {
+  bottom: 0;
+  right: 0;
+}
+
+div.push-right {
+  left: 100px
+}
+
+div.pink { background: #ee3e64; }
+div.blue { background: #44accf; }
+div.green { background: #b7d84b; }
+div.yellow { background: #ebde52; }
