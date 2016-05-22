@@ -1,0 +1,54 @@
+body {
+  font-family: helvetica;
+  line-height: 1.5em;
+}
+
+div.container-float {
+  position: relative;
+  left: 25%;
+  transform: translate(-25%);
+  width: 660px;
+}
+
+h3.sent {
+  display: inline;
+}
+
+p.sent {
+  display: inline;
+}
+
+a {
+  display: block;
+  font-style: italic;
+  padding: 20px;
+}
+
+a:link {
+  color: black;
+}
+a:visited {
+  color: gray;
+}
+a:hover {
+  text-decoration: none;
+}
+a:active {
+  color: black;
+}
+
+ul.menu {
+  padding: 0;
+}
+
+ul.menu li {
+  display: inline-block;
+  padding: 10px;
+  border: 1px solid #004a55;
+}
+
+ul.menu li:hover {
+  color: #f6f6f6;
+  cursor: pointer;
+  background: #a7cdcc;
+}
