@@ -1,0 +1,38 @@
+2. Client-side organic
+  -- fetch js
+  -- director js
+  -- babel
+  -- bynyan
+  -- domready
+  -- ejs
+  -- postcss loader
+  -- validator
+
+3. User sessions
+  -- local store / session storage
+
+4. CSS specifics
+  -- less
+  -- stuff about css
+
+5. Build pipeline
+  -- webpack
+  -- gulp
+  -- uglify
+
+6. organic-angel
+  -- angelabilities
+  -- skeleton scripts
+  -- use it in day-to-day tasks
+
+7. MDN docs
+
+DONE (for now) RiotJS
+  v да науча всичко наизуст как и какво прави от основите
+  v да науча organic компонентите
+    v static
+    v bind tag
+    v form tag
+    v router tag
+    v create proxy
+  v да задълбая в сорс кода
