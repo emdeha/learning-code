@@ -1,5 +1,5 @@
 2. Client-side organic
-  -- fetch js
+  v fetch js
   -- director js
   -- babel
   -- bynyan
@@ -14,11 +14,6 @@
 4. CSS specifics
   -- less
   -- stuff about css
-
-5. Build pipeline
-  -- webpack
-  -- gulp
-  -- uglify
 
 6. organic-angel
   -- angelabilities
@@ -36,3 +31,9 @@ DONE (for now) RiotJS
     v router tag
     v create proxy
   v да задълбая в сорс кода
+
+DONE (for now) Build pipeline
+  v browserify
+  v webpack
+  v gulp
+  v uglify
