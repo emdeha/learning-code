@@ -1,12 +1,12 @@
 2. Client-side organic
   v fetch js
-  -- director js
-  -- babel
-  -- bynyan
-  -- domready
+  v director js
+  v babel
+  v bunyan
+  v domready
   -- ejs
-  -- postcss loader
-  -- validator
+  v postcss loader
+  v validator
 
 3. User sessions
   -- local store / session storage
