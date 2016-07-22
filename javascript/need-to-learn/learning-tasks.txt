@@ -1,26 +1,30 @@
-2. Client-side organic
+1. organic-angel
+  v angelabilities
+  v skeleton scripts
+  -- use it in day-to-day tasks
+    o deploy tsm
+    o ~/angel/scripts
+    o think of automation tasks
+
+2. CSS specifics
+  -- less
+  -- stuff about css
+
+3. MDN docs
+
+DONE (for now) User sessions
+  v local store / session storage
+  v Modernizr
+
+DONE (for now) Client-side organic
   v fetch js
   v director js
   v babel
   v bunyan
   v domready
-  -- ejs
+  v ejs
   v postcss loader
   v validator
-
-3. User sessions
-  -- local store / session storage
-
-4. CSS specifics
-  -- less
-  -- stuff about css
-
-6. organic-angel
-  -- angelabilities
-  -- skeleton scripts
-  -- use it in day-to-day tasks
-
-7. MDN docs
 
 DONE (for now) RiotJS
   v да науча всичко наизуст как и какво прави от основите
