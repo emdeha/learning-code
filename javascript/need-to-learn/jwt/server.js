@@ -36,5 +36,57 @@ app.get('/setup', function (req, res) {
   })
 })
 
+
 app.listen(port)
-console.log('Magic happens at http://localhost:' + port)
+var apiRoutes = express.Router()
+
+apiRoutes.post('/authenticate', function (req, res) {
+  User.findOne({
+    name: req.body.name
+  }, function (err, user) {
+    if (err) throw err
+    if (!user) {
+      return res.json({ success: false, message: 'User not found' })
+    }
+
+    if (user.password !== req.body.password) {
+      return res.json({ success: false, message: 'Wrong password' })
+    }
+
+    var token = jwt.sign(user, app.get('superSecret'))
+
+    return res.json({ success: true, message: 'Success', token: token })
+  })
+})
+
+apiRoutes.use(function (req, res, next) {
+  var token = req.body.token || req.query.token || req.headers['x-access-token']
+
+  if (!token) {
+    return res.status(403).send({
+      success: false,
+      message: 'No token provided'
+    })
+  }
+
+  jwt.verify(token, app.get('superSecret'), function (err, decoded) {
+    if (err) {
+      return res.json({ success: false, message: 'Bad token' })
+    }
+
+    req.decoded = decoded
+    next()
+  })
+})
+
+apiRoutes.get('/', function (req, res) {
+  res.json({ message: 'Welcome to the API.' })
+})
+
+apiRoutes.get('/users', function (req, res) {
+  User.find({}, function (err, users) {
+    res.json(users)
+  })
+})
+
+app.use('/api', apiRoutes)
