@@ -1,16 +1,20 @@
-1. organic-angel
-  v angelabilities
-  v skeleton scripts
-  -- use it in day-to-day tasks
-    o deploy tsm
-    o ~/angel/scripts
-    o think of automation tasks
+1. Eloquent javaScript
 
-2. CSS specifics
+2. You don't know javaScript
+
+3. MDN docs
+
+4. CSS specifics
   -- less
   -- stuff about css
 
-3. MDN docs
+DONE (for now) organic-angel
+  v angelabilities
+  v skeleton scripts
+  v use it in day-to-day tasks
+    v deploy tsm
+    v ~/angel/scripts
+    v think of automation tasks
 
 DONE (for now) User sessions
   v local store / session storage
