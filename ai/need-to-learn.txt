@@ -1,0 +1,9 @@
+1. Neural networks and deep learning
+
+2. MIT courses:
+  * Artificial Intelligence MIT course
+  * Techniques in AI
+  * Machine Learning
+  * Prediction: Machine Learning and Statistics
+  * Topics in Statistics: Statistical Learning Theory
+  * The Society of Mind
