@@ -219,6 +219,8 @@ actionTypes.reproduce = function (critter, vector, action) {
     return false
   }
   critter.energy -= 2 * baby.energy
+  critter.babies += 1
+  baby.parent = critter
   this.grid.set(dest, baby)
   return true
 }
@@ -231,6 +233,9 @@ LifelikeWorld.prototype.letAct = function (critter, vector) {
   if (!handled) {
     critter.energy -= 0.2
     if (critter.energy <= 0) {
+      if (critter.parent && critter.parent.babies) {
+        critter.parent.babies -= 1
+      }
       this.grid.set(vector, null)
     }
   }
@@ -272,6 +277,37 @@ PlantEater.prototype.act = function (view) {
   if (plant) {
     return { type: 'eat', direction: plant }
   }
+  if (space) {
+    return { type: 'move', direction: space }
+  }
+}
+
+/*
+ * Smart Plant Eater
+ */
+var SmartPlantEater = function () {
+  this.energy = 20
+  this.babies = 0
+}
+
+SmartPlantEater.prototype.act = function (view) {
+  if (this.energy < 40) {
+    var plant = view.find('*')
+    if (plant) {
+      return { type: 'eat', direction: plant }
+    } else {
+      var space = view.find(' ')
+      if (space) {
+        return { type: 'move', direction: space }
+      }
+    }
+  }
+
+  var space = view.find(' ')
+  if (this.energy > 50 && space && this.babies < 1) {
+    return { type: 'reproduce', direction: space }
+  }
+
   if (space) {
     return { type: 'move', direction: space }
   }
@@ -352,7 +388,7 @@ var valley = ['############################',
 var world = new LifelikeWorld(valley, {
   '#': Wall,
   '*': Plant,
-  'O': PlantEater
+  'O': SmartPlantEater
 })
 
 setInterval(function () {
