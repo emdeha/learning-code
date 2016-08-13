@@ -76,6 +76,30 @@ BouncingCritter.prototype.act = function (view) {
   return { type: 'move', direction: this.direction }
 }
 
+/*
+ * Wall Following Critter
+ */
+var dirPlus = function (dir, n) {
+  var idx = directionNames.indexOf(dir)
+  return directionNames[(idx + n + 8) % 8]
+}
+
+var WallFollowingCritter = function () {
+  this.dir = 's'
+}
+
+WallFollowingCritter.prototype.act = function (view) {
+  var start = this.dir
+  if (view.look(dirPlus(this.dir, -3)) !== ' ') {
+    start = dirPlus(this.dir, -2)
+  }
+  while (view.look(this.dir) !== ' ') {
+    this.dir = dirPlus(this.dir, 1)
+    if (this.dir === start) break
+  }
+  return { type: 'move', direction: this.dir }
+}
+
 
 /*
  * World
@@ -189,23 +213,32 @@ View.prototype.find = function (ch) {
  */
 var plan = ['############################',
             '#      #    #      o      ##',
-            '#                          #',
+            '#           ~          ~   #',
             '#          #####           #',
-            '##         #   #    ##     #',
+            '##     ~   #   #    ##     #',
             '###           ##     #     #',
             '#           ###      #     #',
-            '#   ####                   #',
-            '#   ##       o             #',
+            '#   ####               ~   #',
+            '#   ##  ~    o             #',
             '# o  #         o       ### #',
             '#    #                     #',
             '############################'];
 
+var wallFollowingPlan = ['############',
+                         '#     #    #',
+                         '#   ~    ~ #',
+                         '#  ##      #',
+                         '#  ##  o####',
+                         '#          #',
+                         '############']
+
 var world = new World(plan, {
   '#': Wall,
+  '~': WallFollowingCritter,
   'o': BouncingCritter
 })
 
 setInterval(function () {
   document.getElementById('scene').innerHTML = world.toString()
   world.turn()
-}, 50)
+}, 100)
