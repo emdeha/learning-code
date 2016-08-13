@@ -313,6 +313,29 @@ SmartPlantEater.prototype.act = function (view) {
   }
 }
 
+/*
+ * Tiger
+ */
+var Tiger = function () {
+  this.energy = 50
+}
+
+Tiger.prototype.act = function (view) {
+  var herbivore = view.find('O')
+  if (herbivore) {
+    return { type: 'eat', direction: herbivore }
+  }
+
+  var space = view.find(' ')
+  if (this.energy > 60 && space) {
+    return { type: 'reproduce', direction: space }
+  }
+
+  if (space) {
+    return { type: 'move', direction: space }
+  }
+}
+
 
 /*
  * View
@@ -385,10 +408,30 @@ var valley = ['############################',
               '##****     ###***       *###',
               '############################']
 
-var world = new LifelikeWorld(valley, {
+var animate = ['####################################################',
+               '#                 ####         ****              ###',
+               '#   *  @  ##                 ########       OO    ##',
+               '#   *    ##        O O                 ****       *#',
+               '#       ##*                        ##########     *#',
+               '#      ##***  *         ****                     **#',
+               '#* **  #  *  ***      #########                  **#',
+               '#* **  #      *               #   *              **#',
+               '#     ##              #   O   #  ***          ######',
+               '#*            @       #       #   *        O  #    #',
+               '#*                    #  ######                 ** #',
+               '###          ****          ***                  ** #',
+               '#       O                        @         O       #',
+               '#   *     ##  ##  ##  ##               ###      *  #',
+               '#   **         #              *       #####  O     #',
+               '##  **  O   O  #  #    ***  ***        ###      ** #',
+               '###               #   *****                    ****#',
+               '####################################################']
+
+var world = new LifelikeWorld(animate, {
   '#': Wall,
   '*': Plant,
-  'O': SmartPlantEater
+  'O': SmartPlantEater,
+  '@': Tiger
 })
 
 setInterval(function () {
