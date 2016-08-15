@@ -17,7 +17,35 @@ var multiply = function (expr1, expr2) {
 }
 
 var doMultiply = function (expr1, expr2) {
-  return new Product([expr1, expr2])
+  var result
+  if (expr1 instanceof Sum && expr2 instanceof Sum) {
+    var terms = []
+    expr1.terms.forEach((termOne) => {
+      expr2.terms.forEach((termTwo) => {
+        terms.push(new Product(termOne, termTwo))
+      })
+    })
+    result = new Sum(terms)
+  }
+  else if (expr1 instanceof Sum && expr2 instanceof Product) {
+    var terms = []
+    expr1.terms.forEach((term) => {
+      terms.push(new Product(term, expr2))
+    })
+    result = new Sum(terms)
+  }
+  else if (expr1 instanceof Product && expr2 instanceof Sum) {
+    var terms = []
+    expr2.terms.forEach((term) => {
+      terms.push(new Product(term, expr1))
+    })
+    result = new Sum(terms)
+  }
+  else {
+    result = new Product([expr1, expr2])
+  }
+
+  return result.flatten()
 }
 
 function Sum (terms) {
@@ -43,7 +71,7 @@ Sum.prototype.flatten = function () {
     if (term instanceof Sum) {
       terms = terms.concat(term.terms)
     } else {
-      terms.push(term.terms || term)
+      terms.push(term)
     }
   })
   return new Sum(terms)
@@ -57,7 +85,7 @@ Product.prototype.simplify = function () {
   var flatProd = this.flatten()
   
   var result = new Product([1])  
-  flatProd.factors.forEach(function (factor) {
+  this.factors.forEach(function (factor) {
     result = multiply(result, simplifyIfPossible(factor))
   })
 
@@ -70,7 +98,7 @@ Product.prototype.flatten = function () {
     if (factor instanceof Product) {
       factors = factors.concat(factor.factors)
     } else {
-      factors.push(factor.factors || factor)
+      factors.push(factor)
     }
   })
   return new Product(factors)
