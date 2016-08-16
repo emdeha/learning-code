@@ -10,7 +10,11 @@ object TextProcApp {
   val hwAlpha = 0.26
   val hwBeta = 0.19
 
-  def holtWintersGrowth(y: Array[Row], alpha: Double, beta: Double): (Array[Double], Array[Double]) = {
+  def holtWintersGrowth(y: Array[Row],
+      alpha: Double, beta: Double): (Column, Column) = {
+    val sqlCtx = SQLContext.getOrCreate(data.sparkContext)
+    import sqlCtx.implicits._
+
     val n = y.length
     val alphac = 1 - alpha
     val betac = 1 - beta
@@ -25,7 +29,7 @@ object TextProcApp {
       b(i) = (beta * ldelta) + (betac * b(i-1))
     }
 
-    return (l, b)
+    return (l.toDF("Level"), r.toDF("Growth"))
   }
 
   def holt(data: RDD[Int], alpha: Double, beta: Double): DataFrame = {
