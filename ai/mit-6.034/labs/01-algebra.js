@@ -22,7 +22,7 @@ var doMultiply = function (expr1, expr2) {
     var terms = []
     expr1.terms.forEach((termOne) => {
       expr2.terms.forEach((termTwo) => {
-        terms.push(new Product(termOne, termTwo))
+        terms.push(new Product([termOne, termTwo]))
       })
     })
     result = new Sum(terms)
@@ -30,14 +30,14 @@ var doMultiply = function (expr1, expr2) {
   else if (expr1 instanceof Sum && expr2 instanceof Product) {
     var terms = []
     expr1.terms.forEach((term) => {
-      terms.push(new Product(term, expr2))
+      terms.push(new Product([term, expr2]))
     })
     result = new Sum(terms)
   }
   else if (expr1 instanceof Product && expr2 instanceof Sum) {
     var terms = []
     expr2.terms.forEach((term) => {
-      terms.push(new Product(term, expr1))
+      terms.push(new Product([term, expr1]))
     })
     result = new Sum(terms)
   }
@@ -118,4 +118,4 @@ var expr = new Sum([
 ])
 console.log('before', expr)
 expr = expr.simplify()
-console.log('after', expr)
+console.log('after', JSON.stringify(expr))
