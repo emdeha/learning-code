@@ -15,48 +15,29 @@ from zookeeper import ZOOKEEPER_RULES
 
 
 def backchain_to_goal_tree(rules, hypothesis):
-    or_node = []
+    goals = [OR ( hypothesis )]
 
     for rule in rules:
-        matches = False
         for c in rule.consequent():
             binding = match(c, hypothesis)
             if binding != None:
-                matches = True
                 sub_goals = []
                 ant = rule.antecedent()
-                if isinstance(ant, AND) or isinstance(ant, OR):
-                    for a in ant:
-                        pop = populate(a, binding)
-                        sub_goals.append( AND ( backchain_to_goal_tree(rules, pop) ) )
-                else:
-                    pop = populate(ant, binding)
-                    sub_goals.append( AND ( backchain_to_goal_tree(rules, pop) ) )
-                if isinstance(ant, OR):
-                    or_node.append( OR ( sub_goals ) )
-                else:
-                    or_node.append( AND ( sub_goals ) )
-        if not matches:
-            or_node.append( OR ( hypothesis ) )
 
-    if len(or_node) == 0:
-        or_node = OR (hypothesis)
-    return simplify(OR ( or_node ))
+                # Wrap leaf nodes
+                if isinstance(ant, str):
+                    ant = AND ( ant )
+
+                for a in ant:
+                    pop = populate(a, binding)
+                    sub_goals.append( AND ( backchain_to_goal_tree(rules, pop) ) )
+
+                # Take into account whether the antecedent is an AND
+                # or OR node
+                goals.append( type(ant) ( sub_goals ) )
+
+    return simplify(OR ( goals ))
 
 # Here's an example of running the backward chainer - uncomment
 # it to see it work:
-rlz = (
-    IF( AND( 'a (?x)',
-             'b (?x)' ),
-        THEN( 'c d' '(?x) e' )),
-    IF( OR( '(?y) f e',
-            '(?y) g' ),
-        THEN( 'h (?y) j' )),
-    IF( AND( 'h c d j',
-             'h i j' ),
-        THEN( 'zot' )),
-    IF( '(?z) i',
-        THEN( 'i (?z)' ))
-    )
-hyp = 'zot'
-print backchain_to_goal_tree(rlz, hyp)
+print backchain_to_goal_tree(ZOOKEEPER_RULES, 'opus is a penguin')
