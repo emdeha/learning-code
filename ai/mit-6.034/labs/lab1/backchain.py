@@ -30,7 +30,7 @@ def backchain_to_goal_tree(rules, hypothesis):
 
                 for a in ant:
                     pop = populate(a, binding)
-                    sub_goals.append( AND ( backchain_to_goal_tree(rules, pop) ) )
+                    sub_goals.append( type(ant) ( backchain_to_goal_tree(rules, pop) ) )
 
                 # Take into account whether the antecedent is an AND
                 # or OR node
