@@ -74,7 +74,7 @@ function parseExpression(program) {
   return parseApply(expr, program.slice(match[0].length))
 }
 
-var parser = function (program) {
+var parse = function (program) {
   var parsed = parseExpression(program)
   if (skipSpace(parsed.rest).length > 0) {
     throw new SyntaxError('Unexpected text after program')
@@ -127,9 +127,115 @@ specialForms['if'] = function (args, env) {
   }
 }
 
-var env = {
-  'true': true,
-  'false': false
+specialForms['while'] = function (args, env) {
+  if (args.length !== 2) {
+    throw new SyntaxError('Expected 2 arguments to while')
+  }
+
+  while (evaluate(args[0], env) !== false) {
+    evaluate(args[1], env)
+  }
+  return false
 }
 
-console.log(evaluate(parser('if(true, 2, 1)'), env))
+specialForms['do'] = function (args, env) {
+  var result = false
+  args.forEach(function (arg) {
+    result = evaluate(arg, env)
+  })
+  return result
+}
+
+specialForms['define'] = function (args, env) {
+  if (args.length !== 2) {
+    throw new SyntaxError('Expected 2 arguments to define')
+  }
+
+  var word = args[0]
+  if (word.type !== 'word') {
+    throw new SyntaxError('Expected a word as the first argument to define')
+  }
+
+  var value = evaluate(args[1], env)
+  env[word.name] = value
+  return value
+}
+
+specialForms['fun'] = function (args, env) {
+  if (!args.length) {
+    throw new SyntaxError('Functions need a body')
+  }
+  var name = function (expr) {
+    if (expr.type !== 'word') {
+      throw new SyntaxError('Arg names must be words')
+    }
+    return expr.name
+  }
+  var argNames = args.slice(0, args.length - 1).map(name)
+  var body = args[args.length - 1]
+
+  return function () {
+    if (arguments.length !== argNames.length) {
+      throw new SyntaxError('Wrong number of arguments')
+    }
+    var localEnv = Object.create(env)
+    for (var i = 0; i < arguments.length; i++) {
+      localEnv[argNames[i]] = arguments[i]
+    }
+    return evaluate(body, localEnv)
+  }
+}
+
+var topEnv = {
+  'true': true,
+  'false': false,
+  'print': function (value) {
+    console.log(value)
+    return value
+  }
+}
+
+var ops = ['+', '-', '*', '/', '==', '<', '>']
+ops.forEach(function (op) {
+  topEnv[op] = new Function('a, b', 'return a ' + op + ' b;')
+})
+
+/* Array support */
+topEnv['array'] = function () {
+  return Array.prototype.slice.call(arguments, 0)
+}
+
+topEnv['length'] = function (array) {
+  return array.length
+}
+
+topEnv['element'] = function (array, n) {
+  return array[n]
+}
+
+var run = function () {
+  var env = Object.create(topEnv)
+  var program = Array.prototype.slice.call(arguments, 0).join('\n')
+  return evaluate(parse(program), env)
+}
+
+
+var plusOne = 'do(define(plusOne, fun (a, +(a, 1))),' +
+              '  print(plusOne(10)))'
+
+var pow = 'do(define(pow, fun (base, exp,' +
+          '  if(==(exp, 0),' +
+          '     1,' +
+          '     *(base, pow(base, -(exp, 1)))))),' +
+          '  print(pow(2, 10)))'
+
+var arr = 'do(define(sum, fun(array,' +
+          '     do(define(i, 0),' +
+          '        define(sum, 0),' +
+          '        while(<(i, length(array)),' +
+          '          do(define(sum, +(sum, element(array, i))),' +
+          '             define(i, +(i, 1)))),' +
+          '        sum))),' +
+          '   print(sum(array(1, 2, 3))))'
+
+run(arr)
