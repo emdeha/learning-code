@@ -40,12 +40,40 @@ from search import Graph
 # The online tester will not test them.
 
 def bfs(graph, start, goal):
-    raise NotImplementedError
+    agenda = [ [start] ]
+
+    while agenda:
+        path = agenda.pop(0)
+        lastNode = path[-1]
+        if graph.is_valid_path(path) and lastNode == goal:
+            return path
+        for node in graph.get_connected_nodes(lastNode):
+            if not node in path:
+                newPath = path[:]
+                newPath.append(node)
+                agenda.append(newPath)
+
+    return []
 
 ## Once you have completed the breadth-first search,
 ## this part should be very simple to complete.
 def dfs(graph, start, goal):
-    raise NotImplementedError
+    agenda = [ [start] ]
+
+    while agenda:
+        path = agenda.pop(0)
+        lastNode = path[-1]
+        if graph.is_valid_path(path) and lastNode == goal:
+            return path
+        for node in graph.get_connected_nodes(lastNode):
+            if not node in path:
+                newPath = path[:]
+                newPath.append(node)
+                newAgenda = [newPath]
+                newAgenda.extend(agenda[:])
+                agenda = newAgenda
+
+    return []
 
 
 ## Now we're going to add some heuristics into the search.  
