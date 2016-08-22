@@ -169,6 +169,28 @@ specialForms['define'] = function (args, env) {
   return value
 }
 
+// Sets the var in the outer scope if it wasn't defined in the inner
+specialForms['set'] = function (args, env) {
+  if (args.length !== 2) {
+    throw new SyntaxError('Expected 2 arguments to set')
+  }
+
+  var word = args[0]
+  if (word.type !== 'word') {
+    throw new SyntaxError('Expected a word as the first argument to set')
+  }
+
+  var value = evaluate(args[1], env)
+  var outerEnv = Object.getPrototypeOf(env)
+  if (!Object.prototype.hasOwnProperty.call(env, word.name)) {
+    // Not defined in the inner scope
+    outerEnv[word.name] = value
+  } else {
+    env[word.name] = value
+  }
+  return value
+}
+
 specialForms['fun'] = function (args, env) {
   if (!args.length) {
     throw new SyntaxError('Functions need a body')
@@ -250,9 +272,16 @@ var arr = 'do(define(sum, fun(array,\n' +
 var closure = 'do(define(f, fun(a, fun(b, +(a, b)))),' +
               '  print(f(4)(5)))'
 
+var set = 'do(define(x, 4),\n' +
+          '   define(setx, fun(val, set(x, val))),\n' +
+          '   setx(50),\n' +
+          '   print(x))'
+
+/*
 console.log(parse("# hello\nx"))
 
 console.log(parse("a # one\n   # two\n()"))
 
 console.log(parse(arr))
-run(plusOne)
+*/
+run(set)
