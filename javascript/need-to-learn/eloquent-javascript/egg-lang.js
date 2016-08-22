@@ -184,6 +184,10 @@ specialForms['set'] = function (args, env) {
   var outerEnv = Object.getPrototypeOf(env)
   if (!Object.prototype.hasOwnProperty.call(env, word.name)) {
     // Not defined in the inner scope
+    if (!outerEnv[word.name]) {
+      throw new ReferenceError('Variable not defined')
+    }
+
     outerEnv[word.name] = value
   } else {
     env[word.name] = value
@@ -276,6 +280,8 @@ var set = 'do(define(x, 4),\n' +
           '   define(setx, fun(val, set(x, val))),\n' +
           '   setx(50),\n' +
           '   print(x))'
+
+var undefSet = 'set(quux, true)'
 
 /*
 console.log(parse("# hello\nx"))
