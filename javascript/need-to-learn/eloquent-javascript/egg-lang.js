@@ -33,7 +33,15 @@ var testExpr =
 var skipSpace = function (str) {
   var idx = str.search(/\S/)
   if (idx === -1) return ''
-  return str.slice(idx)
+  str = str.slice(idx)
+  while (str[0] === '#') {
+    idx = str.search(/(\n|\r\n?)/) + 1
+    str = str.slice(idx)
+    idx = str.search(/\S/)
+    str = str.slice(idx)
+  }
+
+  return str
 }
 
 function parseApply(expr, program) {
@@ -77,7 +85,7 @@ function parseExpression(program) {
 var parse = function (program) {
   var parsed = parseExpression(program)
   if (skipSpace(parsed.rest).length > 0) {
-    throw new SyntaxError('Unexpected text after program')
+    throw new SyntaxError('Unexpected text after program: ' + parsed.rest)
   }
   return parsed.tree
 }
@@ -229,13 +237,22 @@ var pow = 'do(define(pow, fun (base, exp,' +
           '     *(base, pow(base, -(exp, 1)))))),' +
           '  print(pow(2, 10)))'
 
-var arr = 'do(define(sum, fun(array,' +
-          '     do(define(i, 0),' +
-          '        define(sum, 0),' +
-          '        while(<(i, length(array)),' +
-          '          do(define(sum, +(sum, element(array, i))),' +
-          '             define(i, +(i, 1)))),' +
-          '        sum))),' +
+var arr = 'do(define(sum, fun(array,\n' +
+          '     do(define(i, 0),\n' +
+          '        define(sum, 0),\n' +
+          '        while(<(i, length(array)),\n' +
+          '          do(define(sum, +(sum, element(array, i))),\n' +
+          '             define(i, +(i, 1)))),\n' +
+          '        sum))),\n' +
+          '   # print("sad"),\n' +
           '   print(sum(array(1, 2, 3))))'
 
-run(arr)
+var closure = 'do(define(f, fun(a, fun(b, +(a, b)))),' +
+              '  print(f(4)(5)))'
+
+console.log(parse("# hello\nx"))
+
+console.log(parse("a # one\n   # two\n()"))
+
+console.log(parse(arr))
+run(plusOne)
