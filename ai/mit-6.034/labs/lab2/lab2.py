@@ -109,13 +109,22 @@ def beam_search(graph, start, goal, beam_width):
         if graph.is_valid_path(path) and lastNode == goal:
             return path
         nodes = graph.get_connected_nodes(lastNode)
-        nodes = sorted(nodes, key=lambda nd: graph.get_heuristic(nd, goal))
-        for node in nodes[:beam_width]:
+        for node in nodes:
             if not node in path:
                 agenda.append(path[:])
                 agenda[-1].append(node)
 
+        # Prune if we are going to advance to the next level
+        if agenda and len(path) < len(agenda[0]):
+            prunedAgenda = sorted(
+                [pth for pth in agenda if len(pth) == len(path) + 1],
+                    key=lambda pth: graph.get_heuristic(pth[-1], goal))[:beam_width]
+            restAgenda = [pth for pth in agenda if len(pth) != len(path) + 1]
+            prunedAgenda.extend(restAgenda)
+            agenda = prunedAgenda
+
     return []
+
 
 ## Now we're going to try optimal search.  The previous searches haven't
 ## used edge distances in the calculation.
