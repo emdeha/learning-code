@@ -203,6 +203,6 @@ def is_consistent(graph, goal):
 
     return True
 
-HOW_MANY_HOURS_THIS_PSET_TOOK = ''
-WHAT_I_FOUND_INTERESTING = ''
-WHAT_I_FOUND_BORING = ''
+HOW_MANY_HOURS_THIS_PSET_TOOK = '3.5'
+WHAT_I_FOUND_INTERESTING = 'the way searches are connected to one another'
+WHAT_I_FOUND_BORING = 'nothing'
