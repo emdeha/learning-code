@@ -144,7 +144,21 @@ def path_length(graph, node_names):
 
 
 def branch_and_bound(graph, start, goal):
-    raise NotImplementedError
+    agenda = [ [start] ]
+
+    while agenda:
+        path = agenda.pop(0)
+        lastNode = path[-1]
+        if graph.is_valid_path(path) and lastNode == goal:
+            return path
+        nodes = graph.get_connected_nodes(lastNode)
+        for node in nodes:
+            if not node in path:
+                agenda.append(path[:])
+                agenda[-1].append(node)
+        agenda = sorted(agenda, key=lambda pth: path_length(graph, pth))
+
+    return []
 
 def a_star(graph, start, goal):
     raise NotImplementedError
