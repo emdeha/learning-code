@@ -187,10 +187,21 @@ def a_star(graph, start, goal):
 ## consistent, but not admissible?
 
 def is_admissible(graph, goal):
-    raise NotImplementedError
+    for node in graph.nodes:
+        path = branch_and_bound(graph, node, goal)
+        if graph.get_heuristic(node, goal) > path_length(graph, path):
+            return False
+
+    return True
 
 def is_consistent(graph, goal):
-    raise NotImplementedError
+    for edge in graph.edges:
+        m_heur = graph.get_heuristic(edge.node1, goal)
+        n_heur = graph.get_heuristic(edge.node2, goal)
+        if abs(m_heur - n_heur) > edge.length:
+            return False
+
+    return True
 
 HOW_MANY_HOURS_THIS_PSET_TOOK = ''
 WHAT_I_FOUND_INTERESTING = ''
