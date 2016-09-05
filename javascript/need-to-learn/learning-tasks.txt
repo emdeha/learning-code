@@ -1,12 +1,58 @@
-1. Eloquent javaScript
+-- Back-end
+
+1. HTTP in depth
+
+2. Websockets
+
+3. Databases
+  -- Postgres (relational)
+  -- MongoDB (document)
+  -- CouchDB (document)
+  -- Elasticsearch
+  -- Neo4j (graph)
+  -- OrientDB (graph)
+  -- Normalization
+
+4. Database models
+  -- ORM
+  -- Star schema
+
+5. Languages
+  -- Go
+  -- Node.js
+  -- Scala
+  -- php
+  -- Java
+  -- Ruby
+
+6. DevOps
+  -- puppet / ansible
+  -- Nginx setups
+  -- Apache setups
+
+7. Node frameworks
+  -- Express
+  -- hapi
+  -- koa
+  -- Sails
+  -- Meteor
+  -- Derby
+  -- Keystone
+  -- Connect
+  -- Kraken
+
+
+-- Front-end
+1. MDN docs
 
 2. You don't know javaScript
 
-3. MDN docs
-
-4. CSS specifics
+3. CSS specifics
   -- less
   -- stuff about css
+
+
+DONE eloquent-javascript
 
 DONE (for now) organic-angel
   v angelabilities
