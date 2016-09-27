@@ -1,6 +1,11 @@
--- Back-end
+1. RPC + HTTP simple client and server (RFC 707, RFC 2616)
+  -- implement RPC
+  -- examine Apache Thrift or other framework
+  -- blog
+  -- read Steve Vinoski's articles about RPC
+  -- blog
 
-1. HTTP in depth
+-- Back-end
 
 2. Websockets
 
@@ -43,6 +48,8 @@
 
 
 -- Front-end
+1. Polymer
+
 1. MDN docs
 
 2. You don't know javaScript
@@ -51,6 +58,8 @@
   -- less
   -- stuff about css
 
+
+DONE HTTP 1.1 RFC
 
 DONE eloquent-javascript
 
