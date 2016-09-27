@@ -305,7 +305,7 @@ def run_test_game_1_testanswer(val, original_val = None):
     return ( wins - losses >= 2 )
 
 # Set this if-guard to False to temporarily disable this test.
-if True:
+if False:
     make_test(type = 'MULTIFUNCTION',
               getargs = run_test_game_1_getargs,
               testanswer = run_test_game_1_testanswer,
