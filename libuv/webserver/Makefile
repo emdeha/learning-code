@@ -10,5 +10,8 @@ uvcat: uvcat.c uv/uv.a
 uvtee: uvtee.c uv/uv.a
 	gcc -o uvtee uvtee.c $(UV_PATH) $(LIBS)
 
+uvchange: uvchange.c uv/uv.a
+	gcc -o uvchange uvchange.c $(UV_PATH) $(LIBS)
+
 uv/uv.a:
 	$(MAKE) -C uv
