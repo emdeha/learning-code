@@ -7,5 +7,8 @@ webserver: webserver.c uv/uv.a
 uvcat: uvcat.c uv/uv.a
 	gcc -o uvcat uvcat.c $(UV_PATH) $(LIBS)
 
+uvtee: uvtee.c uv/uv.a
+	gcc -o uvtee uvtee.c $(UV_PATH) $(LIBS)
+
 uv/uv.a:
 	$(MAKE) -C uv
