@@ -122,17 +122,23 @@ senate_group1, senate_group2 = crosscheck_groups(senate_people)
 ## computes Hamming distances.
 
 def euclidean_distance(list1, list2):
-    # this is not the right solution!
-    return hamming_distance(list1, list2)
+    assert isinstance(list1, list)
+    assert isinstance(list2, list)
+
+    dist = 0
+
+    for item1, item2 in zip(list1, list2):
+        dist += (item1 - item2) ** 2
+    return dist ** 0.5
 
 #Once you have implemented euclidean_distance, you can check the results:
-#evaluate(nearest_neighbors(euclidean_distance, 1), senate_group1, senate_group2)
+#evaluate(nearest_neighbors(euclidean_distance, 5), senate_group1, senate_group2, verbose=1)
 
 ## By changing the parameters you used, you can get a classifier factory that
 ## deals better with independents. Make a classifier that makes at most 3
 ## errors on the Senate.
 
-my_classifier = nearest_neighbors(hamming_distance, 1)
+my_classifier = nearest_neighbors(euclidean_distance, 5)
 #evaluate(my_classifier, senate_group1, senate_group2, verbose=1)
 
 ### Part 2: ID Trees
@@ -140,9 +146,37 @@ my_classifier = nearest_neighbors(hamming_distance, 1)
 
 ## Now write an information_disorder function to replace homogeneous_disorder,
 ## which should lead to simpler trees.
+def prop_or_zero(number, div):
+    if div == 0.0: return 0.0
+
+    prop = number / div
+    if prop > 0.0:
+        return prop * math.log(prop, 2.0)
+    return 0.0
+
+def disorder(total, branch_len):
+    def for_classes(class_a, class_b):
+        class_a_prop = prop_or_zero(class_a, branch_len)
+        class_b_prop = prop_or_zero(class_b, branch_len)
+        return (-(class_a + class_b) / total) * (class_a_prop + class_b_prop)
+    return for_classes
 
 def information_disorder(yes, no):
-    return homogeneous_disorder(yes, no)
+    total = float(len(yes) + len(no))
+
+    democrats_yes = float(yes.count('Democrat'))
+    democrats_no = float(no.count('Democrat'))
+    democrats_len = democrats_yes + democrats_no
+
+    republicans_yes = float(yes.count('Republican'))
+    republicans_no = float(no.count('Republican'))
+    republicans_len = republicans_yes + republicans_no
+
+    democrats_disorder = disorder(total, democrats_len)(democrats_yes, democrats_no)
+    republicans_disorder = disorder(total, republicans_len)(republicans_yes, republicans_no)
+    avg_disorder = democrats_disorder + republicans_disorder
+
+    return avg_disorder
 
 #print CongressIDTree(senate_people, senate_votes, information_disorder)
 #evaluate(idtree_maker(senate_votes, homogeneous_disorder), senate_group1, senate_group2)
@@ -172,15 +206,15 @@ def limited_house_classifier(house_people, house_votes, n, verbose = False):
                                    
 ## Find a value of n that classifies at least 430 representatives correctly.
 ## Hint: It's not 10.
-N_1 = 10
+N_1 = 551
 rep_classified = limited_house_classifier(house_people, house_votes, N_1)
 
 ## Find a value of n that classifies at least 90 senators correctly.
-N_2 = 10
+N_2 = 207
 senator_classified = limited_house_classifier(senate_people, senate_votes, N_2)
 
 ## Now, find a value of n that classifies at least 95 of last year's senators correctly.
-N_3 = 10
+N_3 = 111
 old_senator_classified = limited_house_classifier(last_senate_people, last_senate_votes, N_3)
 
 
