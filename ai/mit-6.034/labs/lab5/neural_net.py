@@ -60,7 +60,7 @@ class Input(ValuedElement,DifferentiableElement):
         
         returns: number (float or int)
         """
-        raise NotImplementedError, "Implement me!"
+        return self.get_value()
 
     def dOutdX(self, elem):
         """
@@ -71,7 +71,7 @@ class Input(ValuedElement,DifferentiableElement):
 
         returns: number (float or int)
         """
-        raise NotImplementedError, "Implement me!"
+        return self.get_value()
 
 class Weight(ValuedElement):
     """
@@ -170,7 +170,11 @@ class Neuron(DifferentiableElement):
 
         returns: number (float or int)
         """
-        raise NotImplementedError, "Implement me!"
+        z = reduce(lambda a, (w, i): a + w.get_value() * i.output(),
+                zip(self.my_weights, self.my_inputs), 0.0)
+        e = math.e
+        o = 1.0 / (1.0 + e**(-z))
+        return o
 
     def dOutdX(self, elem):
         # Implement compute_doutdx instead!!
@@ -190,7 +194,10 @@ class Neuron(DifferentiableElement):
 
         returns: number (float/int)
         """
-        raise NotImplementedError, "Implement me!"
+        step_weights = reduce(lambda a, (w, i): a + w.get_value() * i.dOutdX(elem),
+                zip(self.my_weights, self.my_inputs), 0.0)
+        o = self.output()
+        return o * (1.0 - o) * step_weights
 
     def get_weights(self):
         return self.my_weights
@@ -225,7 +232,9 @@ class PerformanceElem(DifferentiableElement):
         
         returns: number (float/int)
         """
-        raise NotImplementedError, "Implement me!"
+        e = math.e
+        o = 1.0 / (1.0 + e**(-self.get_input().output()))
+        return o
 
     def dOutdX(self, elem):
         """
@@ -236,7 +245,8 @@ class PerformanceElem(DifferentiableElement):
 
         returns: number (int/float)
         """
-        raise NotImplementedError, "Implement me!"
+        o = self.output()
+        return o * (1 - o) * self.get_input().dOutdX(elem.get_value())
 
     def set_desired(self,new_desired):
         self.my_desired_val = new_desired
