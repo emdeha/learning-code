@@ -1,5 +1,6 @@
 #lang racket
 (require xml net/url)
+(require racket/control)
 
 (define (go)
  'yep-it-works)
@@ -17,6 +18,7 @@
 
 (define (accept-and-handle listener)
  (define cust (make-custodian))
+ (custodian-limit-memory cust (* 50 1024 1024))
  (parameterize ([current-custodian cust])
    (define-values (in out) (tcp-accept listener))
    (thread (lambda ()
@@ -36,7 +38,7 @@
  (when req
    ; Discard the request header (up to a blank line):
    (regexp-match #rx"(\r\n|^)\r\n" in)
-   (let ([xexpr (dispatch (list-ref req 1))])
+   (let ([xexpr (prompt (dispatch (list-ref req 1)))])
      ; Send reply:
      (display "HTTP/1.0 200 Okay\r\n" out)
      (display "Server: k\r\nContent-Type: text/html\r\n\r\n" out)
@@ -78,3 +80,25 @@
 
 (hash-set! dispatch-table "many" many)
 (hash-set! dispatch-table "reply" reply)
+
+(define (get-number label)
+ (define query
+  ; Generate a URL for the current computation
+  (send/suspend
+   ; Receive the computation-as-url here
+   (lambda (k-url)
+    (build-request-page label k-url ""))))
+ (string->number (cdr (assq 'number query))))
+
+(define (send/suspend mk-page)
+ (let/cc k
+  (define tag (format "k~a" (current-inexact-milliseconds)))
+  (hash-set! dispatch-table tag k)
+  (abort (mk-page (string-append "/" tag)))))
+
+(define (sum query)
+ (define m (get-number "First number:"))
+ (define n (get-number "Second number:"))
+ `(html (body "The sum is " ,(number->string (+ m n)))))
+
+(hash-set! dispatch-table "sum" sum)
