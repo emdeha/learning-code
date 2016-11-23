@@ -71,7 +71,7 @@ class Input(ValuedElement,DifferentiableElement):
 
         returns: number (float or int)
         """
-        return self.get_value()
+        return 0
 
 class Weight(ValuedElement):
     """
@@ -245,8 +245,11 @@ class PerformanceElem(DifferentiableElement):
 
         returns: number (int/float)
         """
-        o = self.output()
-        return o * (1 - o) * self.get_input().dOutdX(elem.get_value())
+        e  = math.e
+        o = self.get_input()
+        on = o.output()
+        d = self.my_desired_val
+        return (d - on) * o.dOutdX(elem)
 
     def set_desired(self,new_desired):
         self.my_desired_val = new_desired
