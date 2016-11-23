@@ -39,3 +39,33 @@
    (else (make-tree (f (root tree))
             (map-tree f (left tree))
             (map-tree f (right tree))))))
+
+(define (fold-tree f init tree)
+ (cond
+  ((empty-tree? tree) init)
+   (else (f (root tree) (fold-tree f init (left tree)) (fold-tree f init (right tree))))))
+
+;
+; Scheme interpreter for arithmetic expressions
+(define expr1 '(2 + 3))
+(define expr2 '((7 + 4) - (2 * 3)))
+(define expr3 '(1 - (2 * 6)))
+(define expr4 '((3 * 4) - 2))
+
+(define (build-tree expr)
+ (cond
+  ((not (list? expr)) expr)
+  (else
+   (let ([l-op (car expr)]
+         [r-op (caddr expr)]
+         [op (cadr expr)])
+     (make-tree op (build-tree l-op) (build-tree r-op))))))
+
+(define (eval-tree expr-tree)
+ (cond
+  ((number? expr-tree) expr-tree)
+  (else
+   (let ([l-op (left expr-tree)]
+         [r-op (right expr-tree)]
+         [op (eval (root expr-tree))])
+     (op (eval-tree l-op) (eval-tree r-op))))))
