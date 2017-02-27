@@ -1,3 +1,30 @@
+Prio:
+  1. Copy 3 sites using CSS + responsive layout
+    -- Volontime
+    -- http://www.hackreactor.com/
+    -- http://stackoverflow.com/
+  2. A good course on CSS
+    -- http://oocss.org/
+    -- https://smacss.com/
+    -- http://cssguidelin.es/
+    -- https://www.smashingmagazine.com/2010/10/50-new-useful-css-techniques-tutorials-and-tools/
+    -- https://design.google.com/
+    -- https://www.w3.org/TR/css3-selectors/#selectors
+  3. Rework the copied sites based on stuff I learned
+  4. Copy 3 more sites using CSS + responsive layout
+  5. A good course on less/sass
+  6. Automated build pipeline for less/sass
+  7. Rework the copied sites to use less/sass
+
+  8. A good course on relational databases
+  9. A good course on Postgres
+ 10. Use PostgreSQL schemas for projects I've been through
+
+
+3. CSS specifics
+  -- less
+  -- stuff about css
+
 1. RPC + HTTP simple client and server (RFC 707, RFC 2616)
   -- implement RPC
   -- examine Apache Thrift or other framework
@@ -53,10 +80,6 @@
 1. MDN docs
 
 2. You don't know javaScript
-
-3. CSS specifics
-  -- less
-  -- stuff about css
 
 
 DONE HTTP 1.1 RFC
