@@ -1,0 +1,8 @@
+char = 'a' | 'b' | ... | 'z';
+string = <char>+;
+boolean = "true" | "false";
+digit = '0' | '1' | ... | '9';
+number = <digit>+;
+composite = <string> | <number> | <boolean> | <array> | <object>;
+array = '[' <composite> ','? (<composite> ',')* ']';
+object = '{' <string> ':' <composite> ','? (<string> ':' <composite> ',')* '}';

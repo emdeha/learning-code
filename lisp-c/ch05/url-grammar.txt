@@ -1,0 +1,5 @@
+char = 'a' | 'b' | ... | 'z';
+dot = '.';
+protocol = <char>+ "://";
+domain-part = <char>+ <dot>?;
+url = <protocol> <domain-part>+;
