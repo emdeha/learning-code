@@ -61,6 +61,9 @@ long eval(mpc_ast_t *t) {
   char *op = t->children[1]->contents;
 
   long x = eval(t->children[2]);
+  if (strcmp(op, "-") == 0 && !strstr(t->children[3]->tag, "expr")) {
+    return -x;
+  }
 
   int i = 3;
   while (strstr(t->children[i]->tag, "expr")) {
@@ -141,6 +144,7 @@ int main(int argc, char **argv) {
     add_history(input);
     mpc_result_t r;
     if (mpc_parse("<stdin>", input, Lispy, &r)) {
+      mpc_ast_print(r.output);
       long result = eval(r.output);
       printf("Result: %li\n", result);
       mpc_ast_delete(r.output);
