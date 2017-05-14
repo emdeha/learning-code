@@ -32,12 +32,12 @@ enum { LERR_DIV_ZERO, LERR_BAD_OP, LERR_BAD_NUM };
 typedef struct {
   int type;
   union {
-    long num;
+    long double num;
     int err;
   };
 } lval;
 
-lval lval_num(long x) {
+lval lval_num(long double x) {
   lval v;
   v.type = LVAL_NUM;
   v.num = x;
@@ -53,7 +53,7 @@ lval lval_err(int err) {
 
 void lval_print(lval v) {
   if (v.type == LVAL_NUM) {
-    printf("%li", v.num);
+    printf("%Lf", v.num);
     return;
   }
 
@@ -78,7 +78,7 @@ void lval_println(lval v) {
 }
 
 
-long power(long x, long y) {
+long double power(long double x, long double y) {
   long i = 1;
   for (; i < y; i++) {
     x *= x;
@@ -86,11 +86,11 @@ long power(long x, long y) {
   return x;
 }
 
-long max(long a, long b) {
+long double max(long double a, long double b) {
   return a < b ? b : a;
 }
 
-long min(long a, long b) {
+long double min(long double a, long double b) {
   return a > b ? b : a;
 }
 
@@ -111,7 +111,7 @@ lval eval_op(lval x, char *op, lval y) {
     if (y.num == 0) {
       return lval_err(LERR_DIV_ZERO);
     }
-    return lval_num(x.num % y.num);
+    return lval_num((long)x.num % (long)y.num);
   }
   if (strcmp(op, "^") == 0) { return lval_num(power(x.num, y.num)); }
   if (strcmp(op, "max") == 0) { return lval_num(max(x.num, y.num)); }
@@ -123,7 +123,7 @@ lval eval_op(lval x, char *op, lval y) {
 lval eval(mpc_ast_t *t) {
   if (strstr(t->tag, "number")) {
     errno = 0;
-    long x = strtol(t->contents, NULL, 10);
+    long double x = strtold(t->contents, NULL);
     return errno != ERANGE ? lval_num(x) : lval_err(LERR_BAD_NUM);
   }
 
