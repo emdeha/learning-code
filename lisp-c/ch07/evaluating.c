@@ -33,6 +33,14 @@ long power(long x, long y) {
   return x;
 }
 
+long max(long a, long b) {
+  return a < b ? b : a;
+}
+
+long min(long a, long b) {
+  return a > b ? b : a;
+}
+
 long eval_op(long x, char *op, long y) {
   if (strcmp(op, "+") == 0) { return x + y; }
   if (strcmp(op, "-") == 0) { return x - y; }
@@ -40,6 +48,8 @@ long eval_op(long x, char *op, long y) {
   if (strcmp(op, "/") == 0) { return x / y; }
   if (strcmp(op, "%") == 0) { return x % y; }
   if (strcmp(op, "^") == 0) { return power(x, y); }
+  if (strcmp(op, "max") == 0) { return max(x, y); }
+  if (strcmp(op, "min") == 0) { return min(x, y); }
   return 0;
 }
 
@@ -89,10 +99,6 @@ int num_branches(mpc_ast_t *t) {
   return branches;
 }
 
-int max(int a, int b) {
-  return a < b ? b : a;
-}
-
 int most_num_children(mpc_ast_t *t) {
   int max_branches = t->children_num;
   if (max_branches == 0) {
@@ -118,8 +124,9 @@ int main(int argc, char **argv) {
   mpca_lang(MPCA_LANG_DEFAULT,
     "                                                            \
       number: /-?[0-9]+([.][0-9]+)?/ ;                           \
-      op_symbol: '+' | '-' | '/' | '*' | '%' | '^';              \
-      op_text: \"add\" | \"sub\" | \"mul\" | \"div\" | \"mod\" ; \
+      op_symbol: '+' | '-' | '/' | '*' | '%' | '^' ;             \
+      op_text: \"add\" | \"sub\" | \"mul\" | \"div\" | \"mod\" | \
+        \"min\" | \"max\" ;                                      \
       operator: <op_symbol> | <op_text> ;                        \
       expr: <number> | '(' <operator> <expr>+ ')' ;              \
       lispy: /^/ <operator> <expr>+ /$/ ;                        \
