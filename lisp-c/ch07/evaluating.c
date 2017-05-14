@@ -25,11 +25,21 @@ void add_history(char *unused) {}
 #include "mpc.h"
 
 
+long power(long x, long y) {
+  long i = 1;
+  for (; i < y; i++) {
+    x *= x;
+  }
+  return x;
+}
+
 long eval_op(long x, char *op, long y) {
   if (strcmp(op, "+") == 0) { return x + y; }
   if (strcmp(op, "-") == 0) { return x - y; }
   if (strcmp(op, "*") == 0) { return x * y; }
   if (strcmp(op, "/") == 0) { return x / y; }
+  if (strcmp(op, "%") == 0) { return x % y; }
+  if (strcmp(op, "^") == 0) { return power(x, y); }
   return 0;
 }
 
@@ -108,7 +118,7 @@ int main(int argc, char **argv) {
   mpca_lang(MPCA_LANG_DEFAULT,
     "                                                            \
       number: /-?[0-9]+([.][0-9]+)?/ ;                           \
-      op_symbol: '+' | '-' | '/' | '*' | '%' ;                   \
+      op_symbol: '+' | '-' | '/' | '*' | '%' | '^';              \
       op_text: \"add\" | \"sub\" | \"mul\" | \"div\" | \"mod\" ; \
       operator: <op_symbol> | <op_text> ;                        \
       expr: <number> | '(' <operator> <expr>+ ')' ;              \
@@ -124,11 +134,8 @@ int main(int argc, char **argv) {
     add_history(input);
     mpc_result_t r;
     if (mpc_parse("<stdin>", input, Lispy, &r)) {
-      // long result = eval(r.output);
-      // printf("Result: %li\n", result);
-      mpc_ast_print(r.output);
-      int result = most_num_children(r.output);
-      printf("Most num children: %i\n", result);
+      long result = eval(r.output);
+      printf("Result: %li\n", result);
       mpc_ast_delete(r.output);
     } else {
       mpc_err_print(r.error);
