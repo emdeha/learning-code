@@ -65,6 +65,20 @@ int num_leaves(mpc_ast_t *t) {
   return leaves;
 }
 
+int num_branches(mpc_ast_t *t) {
+  if (t->children_num == 0) {
+    return 0;
+  }
+
+  int i = 0;
+  int branches = t->children_num;
+  for (; i < t->children_num; i++) {
+    branches += num_branches(t->children[i]);
+  }
+
+  return branches;
+}
+
 int main(int argc, char **argv) {
   mpc_parser_t *Number = mpc_new("number");
   mpc_parser_t *Operator = mpc_new("operator");
@@ -95,8 +109,8 @@ int main(int argc, char **argv) {
       // long result = eval(r.output);
       // printf("Result: %li\n", result);
       mpc_ast_print(r.output);
-      int result = num_leaves(r.output);
-      printf("Num leaves: %i\n", result);
+      int result = num_branches(r.output);
+      printf("Num branches: %i\n", result);
       mpc_ast_delete(r.output);
     } else {
       mpc_err_print(r.error);
