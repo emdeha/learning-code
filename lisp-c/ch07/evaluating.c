@@ -79,6 +79,24 @@ int num_branches(mpc_ast_t *t) {
   return branches;
 }
 
+int max(int a, int b) {
+  return a < b ? b : a;
+}
+
+int most_num_children(mpc_ast_t *t) {
+  int max_branches = t->children_num;
+  if (max_branches == 0) {
+    return max_branches;
+  }
+
+  int i = 0;
+  for (; i < t->children_num; i++) {
+    max_branches = max(max_branches, most_num_children(t->children[i]));
+  }
+
+  return max_branches;
+}
+
 int main(int argc, char **argv) {
   mpc_parser_t *Number = mpc_new("number");
   mpc_parser_t *Operator = mpc_new("operator");
@@ -109,8 +127,8 @@ int main(int argc, char **argv) {
       // long result = eval(r.output);
       // printf("Result: %li\n", result);
       mpc_ast_print(r.output);
-      int result = num_branches(r.output);
-      printf("Num branches: %i\n", result);
+      int result = most_num_children(r.output);
+      printf("Most num children: %i\n", result);
       mpc_ast_delete(r.output);
     } else {
       mpc_err_print(r.error);
