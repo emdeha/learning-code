@@ -31,8 +31,10 @@ enum { LERR_DIV_ZERO, LERR_BAD_OP, LERR_BAD_NUM };
 
 typedef struct {
   int type;
-  long num;
-  int err;
+  union {
+    long num;
+    int err;
+  };
 } lval;
 
 lval lval_num(long x) {
@@ -105,7 +107,12 @@ lval eval_op(lval x, char *op, lval y) {
     }
     return lval_num(x.num / y.num);
   }
-  if (strcmp(op, "%") == 0) { return lval_num(x.num % y.num); }
+  if (strcmp(op, "%") == 0) {
+    if (y.num == 0) {
+      return lval_err(LERR_DIV_ZERO);
+    }
+    return lval_num(x.num % y.num);
+  }
   if (strcmp(op, "^") == 0) { return lval_num(power(x.num, y.num)); }
   if (strcmp(op, "max") == 0) { return lval_num(max(x.num, y.num)); }
   if (strcmp(op, "min") == 0) { return lval_num(min(x.num, y.num)); }
