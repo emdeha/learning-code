@@ -51,6 +51,20 @@ long eval(mpc_ast_t *t) {
   return x;
 }
 
+int num_leaves(mpc_ast_t *t) {
+  if (t->children_num == 0) {
+    return 1;
+  }
+
+  int i = 0;
+  int leaves = 0;
+  for (; i < t->children_num; i++) {
+    leaves += num_leaves(t->children[i]);
+  }
+
+  return leaves;
+}
+
 int main(int argc, char **argv) {
   mpc_parser_t *Number = mpc_new("number");
   mpc_parser_t *Operator = mpc_new("operator");
@@ -78,8 +92,11 @@ int main(int argc, char **argv) {
     add_history(input);
     mpc_result_t r;
     if (mpc_parse("<stdin>", input, Lispy, &r)) {
-      long result = eval(r.output);
-      printf("Result: %li\n", result);
+      // long result = eval(r.output);
+      // printf("Result: %li\n", result);
+      mpc_ast_print(r.output);
+      int result = num_leaves(r.output);
+      printf("Num leaves: %i\n", result);
       mpc_ast_delete(r.output);
     } else {
       mpc_err_print(r.error);
