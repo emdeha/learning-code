@@ -10,5 +10,9 @@
   "description": "",
   "dependencies": {
     "ejs": "^2.5.6"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-ejs": "^3.0.0"
   }
 }
