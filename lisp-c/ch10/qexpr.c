@@ -200,6 +200,49 @@ lval* builtin_tail(lval *args) {
   return v;
 }
 
+lval* builtin_list(lval *args) {
+  args->type = LVAL_QEXPR;
+  return args;
+}
+
+lval* lval_eval(lval *v);
+
+lval* builtin_eval(lval *args) {
+  LASSERT(args, args->count == 1,
+      "Function 'eval' expects only one argument!");
+  LASSERT(args, args->cell[0]->type == LVAL_QEXPR,
+      "Function 'eval' expects a Q expression!");
+
+  lval *x = lval_take(args, 0);
+  x->type = LVAL_SEXPR;
+  return lval_eval(x);
+}
+
+lval* lval_join(lval *x, lval *y) {
+  while (y->count) {
+    x = lval_add(x, lval_pop(y, 0));
+  }
+
+  lval_del(y);
+  return x;
+}
+
+lval* builtin_join(lval *args) {
+  for (int i = 0; i < args->count; i++) {
+    LASSERT(args, args->cell[i]->type == LVAL_QEXPR,
+        "Function 'join' expects Q expressions!");
+  }
+
+  lval *x = lval_pop(args, 0);
+
+  while (args->count) {
+    x = lval_join(x, lval_pop(args, 0));
+  }
+
+  lval_del(args);
+  return x;
+}
+
 lval* builtin_op(lval *args, char *op) {
   for (int i = 0; i < args->count; i++) {
     if (args->cell[i]->type != LVAL_NUM) {
@@ -235,7 +278,16 @@ lval* builtin_op(lval *args, char *op) {
   return x;
 }
 
-lval* lval_eval(lval *v);
+lval *builtin(lval *args, char *func) {
+  if (strcmp("list", func) == 0) { return builtin_list(args); }
+  if (strcmp("head", func) == 0) { return builtin_head(args); }
+  if (strcmp("tail", func) == 0) { return builtin_tail(args); }
+  if (strcmp("join", func) == 0) { return builtin_join(args); }
+  if (strcmp("eval", func) == 0) { return builtin_eval(args); }
+  if (strstr("+-/*", func)) { return builtin_op(args, func); }
+  lval_del(args);
+  return lval_err("Unkown function!");
+}
 
 lval* lval_eval_sexpr(lval *v) {
   for (int i = 0; i < v->count; i++) {
@@ -255,7 +307,7 @@ lval* lval_eval_sexpr(lval *v) {
     return lval_err("S-expression Does not start with a symbol!");
   }
 
-  lval *result = builtin_op(v, f->sym);
+  lval *result = builtin(v, f->sym);
   lval_del(f);
   return result;
 }
