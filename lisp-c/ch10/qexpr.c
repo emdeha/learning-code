@@ -327,14 +327,14 @@ int main() {
   mpc_parser_t *Lispy = mpc_new("lispy");
 
   mpca_lang(MPCA_LANG_DEFAULT,
-    "                                                                \
-      number: /-?[0-9]+/ ;                                           \
-      symbol: \"list\" | \"head\" | \"tail\" | \"join\" | \"eval\" ; \
-            | '+' | '-' | '/' | '*' | '%' | '^' ;                    \
-      sexpr: '(' <expr>* ')' ;                                       \
-      qexpr: '{' <expr>* '}' ;                                       \
-      expr: <number> | <symbol> | <sexpr> | <qexpr> ;                \
-      lispy: /^/ <expr>* /$/ ;                                       \
+    "                                                               \
+      number: /-?[0-9]+/ ;                                          \
+      symbol: \"list\" | \"head\" | \"tail\" | \"join\" | \"eval\"  \
+            | '+' | '-' | '/' | '*' | '%' | '^' ;                   \
+      sexpr: '(' <expr>* ')' ;                                      \
+      qexpr: '{' <expr>* '}' ;                                      \
+      expr: <number> | <symbol> | <sexpr> | <qexpr> ;               \
+      lispy: /^/ <expr>* /$/ ;                                      \
     ",
     Number, Symbol, Sexpr, Qexpr, Expr, Lispy);
 
